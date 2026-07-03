@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import CheckerLogo from '../components/CheckerLogo.astro';
-import ConcentricRingsMuted from '../components/ConcentricRingsMuted.astro';
+import RuleLogo from '../components/RuleLogo.astro';
+import HeroRules from '../components/HeroRules.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 
 const caseStudies = [
   {
@@ -35,8 +36,8 @@ const caseStudies = [
 >
   <header slot="header" class="site-header">
     <div class="container site-header__inner">
-      <a class="brand" href="/">
-        <CheckerLogo />
+      <a class="brand" href="/" aria-label="Munad Mahinoor — home">
+        <RuleLogo />
         <span class="brand__name">Munad Mahinoor</span>
       </a>
       <nav aria-label="Primary">
@@ -45,6 +46,7 @@ const caseStudies = [
           <li><a href="/writing">Writing</a></li>
           <li><a href="/resume">Resume</a></li>
           <li><a href="/contact">Contact</a></li>
+          <li><ThemeToggle /></li>
         </ul>
       </nav>
     </div>
@@ -63,7 +65,7 @@ const caseStudies = [
         </div>
       </div>
       <div class="hero__motif">
-        <ConcentricRingsMuted />
+        <HeroRules />
       </div>
     </div>
   </section>
@@ -128,6 +130,7 @@ const caseStudies = [
   }
   .nav {
     display: flex;
+    align-items: center;
     gap: var(--space-3);
     list-style: none;
     margin: 0;
@@ -140,8 +143,8 @@ const caseStudies = [
     font-weight: var(--fw-medium);
   }
   .nav a:hover {
-    color: var(--color-accent);
     text-decoration: underline;
+    text-decoration-thickness: 2px;
     text-underline-offset: 0.15em;
   }
 
@@ -176,7 +179,7 @@ const caseStudies = [
     text-underline-offset: 0.15em;
   }
   .btn-secondary:hover {
-    color: var(--color-accent);
+    text-decoration-thickness: 2px;
   }
   .hero__motif {
     max-width: 300px;
@@ -235,13 +238,15 @@ const caseStudies = [
     text-decoration: none;
   }
   .card:hover {
-    border-color: var(--color-rule);
+    border-color: var(--color-ink);
   }
   .card h3 {
     margin-top: var(--space-1);
   }
   .card:hover h3 {
-    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 2px;
   }
   .card p:last-child {
     margin-bottom: 0;

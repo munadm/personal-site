@@ -1,0 +1,52 @@
+---
+/* Neutral abstract hero motif: a block of thin horizontal rules with
+   subtly varying stroke weight and spacing (ledger/rhythm feel). Replaces
+   the concentric-rings motif, which read as ambiguous target/radar
+   symbolism. Purely decorative — aria-hidden — 1px-ish strokes at low
+   opacity, no circles, no figurative imagery. */
+
+const rows = [
+  { y: 20, w: 220, sw: 1 },
+  { y: 46, w: 260, sw: 1.25 },
+  { y: 72, w: 190, sw: 1 },
+  { y: 98, w: 300, sw: 1.5 },
+  { y: 124, w: 150, sw: 1 },
+  { y: 150, w: 260, sw: 1.75 },
+  { y: 176, w: 210, sw: 1 },
+  { y: 202, w: 280, sw: 1.25 },
+  { y: 228, w: 170, sw: 1 },
+  { y: 254, w: 240, sw: 1.5 },
+  { y: 280, w: 200, sw: 1 },
+];
+---
+
+<svg
+  class="motif-rules"
+  viewBox="0 0 320 300"
+  role="presentation"
+  aria-hidden="true"
+  focusable="false"
+>
+  <g stroke="currentColor" stroke-linecap="square">
+    {
+      rows.map((r) => (
+        <line
+          x1={320 - r.w}
+          y1={r.y}
+          x2="320"
+          y2={r.y}
+          stroke-width={r.sw}
+        />
+      ))
+    }
+  </g>
+</svg>
+
+<style>
+  .motif-rules {
+    width: 100%;
+    height: auto;
+    color: var(--color-ink);
+    opacity: 0.35;
+  }
+</style>
