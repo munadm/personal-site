@@ -25,35 +25,40 @@ body {
   font-family: var(--font-sans);
   font-size: var(--fs-18);
   font-weight: var(--fw-regular);
-  line-height: var(--lh-body);
+  line-height: var(--leading-body);
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* ---- Headings: geometric, tight tracking ---- */
+/* ---- Headings: geometric, tight tracking ----
+ * Sizes/line-heights come from the fluid type scale in tokens.css so every
+ * heading level reads consistently (site-wide, not just the homepage).
+ */
 h1,
 h2,
 h3,
 h4 {
   margin: 0 0 var(--space-2);
-  line-height: var(--lh-heading);
+  line-height: var(--leading-heading);
   letter-spacing: var(--tracking-tight);
   font-weight: var(--fw-bold);
 }
 
 h1 {
-  font-size: var(--fs-48);
-  line-height: var(--lh-tight);
+  font-size: var(--fs-display);
+  line-height: var(--leading-display);
   font-weight: var(--fw-black);
 }
 
 h2 {
-  font-size: var(--fs-32);
+  font-size: var(--fs-heading-lg);
+  line-height: var(--leading-heading);
 }
 
 h3 {
-  font-size: var(--fs-24);
+  font-size: var(--fs-heading-md);
+  line-height: var(--leading-heading);
 }
 
 p {
@@ -73,7 +78,7 @@ a:hover {
 
 ul,
 ol {
-  line-height: var(--lh-body);
+  line-height: var(--leading-body);
 }
 
 img,

@@ -149,20 +149,20 @@ const caseStudies = [
   }
 
   .hero {
-    padding-block: var(--space-1);
+    padding-block: var(--space-4);
     overflow: hidden;
   }
   .hero__inner {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-1);
+    gap: var(--space-3);
     align-items: center;
   }
   .hero__subhead {
-    font-size: var(--fs-24);
-    line-height: var(--lh-heading);
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
     color: var(--color-muted);
-    margin-bottom: var(--space-1);
+    margin-bottom: var(--space-3);
     max-width: 34ch;
   }
   .hero__actions {
@@ -187,10 +187,6 @@ const caseStudies = [
     opacity: 0.9;
   }
 
-  h1 {
-    font-size: var(--fs-48);
-  }
-
   @media (min-width: 52rem) {
     .hero {
       padding-block: var(--space-7);
@@ -201,9 +197,6 @@ const caseStudies = [
     }
     .hero__subhead {
       margin-bottom: var(--space-4);
-    }
-    h1 {
-      font-size: 3.5rem; /* 56px — within the 48-56px muted display range */
     }
     /* Bleed the motif off the right edge, at reduced weight. */
     .hero__motif {
@@ -216,7 +209,7 @@ const caseStudies = [
   .container-hr {
     max-width: var(--container);
     margin-inline: auto;
-    margin-block: var(--space-1);
+    margin-block: var(--space-3);
   }
 
   @media (min-width: 52rem) {
