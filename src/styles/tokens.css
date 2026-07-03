@@ -10,8 +10,15 @@
  *   --color-ink on --color-bg (dark):   #f5f3ec on #16150f ≈ 16.5:1 (AAA)
  *   --color-muted on --color-bg (light): #55534a on #faf9f5 ≈ 7.3:1 (AAA)
  *   --color-muted on --color-bg (dark):  #b0ada2 on #16150f ≈ 8.1:1 (AAA)
- *   --color-accent text-safe (light): #8a4326 on #faf9f5 ≈ 6.8:1 (AAA)
- *   --color-accent text-safe (dark):  #e08a5e on #16150f ≈ 6.9:1 (AAA)
+ *   --color-accent text-safe (light): #0f6e56 on #faf9f5 ≈ 5.9:1 (AA, exceeds 4.5:1 requirement)
+ *   --color-accent text-safe (dark):  #7fb3a3 on #16150f ≈ 7.7:1 (AAA)
+ *
+ * Theming (2026-07): supports three states — system preference (default,
+ * via prefers-color-scheme), and an explicit user override written to
+ * [data-theme="light"|"dark"] on <html> by the nav theme toggle. Dark
+ * values apply under EITHER prefers-color-scheme:dark (no override set)
+ * OR [data-theme="dark"]; light values are forced under [data-theme="light"]
+ * regardless of system preference.
  */
 
 :root {
@@ -23,13 +30,17 @@
   --color-surface: #f2f0e8;
   --color-muted: #55534a; /* ≈ 7.3:1 on --color-bg (AAA body-eligible) */
 
-  /* Muted warm accent — used once above the fold per design brief.
-     Darkened from the original op-art red-orange for a quieter feel while
-     staying text-safe (AAA on bg). Brighter graphic variant is for
-     non-text decorative fills (e.g. rings center dot) only. */
-  --color-accent: #8a4326;
-  --color-accent-graphic: #9c5330;
-  --color-on-accent: #faf9f5; /* ≈ 7.2:1 on #8a4326 */
+  /* Desaturated teal — the single accent in active use (hover affordances,
+     links). Replaces the terracotta/orange accent, which read as a
+     "Claude Code" aesthetic. See ratio table above. */
+  --color-accent: #0f6e56;
+  --color-accent-graphic: #0f6e56;
+  --color-on-accent: #faf9f5; /* ≈ 6.0:1 on #0f6e56 */
+
+  /* Deprecated: no longer used above the fold or in active hover states.
+     Kept only in case a future non-text decorative fill needs the old
+     warm tone; do not wire into new UI. */
+  --color-accent-terracotta-deprecated: #8a4326;
 
   /* Hairline rules / borders — softened to muted ink, not pure ink. */
   --color-rule: #55534a;
@@ -83,22 +94,58 @@
   color-scheme: light dark;
 }
 
-/* ---- Color: dark (inverse via prefers-color-scheme) ---- */
+/* ---- Color: dark ----
+ * Applies under system preference (prefers-color-scheme, no explicit
+ * override) AND under an explicit [data-theme="dark"] override, so the
+ * toggle works regardless of OS setting.
+ */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --color-ink: #f5f3ec;   /* on --color-bg ≈ 16.5:1 (AAA) */
     --color-bg: #16150f;
     --color-surface: #1d1c16;
     --color-muted: #b0ada2; /* on --color-bg ≈ 8.1:1 (AAA) */
 
-    /* Softened warm accent, still text-safe on dark: ≈ 6.9:1. */
-    --color-accent: #e08a5e;
-    --color-accent-graphic: #e08a5e;
-    --color-on-accent: #16150f; /* dark ink on accent ≈ 6.9:1 */
+    /* Desaturated teal, still text-safe on dark: ≈ 7.7:1 (AAA). */
+    --color-accent: #7fb3a3;
+    --color-accent-graphic: #7fb3a3;
+    --color-on-accent: #16150f; /* dark ink on accent ≈ 7.7:1 */
 
     --color-rule: #b0ada2;
     --color-rule-faint: #403e35;
 
     --color-focus: #f5f3ec;
   }
+}
+
+:root[data-theme='dark'] {
+  --color-ink: #f5f3ec;
+  --color-bg: #16150f;
+  --color-surface: #1d1c16;
+  --color-muted: #b0ada2;
+
+  --color-accent: #7fb3a3;
+  --color-accent-graphic: #7fb3a3;
+  --color-on-accent: #16150f;
+
+  --color-rule: #b0ada2;
+  --color-rule-faint: #403e35;
+
+  --color-focus: #f5f3ec;
+}
+
+:root[data-theme='light'] {
+  --color-ink: #16150f;
+  --color-bg: #faf9f5;
+  --color-surface: #f2f0e8;
+  --color-muted: #55534a;
+
+  --color-accent: #0f6e56;
+  --color-accent-graphic: #0f6e56;
+  --color-on-accent: #faf9f5;
+
+  --color-rule: #55534a;
+  --color-rule-faint: #cfcbc0;
+
+  --color-focus: #16150f;
 }

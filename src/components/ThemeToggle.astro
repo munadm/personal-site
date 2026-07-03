@@ -1,0 +1,103 @@
+---
+/* Three-state theme control collapsed to a single toggle button: respects
+   prefers-color-scheme by default, click toggles light/dark, choice
+   persists in localStorage, and applies via [data-theme] on <html>.
+   The pre-paint init script lives in Base.astro's <head> (must run before
+   first paint to avoid a flash of the wrong theme); this component only
+   owns the button markup, icons, and the click-handling script. */
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  class="theme-toggle"
+  aria-label="Switch to dark mode"
+>
+  <svg class="icon icon-sun" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+  </svg>
+  <svg class="icon icon-moon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+  </svg>
+  <span class="theme-toggle__text" aria-hidden="true">Theme</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    background: transparent;
+    color: var(--color-ink);
+    border: var(--border-hair) solid var(--color-rule-faint);
+    border-radius: 0;
+    cursor: pointer;
+    flex: none;
+  }
+  .theme-toggle:hover {
+    border-color: var(--color-rule);
+  }
+  .icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .icon-moon {
+    display: none;
+  }
+  /* data-theme="dark", or system dark with no override, shows the moon
+     (i.e. "click to switch to light" is represented as a moon = currently dark). */
+  :global([data-theme='dark']) .icon-sun {
+    display: none;
+  }
+  :global([data-theme='dark']) .icon-moon {
+    display: block;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme='light'])) .icon-sun {
+      display: none;
+    }
+    :global(html:not([data-theme='light'])) .icon-moon {
+      display: block;
+    }
+  }
+  .theme-toggle__text {
+    display: none;
+  }
+  /* forced-colors (Windows High Contrast etc.): icons may not render
+     meaningfully, so fall back to visible text. */
+  @media (forced-colors: active) {
+    .icon {
+      display: none !important;
+    }
+    .theme-toggle__text {
+      display: inline;
+      font-size: var(--fs-14);
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    function current() {
+      var stored = localStorage.getItem('theme');
+      if (stored === 'light' || stored === 'dark') return stored;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    function label(theme) {
+      return theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    }
+    btn.setAttribute('aria-label', label(current()));
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      btn.setAttribute('aria-label', label(next));
+    });
+  })();
+</script>
