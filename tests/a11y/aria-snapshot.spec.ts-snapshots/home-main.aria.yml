@@ -1,0 +1,28 @@
+- main:
+  - heading "Munad Mahinoor" [level=1]
+  - paragraph: Engineering leader for AI-enabled, remote-first teams. Payments at scale.
+  - link "Read the case studies":
+    - /url: "#work"
+  - link "Download resume (PDF)":
+    - /url: /resume.pdf
+  - separator
+  - heading "Selected work" [level=2]
+  - list:
+    - listitem:
+      - link /Case study \d+ BNPL at \$[\d,.]+[bkmBKM]+ scale Leading the engineering org behind a Buy-Now-Pay-Later platform processing tens of billions in annual volume — reliability, risk, and velocity\./:
+        - /url: /work
+        - paragraph: /Case study \d+/
+        - heading /BNPL at \$[\d,.]+[bkmBKM]+ scale/ [level=3]
+        - paragraph: Leading the engineering org behind a Buy-Now-Pay-Later platform processing tens of billions in annual volume — reliability, risk, and velocity.
+    - listitem:
+      - link /Case study \d+ LLM PII scanner Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs\./:
+        - /url: /work
+        - paragraph: /Case study \d+/
+        - heading "LLM PII scanner" [level=3]
+        - paragraph: Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs.
+    - listitem:
+      - link "Essay How I built this site with an agent workforce A point-of-view essay on directing a small team of AI agents through design, build, and accessibility verification.":
+        - /url: /writing
+        - paragraph: Essay
+        - heading "How I built this site with an agent workforce" [level=3]
+        - paragraph: A point-of-view essay on directing a small team of AI agents through design, build, and accessibility verification.

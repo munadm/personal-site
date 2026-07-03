@@ -1,0 +1,49 @@
+name: CI
+
+# Build the static site and run the full Playwright suite (fold + a11y) on
+# every push to main and every pull request. The VoiceOver launch gate is NOT
+# run here — see voiceover-gate.yml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # `npm test` == `playwright test`; the config's webServer rebuilds and
+      # previews the site, and the default projects cover fold + a11y (the
+      # voiceover project is excluded unless VOICEOVER=1).
+      - name: Run Playwright suite (fold + a11y)
+        run: npm test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

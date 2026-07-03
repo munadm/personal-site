@@ -1,0 +1,60 @@
+name: VoiceOver launch gate
+
+# LAUNCH GATE — not a PR gate.
+#
+# This runs the REAL macOS VoiceOver narration test (tests/voiceover/*.voiceover.spec.ts)
+# via @guidepup/playwright. VoiceOver control is macOS-only and must be granted
+# before the run; in CI that's done by the official guidepup setup action
+# (guidepup/setup-action), which is the CI equivalent of running
+# `npx guidepup setup` locally. Because it's slow and macOS-bound, it is
+# deliberately kept OUT of ci.yml / PR checks and gated to run only:
+#   - manually (workflow_dispatch), and
+#   - on release tags (push of a v* tag),
+# i.e. right before/at a launch.
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  voiceover:
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Grants VoiceOver automation permission on the runner — the CI
+      # equivalent of running `npx guidepup setup` locally once. Without this
+      # the voiceover project cannot drive VoiceOver.
+      - name: Set up guidepup / VoiceOver
+        uses: guidepup/setup-action@0.14.0
+
+      # Only the `voiceover` project runs here. VOICEOVER=1 registers it in
+      # playwright.config.ts (it is not part of the default suite). The
+      # config's webServer rebuilds + previews the site on :4321.
+      - name: Run VoiceOver narration gate
+        run: VOICEOVER=1 npx playwright test --project=voiceover
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: voiceover-report
+          path: playwright-report/
+          retention-days: 14

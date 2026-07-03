@@ -1,0 +1,20 @@
+- main:
+  - heading "Colophon" [level=1]
+  - paragraph: How this site is built.
+  - separator
+  - heading "Stack" [level=2]
+  - paragraph:
+    - text: Built with
+    - link "Astro":
+      - /url: https://astro.build
+    - text: ", shipping essentially zero client-side JavaScript — the one exception is the light/dark theme toggle. Type is set in a self-hosted Archivo variable font, served from this site rather than a third-party font host. Hosted on Cloudflare Pages."
+  - heading "Design system" [level=2]
+  - paragraph: "The visual language is op-art-inspired and accessibility-first: static line-weight geometry, ruled dividers, and typography carry the expression, rather than imagery, motion, or decoration for its own sake. Every color pairing used for text is contrast-checked, with body text held to AAA (7:1) rather than the AA minimum."
+  - heading "How it was made" [level=2]
+  - paragraph:
+    - text: This site was designed and built through an agent workforce that I directed — Claude models handling the design system, the page-by-page build, and accessibility verification, with me setting direction, reviewing output, and making the calls a person needs to make. It's also the subject of a forthcoming essay on the
+    - link "writing":
+      - /url: /writing
+    - text: page.
+  - heading "Privacy" [level=2]
+  - paragraph: No analytics, no cookies, no tracking scripts of any kind. I don't know who visits this site or what they look at.

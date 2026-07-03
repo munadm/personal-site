@@ -1,0 +1,14 @@
+- main:
+  - heading "Contact" [level=1]
+  - paragraph: Remote-first, based in Philadelphia (Eastern time). The fastest way to reach me is email.
+  - separator
+  - term: Email
+  - definition:
+    - link "nobodylikesmoe@gmail.com":
+      - /url: mailto:nobodylikesmoe@gmail.com
+  - term: LinkedIn
+  - definition:
+    - link "linkedin.com/in/munadmahinoor":
+      - /url: https://www.linkedin.com/in/munadmahinoor
+  - term: Location
+  - definition: Philadelphia, PA — remote-first, Eastern time

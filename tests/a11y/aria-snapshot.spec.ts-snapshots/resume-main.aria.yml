@@ -1,0 +1,75 @@
+- main:
+  - heading "Munad Mahinoor" [level=1]
+  - paragraph: Philadelphia, PA
+  - link "Download PDF":
+    - /url: /resume.pdf
+  - list:
+    - listitem:
+      - link "nobodylikesmoe@gmail.com":
+        - /url: mailto:nobodylikesmoe@gmail.com
+    - listitem:
+      - link "linkedin.com/in/munadmahinoor":
+        - /url: https://www.linkedin.com/in/munadmahinoor
+  - separator
+  - region "Summary":
+    - heading "Summary" [level=2]
+    - paragraph: /Engineering leader with 9\+ years building high-availability fintech platforms at PayPal, scaling from individual contributor to managing an organization of \d+ engineers\. Drove \$[\d,.]+[bkmBKM]+\+ in incremental transaction volume, architected cloud-native systems on AWS, led GDPR\/SOC2 compliance remediation under pressure, and introduced CI\/CD practices that doubled developer throughput\. Specializes in cross-functional technical alignment, incident response, and shipping in regulated, mission-critical environments\./
+  - region "Experience":
+    - heading "Experience" [level=2]
+    - article:
+      - heading "PayPal Buy Now Pay Later" [level=3]
+      - paragraph: Senior Engineering Manager
+      - paragraph: Remote
+      - paragraph: /Feb\. \d+ – Present/
+      - list:
+        - listitem: /Led an engineering organization of \d+ full-stack engineers and 1 manager supporting a \$[\d,.]+[bkmBKM]+ credit business across multiple international markets/
+        - listitem: /Drove five product experiments generating ~\$[\d,.]+[bkmBKM]+ in incremental TPV by building a cross-team innersource program that reduced PR review cycles from two weeks to same-day delivery; program scaled to \d+ engineers across multiple teams/
+        - listitem: Architected full-stack migration from proprietary web frameworks to NextJS, Tailwind CSS, and tRPC; introduced modern CI/CD practices that doubled developer throughput and reduced false-positive output via AI-augmented automation
+        - listitem: "Led GDPR and SOC2 compliance remediation: identified and closed a systemic PII exposure spanning six years across all legacy credit products in a single weekend; built permanent PII screening controls into CI/CD pipelines"
+        - listitem: Designed and led war-room incident response frameworks for high-stakes operational windows (Black Friday and geo-expansion launches); achieved the lowest rate of customer-impacting failures in a decade
+        - listitem: Named critical partner on PayPal's full Checkout architecture overhaul – the only credit organization at PayPal with full product parity at day-one launch across all credit offerings
+    - article:
+      - heading "PayPal Working Capital" [level=3]
+      - paragraph: Engineering Lead
+      - paragraph: Philadelphia, PA
+      - paragraph: /Jun\. \d+ – Feb\. \d+/
+      - list:
+        - listitem: Introduced NextJS to PayPal; shipped the first commercially compliant NextJS application on PayPal's proprietary web architecture
+        - listitem: Served as architectural lead for a distributed credit platform operating across four countries with thousands of daily active users
+        - listitem: Coached ten engineers on modern web application architecture and engineering best practices
+    - article:
+      - heading "PayPal Business Loan" [level=3]
+      - paragraph: Senior Software Engineer
+      - paragraph: Philadelphia, PA
+      - paragraph: /Jan\. \d+ – May \d+/
+      - list:
+        - listitem: Migrated application stack to AWS (SQS, Lambda, API Gateway, S3), replacing legacy cost drivers with a cloud-native serverless architecture
+        - listitem: Revamped back-end systems from legacy .NET frameworks to a modern Node.js distributed architecture
+        - listitem: Implemented a data-driven loan application that enabled rapid go-to-market execution across new product initiatives
+        - listitem: Contributed to the Swift Capital–PayPal merger integration and led engineering for the Paycheck Protection Program rollout, shipped in under a week
+    - article:
+      - heading "Swift Capital (acquired by PayPal)" [level=3]
+      - paragraph: Software Development Engineer
+      - paragraph: Philadelphia, PA
+      - paragraph: /Jun\. \d+ – Dec\. \d+/
+      - list:
+        - listitem: /Full-stack developer for the flagship Swift Capital Cash Advance product; company acquired by PayPal in fall \d+/
+        - listitem: Contributed across the full product lifecycle including architecture, implementation, cloud provisioning, and CI/CD pipelines
+  - region "Skills":
+    - heading "Skills" [level=2]
+    - term: Languages
+    - definition: TypeScript/JavaScript, Java, C#
+    - term: Cloud & Infrastructure
+    - definition: AWS (API Gateway, SQS, Lambda, S3, CloudFormation), Docker, Google Cloud Platform
+    - term: Frameworks & Tools
+    - definition: Next.js, GraphQL, React, PostgreSQL, Microsoft SQL Server, Git, CI/CD & DevOps, GitHub, JIRA, Confluence
+    - term: Familiar
+    - definition: C++, OpenAPI architecture, distributed systems (message queues, caching, serverless), Google Analytics
+    - term: Interests
+    - definition: Web applications, community development, mentoring programs, soccer, axe throwing
+  - region "Education":
+    - heading "Education" [level=2]
+    - heading "Lehigh University" [level=3]
+    - paragraph: "/Bachelor of Science in Computer Science and Business · CGPA: \\d+\\.\\d+/"
+    - paragraph: Bethlehem, PA
+    - paragraph: /May \d+/

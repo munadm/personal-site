@@ -1,0 +1,33 @@
+- main:
+  - heading "Accessibility statement" [level=1]
+  - paragraph: I care about this more than most people building a personal site would, so here's an honest account rather than boilerplate.
+  - separator
+  - heading "Conformance target" [level=2]
+  - paragraph:
+    - text: This site targets
+    - strong: WCAG 2.2 level AA
+    - text: ", with one deliberate upgrade: body text holds"
+    - strong: AAA contrast (7:1)
+    - text: against its background in both light and dark mode, rather than settling for the AA minimum of 4.5:1.
+  - heading "What I've done" [level=2]
+  - list:
+    - listitem:
+      - text: Semantic HTML throughout — landmarks, one
+      - code: h1
+      - text: per page, headings in logical order, lists and definition lists used where they describe the content.
+    - listitem: Fully keyboard-operable navigation, with a visible, high-contrast focus outline on every interactive element (never color alone).
+    - listitem: A skip link to jump straight to main content.
+    - listitem:
+      - text: Static, reduced-motion-safe design — the op-art visual language is expressed through typography and ruled geometry, not animation, so there's nothing to disable for
+      - code: prefers-reduced-motion
+      - text: .
+    - listitem: A dark mode that respects system preference and offers an explicit override, with contrast ratios verified in both themes.
+    - listitem: "Automated testing on every change: axe-core accessibility checks, Playwright end-to-end tests, and manual screen-reader simulation before shipping."
+  - heading "Known limitations" [level=2]
+  - paragraph: This is a small, actively evolving site. If something doesn't work with your assistive technology, I want to know — see below.
+  - heading "Feedback" [level=2]
+  - paragraph:
+    - text: If you hit an accessibility barrier anywhere on this site, email me at
+    - link "nobodylikesmoe@gmail.com":
+      - /url: mailto:nobodylikesmoe@gmail.com
+    - text: and I'll fix it.

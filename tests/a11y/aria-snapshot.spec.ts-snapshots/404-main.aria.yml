@@ -1,0 +1,8 @@
+- main:
+  - paragraph: /\d+/
+  - heading "Page not found" [level=1]
+  - paragraph: There's nothing here. The page may have moved, or the link may be wrong.
+  - separator
+  - paragraph:
+    - link "Back home":
+      - /url: /
