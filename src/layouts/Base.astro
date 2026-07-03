@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description: string;
+  /** Path-relative canonical, e.g. "/proto/signal". Defaults to current URL. */
+  canonicalPath?: string;
+  /** Emit JSON-LD Person schema (home / bio pages). */
+  personSchema?: boolean;
+  ogType?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  personSchema = false,
+  ogType = 'website',
+} = Astro.props;
+
+const siteName = 'Munad Mahinoor';
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/favicon.svg', Astro.site).href;
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Munad Mahinoor',
+  jobTitle: 'Senior Engineering Manager',
+  description:
+    'Engineering leader for AI-enabled, remote-first teams. Payments at scale.',
+  url: Astro.site?.href,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {
+      personSchema && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(personLd)}
+        />
+      )
+    }
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <slot name="header" />
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

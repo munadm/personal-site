@@ -1,0 +1,93 @@
+/*
+ * Design tokens — Op-art, accessibility-first.
+ * Accessibility wins every conflict. All color pairings used for text
+ * are contrast-checked; body text targets AAA (7:1) on plain backgrounds only.
+ */
+
+:root {
+  /* ---- Color: light (default) ---- */
+  /* Near-black on white. #111 on #fff ≈ 18.9:1 (AAA). */
+  --color-ink: #111111;
+  --color-bg: #ffffff;
+  /* Subtle surface for cards/dividers, still plain (no pattern behind text). */
+  --color-surface: #f4f4f2;
+  --color-muted: #565656; /* #565656 on #fff ≈ 7.3:1 (AAA body-eligible) */
+
+  /* Warm accent. Text-safe shade passes 4.5:1 on white.
+     #B23217 on #fff ≈ 5.7:1 (AA large + normal). Brighter #C7401F reserved
+     for large graphics / non-text motifs only. */
+  --color-accent: #b23217;
+  --color-accent-graphic: #c7401f;
+  --color-on-accent: #ffffff; /* white on #b23217 ≈ 5.7:1 */
+
+  /* Hairline rules / borders. */
+  --color-rule: #111111;
+  --color-rule-faint: #cfcfcb;
+
+  /* Focus ring — high contrast, never relies on accent alone. */
+  --color-focus: #111111;
+
+  /* ---- Type scale (px → rem, base 16) ---- */
+  --font-sans: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-24: 1.5rem;
+  --fs-32: 2rem;
+  --fs-48: 3rem;
+  --fs-72: 4.5rem;
+
+  --fw-regular: 420;
+  --fw-medium: 560;
+  --fw-bold: 720;
+  --fw-black: 860;
+
+  --lh-tight: 1.02;
+  --lh-heading: 1.1;
+  --lh-body: 1.6;
+
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.14em;
+
+  /* ---- Spacing: 8px scale ---- */
+  --space-0: 0;
+  --space-1: 0.5rem;   /*  8px */
+  --space-2: 1rem;     /* 16px */
+  --space-3: 1.5rem;   /* 24px */
+  --space-4: 2rem;     /* 32px */
+  --space-5: 3rem;     /* 48px */
+  --space-6: 4rem;     /* 64px */
+  --space-7: 6rem;     /* 96px */
+  --space-8: 8rem;     /* 128px */
+
+  /* ---- Layout ---- */
+  --measure: 68ch;     /* readable line length for body copy */
+  --container: 72rem;  /* 1152px max content width */
+  --border-hair: 1px;
+  --border-bold: 2px;
+  --focus-width: 3px;
+  --focus-offset: 3px;
+
+  color-scheme: light dark;
+}
+
+/* ---- Color: dark (inverse via prefers-color-scheme) ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-ink: #f2f2f0;   /* #f2f2f0 on #111 ≈ 17:1 (AAA) */
+    --color-bg: #111111;
+    --color-surface: #1c1c1b;
+    --color-muted: #b3b3b0; /* on #111 ≈ 9.6:1 (AAA) */
+
+    /* Brighter accent is text-safe on dark: #ef6a4d on #111 ≈ 6.4:1. */
+    --color-accent: #ef6a4d;
+    --color-accent-graphic: #ef6a4d;
+    --color-on-accent: #111111; /* dark ink on bright accent ≈ 6.4:1 */
+
+    --color-rule: #f2f2f0;
+    --color-rule-faint: #3a3a38;
+
+    --color-focus: #f2f2f0;
+  }
+}

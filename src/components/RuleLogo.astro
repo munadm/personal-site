@@ -1,0 +1,29 @@
+---
+/* Line-weight logo mark: a square holding horizontal rules of increasing
+   stroke weight (op-art / editorial motif). Decorative — aria-hidden. */
+---
+
+<svg
+  class="logo-rule"
+  viewBox="0 0 32 32"
+  role="presentation"
+  aria-hidden="true"
+  focusable="false"
+>
+  <rect x="0" y="0" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" />
+  <g stroke="currentColor" stroke-linecap="square">
+    <line x1="6" y1="8" x2="26" y2="8" stroke-width="1" />
+    <line x1="6" y1="14" x2="26" y2="14" stroke-width="2" />
+    <line x1="6" y1="21" x2="26" y2="21" stroke-width="3" />
+    <line x1="6" y1="27" x2="26" y2="27" stroke-width="4.5" />
+  </g>
+</svg>
+
+<style>
+  .logo-rule {
+    width: 32px;
+    height: 32px;
+    color: var(--color-ink);
+    flex: none;
+  }
+</style>

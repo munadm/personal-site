@@ -1,0 +1,205 @@
+/*
+ * Global base styles. Imports the self-hosted Archivo variable font (weight axis)
+ * and the design tokens. Static by default; any transition is gated behind
+ * prefers-reduced-motion: no-preference.
+ */
+
+@import '@fontsource-variable/archivo/wght.css';
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Headings: geometric, tight tracking ---- */
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 var(--space-2);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  font-weight: var(--fw-bold);
+}
+
+h1 {
+  font-size: var(--fs-48);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-black);
+}
+
+h2 {
+  font-size: var(--fs-32);
+}
+
+h3 {
+  font-size: var(--fs-24);
+}
+
+p {
+  margin: 0 0 var(--space-2);
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+ul,
+ol {
+  line-height: var(--lh-body);
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  display: block;
+}
+
+/* ---- Focus: visible, high-contrast, offset outline ---- */
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* Remove default outline only where focus-visible is supported. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- Skip link ---- */
+.skip-link {
+  position: absolute;
+  left: var(--space-1);
+  top: var(--space-1);
+  z-index: 100;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skip-link {
+    transition: transform 120ms ease-out;
+  }
+}
+
+/* ---- Layout helpers ---- */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--space-3);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Buttons / CTA ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-18);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border: var(--border-bold) solid var(--color-ink);
+}
+
+.btn:hover {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn {
+    transition: background-color 120ms ease-out, color 120ms ease-out;
+  }
+}
+
+/* ---- Kicker / eyebrow label ---- */
+.kicker {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* ---- Striped divider (op-art motif, static) ---- */
+.divider-stripe {
+  height: var(--space-2);
+  border: 0;
+  margin: var(--space-6) 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-ink) 0,
+    var(--color-ink) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+/* ---- Fine horizontal-rule pattern strip (static) ---- */
+.divider-rules {
+  height: var(--space-4);
+  border: 0;
+  margin: var(--space-6) 0 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-rule) 0,
+    var(--color-rule) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+}

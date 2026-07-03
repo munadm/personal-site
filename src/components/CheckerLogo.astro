@@ -1,0 +1,33 @@
+---
+/* Small checkerboard logo square (op-art motif). Decorative — aria-hidden;
+   the accessible name is carried by the surrounding link/text. */
+---
+
+<svg
+  class="logo-checker"
+  viewBox="0 0 32 32"
+  role="presentation"
+  aria-hidden="true"
+  focusable="false"
+>
+  <rect x="0" y="0" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" />
+  <g fill="currentColor">
+    <rect x="2" y="2" width="7" height="7" />
+    <rect x="16" y="2" width="7" height="7" />
+    <rect x="9" y="9" width="7" height="7" />
+    <rect x="23" y="9" width="7" height="7" />
+    <rect x="2" y="16" width="7" height="7" />
+    <rect x="16" y="16" width="7" height="7" />
+    <rect x="9" y="23" width="7" height="7" />
+    <rect x="23" y="23" width="7" height="7" />
+  </g>
+</svg>
+
+<style>
+  .logo-checker {
+    width: 32px;
+    height: 32px;
+    color: var(--color-ink);
+    flex: none;
+  }
+</style>
