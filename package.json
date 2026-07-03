@@ -15,5 +15,9 @@
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/archivo": "^5.2.8",
     "astro": "^7.0.6"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "playwright": "^1.61.1"
   }
 }
