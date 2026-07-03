@@ -1,43 +1,89 @@
 ---
-/* Neutral abstract hero motif: a block of thin horizontal rules with
-   subtly varying stroke weight and spacing (ledger/rhythm feel). Replaces
-   the concentric-rings motif, which read as ambiguous target/radar
-   symbolism. Purely decorative — aria-hidden — 1px-ish strokes at low
-   opacity, no circles, no figurative imagery. */
+/* Neutral abstract hero motif: a dense, cohesive block of horizontal rules
+   spanning a consistent width, with stroke weight progressively swelling
+   from top to bottom (op-art line study, echoing the RuleLogo mark scaled
+   up). Purely decorative — aria-hidden, full-strength ink at high opacity
+   so it holds presence in both light and dark mode. No circles, no
+   concentric/target imagery — nothing that invites symbolic reading.
+   Spacing is progressive (widens as weight grows) to avoid any uniform
+   high-frequency stripe pattern; the gap between rules never drops below
+   ~7 viewBox units (viewBox renders close to 1:1 px at typical sizes). */
 
-const rows = [
-  { y: 20, w: 220, sw: 1 },
-  { y: 46, w: 260, sw: 1.25 },
-  { y: 72, w: 190, sw: 1 },
-  { y: 98, w: 300, sw: 1.5 },
-  { y: 124, w: 150, sw: 1 },
-  { y: 150, w: 260, sw: 1.75 },
-  { y: 176, w: 210, sw: 1 },
-  { y: 202, w: 280, sw: 1.25 },
-  { y: 228, w: 170, sw: 1 },
-  { y: 254, w: 240, sw: 1.5 },
-  { y: 280, w: 200, sw: 1 },
-];
+const ROW_COUNT = 26;
+const VIEW_W = 320;
+const VIEW_H = 320;
+const PAD_TOP = 10;
+const PAD_BOTTOM = 10;
+const MIN_SW = 1;
+const MAX_SW = 6;
+
+// Ease the weight curve so growth is gentle at first and swells toward the
+// bottom — a deliberate gradient rather than a linear ramp.
+function ease(t: number) {
+  return t * t;
+}
+
+// Lay out rows top-to-bottom: stroke weight and the gap between rules both
+// grow together (heavier lines get more breathing room), which keeps the
+// composition from ever reading as tight, uniform, high-frequency stripes.
+const rawRows: { y: number; sw: number }[] = [];
+{
+  let y = PAD_TOP + MAX_SW / 2;
+  for (let i = 0; i < ROW_COUNT; i++) {
+    const t = i / (ROW_COUNT - 1);
+    const sw = MIN_SW + ease(t) * (MAX_SW - MIN_SW);
+    const gap = 7 + ease(t) * 6; // 7 units at top, growing to 13 at bottom
+    rawRows.push({ y, sw });
+    y += sw / 2 + gap + sw / 2;
+  }
+}
+
+// Scale the raw layout to fit exactly within the usable height of the
+// viewBox, so the block always spans a consistent, predictable footprint.
+const usableH = VIEW_H - PAD_TOP - PAD_BOTTOM;
+const naturalSpan = rawRows[rawRows.length - 1].y - rawRows[0].y;
+const scale = (usableH - MAX_SW) / naturalSpan;
+const startY = PAD_TOP + MAX_SW / 2;
+const rows = rawRows.map((r) => ({
+  y: startY + (r.y - rawRows[0].y) * scale,
+  sw: r.sw,
+}));
+
+// Widths: a cohesive block, not scattered fragments — full width with a
+// gentle, consistent inset, tapering slightly narrower at the very top and
+// bottom rows so the block reads as one composed shape rather than a
+// hard-edged rectangle.
+const FULL_W = VIEW_W - 20;
+function widthFor(i: number) {
+  const t = i / (ROW_COUNT - 1);
+  const taper = Math.sin(Math.PI * t) * 0.12 + 0.88;
+  return FULL_W * Math.min(1, taper);
+}
 ---
 
 <svg
   class="motif-rules"
-  viewBox="0 0 320 300"
+  viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
   role="presentation"
   aria-hidden="true"
   focusable="false"
+  preserveAspectRatio="xMidYMid meet"
 >
   <g stroke="currentColor" stroke-linecap="square">
     {
-      rows.map((r) => (
-        <line
-          x1={320 - r.w}
-          y1={r.y}
-          x2="320"
-          y2={r.y}
-          stroke-width={r.sw}
-        />
-      ))
+      rows.map((r, i) => {
+        const w = widthFor(i);
+        const x = (VIEW_W - w) / 2;
+        return (
+          <line
+            x1={x}
+            y1={r.y}
+            x2={x + w}
+            y2={r.y}
+            stroke-width={r.sw}
+          />
+        );
+      })
     }
   </g>
 </svg>
@@ -47,6 +93,6 @@ const rows = [
     width: 100%;
     height: auto;
     color: var(--color-ink);
-    opacity: 0.35;
+    opacity: 0.8;
   }
 </style>
