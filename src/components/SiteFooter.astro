@@ -1,0 +1,51 @@
+---
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p class="footer-note">
+      &copy; {new Date().getFullYear()} Munad Mahinoor
+    </p>
+    <ul class="footer-links">
+      <li><a href="mailto:nobodylikesmoe@gmail.com">Email</a></li>
+      <li><a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">LinkedIn</a></li>
+      <li><a href="/accessibility">Accessibility</a></li>
+      <li><a href="/colophon">Colophon</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+    margin-top: var(--space-7);
+    padding-block: var(--space-3);
+  }
+  .site-footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .footer-note {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .footer-links {
+    display: flex;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+  }
+  .footer-links a:hover {
+    color: var(--color-accent);
+  }
+</style>

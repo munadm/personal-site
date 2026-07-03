@@ -1,8 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import RuleLogo from '../components/RuleLogo.astro';
 import HeroRules from '../components/HeroRules.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 const caseStudies = [
   {
@@ -34,23 +34,7 @@ const caseStudies = [
   description="Engineering leader for AI-enabled, remote-first teams. Payments at scale."
   personSchema
 >
-  <header slot="header" class="site-header">
-    <div class="container site-header__inner">
-      <a class="brand" href="/" aria-label="Munad Mahinoor — home">
-        <RuleLogo />
-        <span class="brand__name">Munad Mahinoor</span>
-      </a>
-      <nav aria-label="Primary">
-        <ul class="nav">
-          <li><a href="/work">Work</a></li>
-          <li><a href="/writing">Writing</a></li>
-          <li><a href="/resume">Resume</a></li>
-          <li><a href="/contact">Contact</a></li>
-          <li><ThemeToggle /></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <SiteHeader slot="header" currentPath="/" />
 
   <section class="hero">
     <div class="container hero__inner">
@@ -91,63 +75,10 @@ const caseStudies = [
     </div>
   </section>
 
-  <footer slot="footer" class="site-footer">
-    <div class="container site-footer__inner">
-      <p class="footer-note">
-        &copy; {new Date().getFullYear()} Munad Mahinoor
-      </p>
-      <ul class="footer-links">
-        <li><a href="mailto:nobodylikesmoe@gmail.com">Email</a></li>
-        <li><a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">LinkedIn</a></li>
-      </ul>
-    </div>
-  </footer>
+  <SiteFooter slot="footer" />
 </Base>
 
 <style>
-  .site-header {
-    border-bottom: var(--border-hair) solid var(--color-rule-faint);
-  }
-  .site-header__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-    padding-block: var(--space-2);
-  }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    color: var(--color-ink);
-    text-decoration: none;
-    font-weight: var(--fw-bold);
-  }
-  .brand__name {
-    font-size: var(--fs-16);
-    letter-spacing: var(--tracking-tight);
-  }
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .nav a {
-    color: var(--color-ink);
-    text-decoration: none;
-    font-size: var(--fs-16);
-    font-weight: var(--fw-medium);
-  }
-  .nav a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.15em;
-  }
-
   .hero {
     padding-block: var(--space-4);
     overflow: hidden;
@@ -268,37 +199,5 @@ const caseStudies = [
   .card p:last-child {
     margin-bottom: 0;
     color: var(--color-muted);
-  }
-
-  .site-footer {
-    border-top: var(--border-hair) solid var(--color-rule-faint);
-    margin-top: var(--space-7);
-    padding-block: var(--space-3);
-  }
-  .site-footer__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-  }
-  .footer-note {
-    font-size: var(--fs-14);
-    color: var(--color-muted);
-    margin: 0;
-  }
-  .footer-links {
-    display: flex;
-    gap: var(--space-3);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .footer-links a {
-    font-size: var(--fs-14);
-    color: var(--color-muted);
-  }
-  .footer-links a:hover {
-    color: var(--color-accent);
   }
 </style>

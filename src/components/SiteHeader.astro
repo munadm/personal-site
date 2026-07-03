@@ -1,0 +1,101 @@
+---
+import RuleLogo from './RuleLogo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+export interface Props {
+  /** Path of the current page, used to mark the active nav link. */
+  currentPath?: string;
+}
+
+const { currentPath = '' } = Astro.props;
+
+const links = [
+  { href: '/work', label: 'Work' },
+  { href: '/writing', label: 'Writing' },
+  { href: '/resume', label: 'Resume' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label="Munad Mahinoor — home">
+      <RuleLogo />
+      <span class="brand__name">Munad Mahinoor</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul class="nav">
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        <li><ThemeToggle /></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding-block: var(--space-2);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-ink);
+    text-decoration: none;
+    font-weight: var(--fw-bold);
+  }
+  .brand__name {
+    font-size: var(--fs-16);
+    letter-spacing: var(--tracking-tight);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  /* At the 320px reflow-test width (WCAG 2.2 SC 1.4.10) the single-row nav is
+     wider than the viewport, so allow it to wrap and tighten its gaps. Scoped
+     to <=20rem (320px) so the small-phone (375px) and large-phone (428px)
+     hero layouts stay exactly as approved — tests/fold.spec.ts is untouched. */
+  @media (max-width: 20rem) {
+    .nav {
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-2);
+    }
+  }
+  .nav a {
+    color: var(--color-ink);
+    text-decoration: none;
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+  }
+  .nav a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+  .nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+</style>

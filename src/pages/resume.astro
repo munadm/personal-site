@@ -1,0 +1,373 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+const experience = [
+  {
+    company: 'PayPal Buy Now Pay Later',
+    location: 'Remote',
+    title: 'Senior Engineering Manager',
+    dates: 'Feb. 2021 – Present',
+    bullets: [
+      'Led an engineering organization of 26 full-stack engineers and 1 manager supporting a $40B credit business across multiple international markets',
+      'Drove five product experiments generating ~$180M in incremental TPV by building a cross-team innersource program that reduced PR review cycles from two weeks to same-day delivery; program scaled to 20 engineers across multiple teams',
+      'Architected full-stack migration from proprietary web frameworks to NextJS, Tailwind CSS, and tRPC; introduced modern CI/CD practices that doubled developer throughput and reduced false-positive output via AI-augmented automation',
+      'Led GDPR and SOC2 compliance remediation: identified and closed a systemic PII exposure spanning six years across all legacy credit products in a single weekend; built permanent PII screening controls into CI/CD pipelines',
+      'Designed and led war-room incident response frameworks for high-stakes operational windows (Black Friday and geo-expansion launches); achieved the lowest rate of customer-impacting failures in a decade',
+      "Named critical partner on PayPal's full Checkout architecture overhaul – the only credit organization at PayPal with full product parity at day-one launch across all credit offerings",
+    ],
+  },
+  {
+    company: 'PayPal Working Capital',
+    location: 'Philadelphia, PA',
+    title: 'Engineering Lead',
+    dates: 'Jun. 2020 – Feb. 2021',
+    bullets: [
+      "Introduced NextJS to PayPal; shipped the first commercially compliant NextJS application on PayPal's proprietary web architecture",
+      'Served as architectural lead for a distributed credit platform operating across four countries with thousands of daily active users',
+      'Coached ten engineers on modern web application architecture and engineering best practices',
+    ],
+  },
+  {
+    company: 'PayPal Business Loan',
+    location: 'Philadelphia, PA',
+    title: 'Senior Software Engineer',
+    dates: 'Jan. 2018 – May 2020',
+    bullets: [
+      'Migrated application stack to AWS (SQS, Lambda, API Gateway, S3), replacing legacy cost drivers with a cloud-native serverless architecture',
+      'Revamped back-end systems from legacy .NET frameworks to a modern Node.js distributed architecture',
+      'Implemented a data-driven loan application that enabled rapid go-to-market execution across new product initiatives',
+      'Contributed to the Swift Capital–PayPal merger integration and led engineering for the Paycheck Protection Program rollout, shipped in under a week',
+    ],
+  },
+  {
+    company: 'Swift Capital (acquired by PayPal)',
+    location: 'Philadelphia, PA',
+    title: 'Software Development Engineer',
+    dates: 'Jun. 2016 – Dec. 2017',
+    bullets: [
+      'Full-stack developer for the flagship Swift Capital Cash Advance product; company acquired by PayPal in fall 2017',
+      'Contributed across the full product lifecycle including architecture, implementation, cloud provisioning, and CI/CD pipelines',
+    ],
+  },
+];
+
+const skills = [
+  { label: 'Languages', value: 'TypeScript/JavaScript, Java, C#' },
+  {
+    label: 'Cloud & Infrastructure',
+    value: 'AWS (API Gateway, SQS, Lambda, S3, CloudFormation), Docker, Google Cloud Platform',
+  },
+  {
+    label: 'Frameworks & Tools',
+    value:
+      'Next.js, GraphQL, React, PostgreSQL, Microsoft SQL Server, Git, CI/CD & DevOps, GitHub, JIRA, Confluence',
+  },
+  {
+    label: 'Familiar',
+    value:
+      'C++, OpenAPI architecture, distributed systems (message queues, caching, serverless), Google Analytics',
+  },
+  {
+    label: 'Interests',
+    value: 'Web applications, community development, mentoring programs, soccer, axe throwing',
+  },
+];
+---
+
+<Base
+  title="Resume — Munad Mahinoor"
+  description="Munad Mahinoor's resume — engineering leadership, PayPal Buy Now Pay Later, cloud architecture, and compliance."
+>
+  <SiteHeader slot="header" currentPath="/resume" />
+
+  <section class="resume-page">
+    <div class="container resume">
+      <header class="resume__header">
+        <div class="resume__heading">
+          <h1>Munad Mahinoor</h1>
+          <p class="resume__location">Philadelphia, PA</p>
+        </div>
+        <div class="resume__actions">
+          <a class="btn" href="/resume.pdf">Download PDF <span aria-hidden="true">&darr;</span></a>
+          <ul class="resume__links">
+            <li><a href="mailto:nobodylikesmoe@gmail.com">nobodylikesmoe@gmail.com</a></li>
+            <li>
+              <a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">
+                linkedin.com/in/munadmahinoor
+              </a>
+            </li>
+          </ul>
+        </div>
+      </header>
+
+      <hr class="divider-stripe divider-stripe--muted" />
+
+      <section class="resume__section" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Summary</h2>
+        <p>
+          Engineering leader with 9+ years building high-availability fintech platforms at
+          PayPal, scaling from individual contributor to managing an organization of 26
+          engineers. Drove $180M+ in incremental transaction volume, architected cloud-native
+          systems on AWS, led GDPR/SOC2 compliance remediation under pressure, and introduced
+          CI/CD practices that doubled developer throughput. Specializes in cross-functional
+          technical alignment, incident response, and shipping in regulated, mission-critical
+          environments.
+        </p>
+      </section>
+
+      <section class="resume__section" aria-labelledby="experience-heading">
+        <h2 id="experience-heading">Experience</h2>
+        {
+          experience.map((job) => (
+            <article class="job">
+              <div class="job__header">
+                <div>
+                  <h3>{job.company}</h3>
+                  <p class="job__title">{job.title}</p>
+                </div>
+                <div class="job__meta">
+                  <p class="job__location">{job.location}</p>
+                  <p class="job__dates">{job.dates}</p>
+                </div>
+              </div>
+              <ul class="job__bullets">
+                {job.bullets.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="resume__section" aria-labelledby="skills-heading">
+        <h2 id="skills-heading">Skills</h2>
+        <dl class="skills">
+          {
+            skills.map((s) => (
+              <div class="skills__row">
+                <dt>{s.label}</dt>
+                <dd>{s.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section class="resume__section" aria-labelledby="education-heading">
+        <h2 id="education-heading">Education</h2>
+        <div class="job">
+          <div class="job__header">
+            <div>
+              <h3>Lehigh University</h3>
+              <p class="job__title">
+                Bachelor of Science in Computer Science and Business &middot; CGPA: 3.64
+              </p>
+            </div>
+            <div class="job__meta">
+              <p class="job__location">Bethlehem, PA</p>
+              <p class="job__dates">May 2016</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .resume-page {
+    padding-block: var(--space-5) var(--space-8);
+  }
+  .resume {
+    max-width: 56rem;
+  }
+  .resume__header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .resume__heading h1 {
+    margin-bottom: var(--space-1);
+  }
+  .resume__location {
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .resume__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+  }
+  .resume__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    font-size: var(--fs-14);
+  }
+
+  .resume .divider-stripe {
+    margin-block: var(--space-4);
+  }
+
+  .resume__section {
+    margin-bottom: var(--space-6);
+  }
+  .resume__section h2 {
+    border-bottom: var(--border-hair) solid var(--color-rule-faint);
+    padding-bottom: var(--space-1);
+    margin-bottom: var(--space-3);
+  }
+  .resume__section > p {
+    max-width: var(--measure);
+  }
+
+  .job {
+    margin-bottom: var(--space-4);
+  }
+  .job:last-child {
+    margin-bottom: 0;
+  }
+  .job__header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+  .job__header h3 {
+    margin-bottom: 0.15em;
+  }
+  .job__title {
+    font-style: italic;
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .job__meta {
+    text-align: right;
+  }
+  .job__location,
+  .job__dates {
+    margin: 0;
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+  }
+  .job__bullets {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-3);
+    max-width: var(--measure);
+  }
+  .job__bullets li {
+    margin-bottom: var(--space-1);
+  }
+
+  .skills {
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .skills__row {
+    padding-block: var(--space-1);
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .skills__row:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  .skills__row dt {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .skills__row dd {
+    margin: 0.15rem 0 0;
+  }
+
+  /* ---- Print: clean, one-to-two-page, black on white ----
+   * The screen design uses generous spacing/type sizes tuned for reading
+   * on a display; print needs a materially denser layout to fit the
+   * standard one-to-two-page resume convention. Sizes/spacing below are
+   * hardcoded (not tokens) because they target the print medium
+   * specifically, not the site's screen scale. */
+  @media print {
+    :global(.site-header),
+    :global(.site-footer),
+    :global(#theme-toggle) {
+      display: none !important;
+    }
+    :global(html),
+    :global(body) {
+      background: #fff !important;
+      color: #000 !important;
+      font-size: 10.5pt !important;
+      line-height: 1.35 !important;
+    }
+    .resume-page {
+      padding: 0;
+    }
+    .resume {
+      max-width: none;
+    }
+    .resume__actions .btn {
+      display: none;
+    }
+    :global(a) {
+      color: #000 !important;
+      text-decoration: none !important;
+    }
+    :global(h1) {
+      font-size: 20pt !important;
+    }
+    :global(h2) {
+      font-size: 13pt !important;
+    }
+    :global(h3) {
+      font-size: 11pt !important;
+    }
+    :global(p) {
+      margin: 0 0 4pt !important;
+    }
+    .resume__header {
+      margin-bottom: 4pt;
+    }
+    .resume__links {
+      font-size: 9pt !important;
+    }
+    .resume .divider-stripe {
+      margin-block: 8pt !important;
+      height: 4pt !important;
+    }
+    .resume__section {
+      margin-bottom: 10pt !important;
+    }
+    .resume__section h2 {
+      padding-bottom: 2pt !important;
+      margin-bottom: 6pt !important;
+    }
+    .job {
+      margin-bottom: 8pt !important;
+      break-inside: avoid;
+    }
+    .job__bullets {
+      margin-top: 4pt !important;
+    }
+    .job__bullets li {
+      margin-bottom: 1pt !important;
+    }
+    .skills__row {
+      padding-block: 3pt !important;
+    }
+  }
+</style>

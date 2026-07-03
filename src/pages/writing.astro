@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Base
+  title="Writing — Munad Mahinoor"
+  description="Essays on engineering leadership and building with AI agents, published on the blog."
+>
+  <SiteHeader slot="header" currentPath="/writing" />
+
+  <section class="page-intro">
+    <div class="container">
+      <h1>Writing</h1>
+      <p class="page-intro__lede">
+        Essays live on the blog, at
+        {' '}<span class="blog-domain">blog.munadmahinoor.com</span> — launching soon.
+        Nothing is published there yet, so there's nothing to link to. This page will list
+        each essay as it goes live.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="upcoming">
+    <div class="container">
+      <h2>Forthcoming</h2>
+      <ul class="essay-list">
+        <li class="essay">
+          <p class="kicker">Essay</p>
+          <h3>How I built this site with an agent workforce</h3>
+          <p>
+            A point-of-view piece on directing a small team of AI agents through design, build,
+            and accessibility verification — what worked, what needed a firm hand, and what I'd
+            do differently.
+          </p>
+          <p class="essay__status">Forthcoming.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .page-intro__lede {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: 60ch;
+  }
+  .blog-domain {
+    color: var(--color-ink);
+    font-weight: var(--fw-medium);
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .upcoming {
+    padding-block: var(--space-2) var(--space-7);
+  }
+
+  .essay-list {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+  }
+  .essay {
+    border: var(--border-hair) solid var(--color-rule-faint);
+    padding: var(--space-3);
+    max-width: 44rem;
+  }
+  .essay p:last-child {
+    margin-bottom: 0;
+  }
+  .essay__status {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>

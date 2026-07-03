@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Base
+  title="Page not found — Munad Mahinoor"
+  description="The page you're looking for doesn't exist."
+>
+  <SiteHeader slot="header" />
+
+  <section class="not-found">
+    <div class="container">
+      <p class="kicker">404</p>
+      <h1>Page not found</h1>
+      <p class="not-found__lede">
+        There's nothing here. The page may have moved, or the link may be wrong.
+      </p>
+      <hr class="divider-stripe divider-stripe--muted" />
+      <p><a class="btn" href="/">Back home</a></p>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .not-found {
+    padding-block: var(--space-6) var(--space-8);
+  }
+  .not-found__lede {
+    font-size: var(--fs-subhead);
+    color: var(--color-muted);
+    max-width: 50ch;
+  }
+  .not-found .divider-stripe {
+    max-width: 16rem;
+    margin-inline: 0;
+  }
+</style>

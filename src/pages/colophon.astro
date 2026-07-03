@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Base
+  title="Colophon — Munad Mahinoor"
+  description="How this site is built: Astro, self-hosted variable font, no tracking, and an agent workforce directing design, build, and accessibility verification."
+>
+  <SiteHeader slot="header" currentPath="/colophon" />
+
+  <section class="page-intro">
+    <div class="container">
+      <h1>Colophon</h1>
+      <p class="page-intro__lede">How this site is built.</p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="statement">
+    <div class="container">
+      <h2>Stack</h2>
+      <p>
+        Built with <a href="https://astro.build" target="_blank" rel="noreferrer">Astro</a>,
+        shipping essentially zero client-side JavaScript &mdash; the one exception is the
+        light/dark theme toggle. Type is set in a self-hosted Archivo variable font, served
+        from this site rather than a third-party font host. Hosted on Cloudflare Pages.
+      </p>
+
+      <h2>Design system</h2>
+      <p>
+        The visual language is op-art-inspired and accessibility-first: static line-weight
+        geometry, ruled dividers, and typography carry the expression, rather than imagery,
+        motion, or decoration for its own sake. Every color pairing used for text is
+        contrast-checked, with body text held to AAA (7:1) rather than the AA minimum.
+      </p>
+
+      <h2>How it was made</h2>
+      <p>
+        This site was designed and built through an agent workforce that I directed &mdash;
+        Claude models handling the design system, the page-by-page build, and accessibility
+        verification, with me setting direction, reviewing output, and making the calls a
+        person needs to make. It's also the subject of a forthcoming essay on the
+        {' '}<a href="/writing">writing</a> page.
+      </p>
+
+      <h2>Privacy</h2>
+      <p>
+        No analytics, no cookies, no tracking scripts of any kind. I don't know who visits
+        this site or what they look at.
+      </p>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .page-intro__lede {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: 60ch;
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .statement {
+    padding-block: var(--space-2) var(--space-7);
+  }
+  .statement :global(h2) {
+    margin-top: var(--space-5);
+  }
+  .statement :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .statement :global(p) {
+    max-width: var(--measure);
+  }
+</style>

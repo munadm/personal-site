@@ -1,0 +1,121 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+const caseStudies = [
+  {
+    label: 'Case study 01',
+    title: 'Leading BNPL platform engineering at PayPal',
+    summary:
+      "Led the engineering organization behind PayPal's Buy-Now-Pay-Later platform, a credit business processing roughly $40B in annual volume across multiple international markets. Set technical direction and org structure for a team of full-stack engineers, balancing reliability and risk controls against the velocity a fast-growing credit product demands.",
+    metrics: '~$40B annual platform volume · $180M incremental TPV from led initiatives',
+  },
+  {
+    label: 'Case study 02',
+    title: 'A KCS innersource API adopted cross-org',
+    summary:
+      'Built and championed an innersource program around a shared API, applying Knowledge-Centered Service practices so contribution and review knowledge compounded instead of living in one team’s heads. Adoption spread organically to other engineering groups, cutting review cycles and duplicated work.',
+    metrics: 'Adopted by multiple engineering teams beyond the originating org',
+  },
+  {
+    label: 'Case study 03',
+    title: 'An LLM-driven PII scanner',
+    summary:
+      'Directed the design and delivery of an internal scanner that uses an LLM to flag personally identifiable information in code and logs before it ships, catching a class of privacy risk that pattern-matching tools miss. Built for CI integration with low false-positive overhead.',
+    metrics: 'Integrated into CI/CD pipelines as a standing compliance control',
+  },
+];
+---
+
+<Base
+  title="Selected work — Munad Mahinoor"
+  description="Case studies in engineering leadership: BNPL platform leadership at PayPal, a cross-org innersource API, and an LLM-driven PII scanner."
+>
+  <SiteHeader slot="header" currentPath="/work" />
+
+  <section class="page-intro">
+    <div class="container">
+      <h1>Selected work</h1>
+      <p class="page-intro__lede">
+        A few of the efforts I've led — platform-scale engineering organizations, internal
+        tooling that spread past its own team, and applied AI for compliance. Full case
+        studies are coming; for now, here's the shape of each.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="cases">
+    <div class="container">
+      <ol class="case-list">
+        {
+          caseStudies.map((c) => (
+            <li class="case">
+              <p class="kicker">{c.label}</p>
+              <h2>{c.title}</h2>
+              <p class="case__summary">{c.summary}</p>
+              <p class="case__metrics">{c.metrics}</p>
+              <p class="case__status">Case study in progress.</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .page-intro__lede {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: 60ch;
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .cases {
+    padding-block: var(--space-2) var(--space-7);
+  }
+  .case-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .case {
+    padding-block: var(--space-5);
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .case:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  .case__summary {
+    max-width: var(--measure);
+  }
+  .case__metrics {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-medium);
+    color: var(--color-ink);
+    letter-spacing: var(--tracking-tight);
+  }
+  .case__status {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+</style>

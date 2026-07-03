@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Base
+  title="Accessibility statement — Munad Mahinoor"
+  description="This site's accessibility conformance target, what's been done to meet it, and how to report a problem."
+>
+  <SiteHeader slot="header" currentPath="/accessibility" />
+
+  <section class="page-intro">
+    <div class="container">
+      <h1>Accessibility statement</h1>
+      <p class="page-intro__lede">
+        I care about this more than most people building a personal site would, so here's an
+        honest account rather than boilerplate.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="statement">
+    <div class="container">
+      <h2>Conformance target</h2>
+      <p>
+        This site targets <strong>WCAG 2.2 level AA</strong>, with one deliberate upgrade: body
+        text holds <strong>AAA contrast (7:1)</strong> against its background in both light and
+        dark mode, rather than settling for the AA minimum of 4.5:1.
+      </p>
+
+      <h2>What I've done</h2>
+      <ul>
+        <li>Semantic HTML throughout &mdash; landmarks, one <code>h1</code> per page, headings in logical order, lists and definition lists used where they describe the content.</li>
+        <li>Fully keyboard-operable navigation, with a visible, high-contrast focus outline on every interactive element (never color alone).</li>
+        <li>A skip link to jump straight to main content.</li>
+        <li>Static, reduced-motion-safe design &mdash; the op-art visual language is expressed through typography and ruled geometry, not animation, so there's nothing to disable for <code>prefers-reduced-motion</code>.</li>
+        <li>A dark mode that respects system preference and offers an explicit override, with contrast ratios verified in both themes.</li>
+        <li>Automated testing on every change: axe-core accessibility checks, Playwright end-to-end tests, and manual screen-reader simulation before shipping.</li>
+      </ul>
+
+      <h2>Known limitations</h2>
+      <p>
+        This is a small, actively evolving site. If something doesn't work with your assistive
+        technology, I want to know &mdash; see below.
+      </p>
+
+      <h2>Feedback</h2>
+      <p>
+        If you hit an accessibility barrier anywhere on this site, email me at
+        {' '}<a href="mailto:nobodylikesmoe@gmail.com">nobodylikesmoe@gmail.com</a> and I'll fix
+        it.
+      </p>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .page-intro__lede {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: 60ch;
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .statement {
+    padding-block: var(--space-2) var(--space-7);
+  }
+  .statement :global(h2) {
+    margin-top: var(--space-5);
+  }
+  .statement :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .statement :global(ul) {
+    max-width: var(--measure);
+    padding-left: var(--space-3);
+  }
+  .statement :global(li) {
+    margin-bottom: var(--space-1);
+  }
+  .statement :global(code) {
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    font-size: 0.9em;
+    background: var(--color-surface);
+    padding: 0.1em 0.35em;
+  }
+</style>

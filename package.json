@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "playwright test"
+    "test": "playwright test",
+    "resume:pdf": "node scripts/make-resume-pdf.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -19,6 +20,10 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@guidepup/playwright": "^0.17.0",
+    "@guidepup/virtual-screen-reader": "^0.32.1",
+    "@types/jsdom": "^28.0.3",
+    "jsdom": "^29.1.1",
     "playwright": "^1.61.1"
   }
 }

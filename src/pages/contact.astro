@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Base
+  title="Contact — Munad Mahinoor"
+  description="Get in touch with Munad Mahinoor — remote-first, based in Philadelphia (Eastern time)."
+>
+  <SiteHeader slot="header" currentPath="/contact" />
+
+  <section class="page-intro">
+    <div class="container">
+      <h1>Contact</h1>
+      <p class="page-intro__lede">
+        Remote-first, based in Philadelphia (Eastern time). The fastest way to reach me is
+        email.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="contact-methods">
+    <div class="container">
+      <dl class="methods">
+        <div class="method">
+          <dt>Email</dt>
+          <dd><a href="mailto:nobodylikesmoe@gmail.com">nobodylikesmoe@gmail.com</a></dd>
+        </div>
+        <div class="method">
+          <dt>LinkedIn</dt>
+          <dd>
+            <a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">
+              linkedin.com/in/munadmahinoor
+            </a>
+          </dd>
+        </div>
+        <div class="method">
+          <dt>Location</dt>
+          <dd>Philadelphia, PA &mdash; remote-first, Eastern time</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .page-intro__lede {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: 60ch;
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .contact-methods {
+    padding-block: var(--space-2) var(--space-7);
+  }
+
+  .methods {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 32rem;
+  }
+  .method {
+    padding-block: var(--space-2);
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .method:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  .method dt {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: var(--space-1);
+  }
+  .method dd {
+    margin: 0;
+    font-size: var(--fs-18);
+  }
+</style>
