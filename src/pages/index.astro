@@ -181,8 +181,16 @@ const caseStudies = [
   .btn-secondary:hover {
     text-decoration-thickness: 2px;
   }
+  /* Mobile: the motif is a substantial element, not an ornament. Width (and
+     hence height — the SVG is square) is capped at 45vh so it scales with
+     the phone: on a large phone (428x926) it grows until the hero's bottom
+     boundary lands essentially at the fold, while on an iPhone SE (375x667)
+     it shrinks so at least 80% of the motif's height stays above the fold.
+     It may exceed the container width slightly on tall phones, bleeding
+     into the horizontal padding (never past the viewport edge);
+     tests/fold.spec.ts enforces both fold targets and no-horizontal-scroll. */
   .hero__motif {
-    max-width: 90px;
+    width: min(calc(100% + 2 * var(--space-3)), 45vh);
     justify-self: center;
     opacity: 0.9;
   }
@@ -198,10 +206,12 @@ const caseStudies = [
     .hero__subhead {
       margin-bottom: var(--space-4);
     }
-    /* Bleed the motif off the right edge, at reduced weight. */
+    /* Bleed the motif off the right edge, at reduced weight. Reset the
+       mobile width so desktop stays exactly as approved. */
     .hero__motif {
       justify-self: end;
       margin-right: calc(-1 * var(--space-6));
+      width: auto;
       max-width: 380px;
     }
   }

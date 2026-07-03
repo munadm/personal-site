@@ -2,68 +2,93 @@ import { test, expect } from 'playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 /*
- * Scroll-affordance regression suite.
+ * Fold / scroll-affordance regression suite.
  *
- * Owner requirement: on narrow (phone-width) viewports, the hero section
- * must not monopolize the entire first screen — the next section (the
- * striped divider / "Selected work" heading) needs to peek into view so
- * the page invites scrolling. Desktop is unaffected and should keep the
- * hero filling a substantial portion of the viewport.
+ * Owner requirement (2026-07 revision): on large phones the hero fills the
+ * first screen — the hero's bottom boundary should land essentially AT the
+ * fold on an iPhone 12 Pro Max (428x926). On a small phone (iPhone SE,
+ * 375x667) the hero motif may dip below the fold, but at least 80% of the
+ * motif's own height must remain visible above the fold. This supersedes
+ * the earlier "hero bottom <=85% + next section peeks" rule on mobile.
+ * Desktop is unaffected and keeps the hero filling a substantial portion
+ * of the viewport.
  */
 
-const MOBILE_VIEWPORTS = [
-  { name: 'iPhone SE', width: 375, height: 667 },
-  { name: 'iPhone 14ish', width: 390, height: 844 },
-];
-
+const LARGE_PHONE = { name: 'iPhone 12 Pro Max', width: 428, height: 926 };
+const SMALL_PHONE = { name: 'iPhone SE', width: 375, height: 667 };
 const DESKTOP_VIEWPORT = { name: 'Desktop', width: 1280, height: 800 };
 
-for (const viewport of MOBILE_VIEWPORTS) {
-  test.describe(`fold affordance @ ${viewport.name} (${viewport.width}x${viewport.height})`, () => {
-    test.use({ viewport: { width: viewport.width, height: viewport.height } });
+test.describe(`hero fold @ ${LARGE_PHONE.name} (${LARGE_PHONE.width}x${LARGE_PHONE.height})`, () => {
+  test.use({ viewport: { width: LARGE_PHONE.width, height: LARGE_PHONE.height } });
 
-    test('hero sits above the fold and the next section peeks', async ({ page }) => {
-      await page.goto('/');
+  test('hero bottom lands essentially at the fold', async ({ page }) => {
+    await page.goto('/');
 
-      const hero = page.locator('.hero');
-      const nextSection = page.locator('#work');
+    const heroBox = await page.locator('.hero').boundingBox();
+    expect(heroBox).not.toBeNull();
 
-      const heroBox = await hero.boundingBox();
-      const nextBox = await nextSection.boundingBox();
+    const heroBottom = heroBox!.y + heroBox!.height;
 
-      expect(heroBox).not.toBeNull();
-      expect(nextBox).not.toBeNull();
-
-      // Hero must be fully above the fold, with room to spare (owner target:
-      // hero bottom lands at roughly <=85% of viewport height).
-      expect(heroBox!.y + heroBox!.height).toBeLessThan(viewport.height);
-      expect(heroBox!.y + heroBox!.height).toBeLessThanOrEqual(viewport.height * 0.85);
-
-      // The next section's top edge must already be visible within the
-      // initial viewport, so the page visibly invites scrolling.
-      expect(nextBox!.y).toBeLessThan(viewport.height);
-    });
-
-    test('no horizontal scrollbar (WCAG reflow check)', async ({ page }) => {
-      await page.goto('/');
-
-      const { scrollWidth, clientWidth } = await page.evaluate(() => ({
-        scrollWidth: document.scrollingElement!.scrollWidth,
-        clientWidth: document.scrollingElement!.clientWidth,
-      }));
-
-      expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
-    });
-
-    test('no axe violations', async ({ page }) => {
-      await page.goto('/');
-
-      const results = await new AxeBuilder({ page }).analyze();
-
-      expect(results.violations).toEqual([]);
-    });
+    // Owner target: hero border "just at the fold" on a large phone —
+    // bottom boundary between 90% and 102% of the viewport height.
+    expect(heroBottom).toBeGreaterThanOrEqual(LARGE_PHONE.height * 0.9);
+    expect(heroBottom).toBeLessThanOrEqual(LARGE_PHONE.height * 1.02);
   });
-}
+
+  test('no horizontal scrollbar (WCAG reflow check)', async ({ page }) => {
+    await page.goto('/');
+
+    const { scrollWidth, clientWidth } = await page.evaluate(() => ({
+      scrollWidth: document.scrollingElement!.scrollWidth,
+      clientWidth: document.scrollingElement!.clientWidth,
+    }));
+
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+  });
+
+  test('no axe violations', async ({ page }) => {
+    await page.goto('/');
+
+    const results = await new AxeBuilder({ page }).analyze();
+
+    expect(results.violations).toEqual([]);
+  });
+});
+
+test.describe(`hero fold @ ${SMALL_PHONE.name} (${SMALL_PHONE.width}x${SMALL_PHONE.height})`, () => {
+  test.use({ viewport: { width: SMALL_PHONE.width, height: SMALL_PHONE.height } });
+
+  test('at least 80% of the hero motif is visible above the fold', async ({ page }) => {
+    await page.goto('/');
+
+    const motifBox = await page.locator('.hero__motif').boundingBox();
+    expect(motifBox).not.toBeNull();
+
+    // The motif may dip below the fold on a small phone, but no more than
+    // 20% of its own height may be hidden.
+    const visibleFraction = (SMALL_PHONE.height - motifBox!.y) / motifBox!.height;
+    expect(visibleFraction).toBeGreaterThanOrEqual(0.8);
+  });
+
+  test('no horizontal scrollbar (WCAG reflow check)', async ({ page }) => {
+    await page.goto('/');
+
+    const { scrollWidth, clientWidth } = await page.evaluate(() => ({
+      scrollWidth: document.scrollingElement!.scrollWidth,
+      clientWidth: document.scrollingElement!.clientWidth,
+    }));
+
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+  });
+
+  test('no axe violations', async ({ page }) => {
+    await page.goto('/');
+
+    const results = await new AxeBuilder({ page }).analyze();
+
+    expect(results.violations).toEqual([]);
+  });
+});
 
 test.describe(`desktop hero @ ${DESKTOP_VIEWPORT.name} (${DESKTOP_VIEWPORT.width}x${DESKTOP_VIEWPORT.height})`, () => {
   test.use({ viewport: { width: DESKTOP_VIEWPORT.width, height: DESKTOP_VIEWPORT.height } });
