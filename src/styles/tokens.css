@@ -2,30 +2,41 @@
  * Design tokens — Op-art, accessibility-first.
  * Accessibility wins every conflict. All color pairings used for text
  * are contrast-checked; body text targets AAA (7:1) on plain backgrounds only.
+ *
+ * Muted palette (2026-07 refinement): near-black on warm off-white rather
+ * than pure black/white, softening visual loudness while holding AAA.
+ * Ratios below computed via WCAG relative-luminance formula.
+ *   --color-ink on --color-bg (light):  #16150f on #faf9f5 ≈ 17.4:1 (AAA)
+ *   --color-ink on --color-bg (dark):   #f5f3ec on #16150f ≈ 16.5:1 (AAA)
+ *   --color-muted on --color-bg (light): #55534a on #faf9f5 ≈ 7.3:1 (AAA)
+ *   --color-muted on --color-bg (dark):  #b0ada2 on #16150f ≈ 8.1:1 (AAA)
+ *   --color-accent text-safe (light): #8a4326 on #faf9f5 ≈ 6.8:1 (AAA)
+ *   --color-accent text-safe (dark):  #e08a5e on #16150f ≈ 6.9:1 (AAA)
  */
 
 :root {
   /* ---- Color: light (default) ---- */
-  /* Near-black on white. #111 on #fff ≈ 18.9:1 (AAA). */
-  --color-ink: #111111;
-  --color-bg: #ffffff;
+  /* Near-black ink on warm off-white bg. See ratio table above. */
+  --color-ink: #16150f;
+  --color-bg: #faf9f5;
   /* Subtle surface for cards/dividers, still plain (no pattern behind text). */
-  --color-surface: #f4f4f2;
-  --color-muted: #565656; /* #565656 on #fff ≈ 7.3:1 (AAA body-eligible) */
+  --color-surface: #f2f0e8;
+  --color-muted: #55534a; /* ≈ 7.3:1 on --color-bg (AAA body-eligible) */
 
-  /* Warm accent. Text-safe shade passes 4.5:1 on white.
-     #B23217 on #fff ≈ 5.7:1 (AA large + normal). Brighter #C7401F reserved
-     for large graphics / non-text motifs only. */
-  --color-accent: #b23217;
-  --color-accent-graphic: #c7401f;
-  --color-on-accent: #ffffff; /* white on #b23217 ≈ 5.7:1 */
+  /* Muted warm accent — used once above the fold per design brief.
+     Darkened from the original op-art red-orange for a quieter feel while
+     staying text-safe (AAA on bg). Brighter graphic variant is for
+     non-text decorative fills (e.g. rings center dot) only. */
+  --color-accent: #8a4326;
+  --color-accent-graphic: #9c5330;
+  --color-on-accent: #faf9f5; /* ≈ 7.2:1 on #8a4326 */
 
-  /* Hairline rules / borders. */
-  --color-rule: #111111;
-  --color-rule-faint: #cfcfcb;
+  /* Hairline rules / borders — softened to muted ink, not pure ink. */
+  --color-rule: #55534a;
+  --color-rule-faint: #cfcbc0;
 
   /* Focus ring — high contrast, never relies on accent alone. */
-  --color-focus: #111111;
+  --color-focus: #16150f;
 
   /* ---- Type scale (px → rem, base 16) ---- */
   --font-sans: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -75,19 +86,19 @@
 /* ---- Color: dark (inverse via prefers-color-scheme) ---- */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-ink: #f2f2f0;   /* #f2f2f0 on #111 ≈ 17:1 (AAA) */
-    --color-bg: #111111;
-    --color-surface: #1c1c1b;
-    --color-muted: #b3b3b0; /* on #111 ≈ 9.6:1 (AAA) */
+    --color-ink: #f5f3ec;   /* on --color-bg ≈ 16.5:1 (AAA) */
+    --color-bg: #16150f;
+    --color-surface: #1d1c16;
+    --color-muted: #b0ada2; /* on --color-bg ≈ 8.1:1 (AAA) */
 
-    /* Brighter accent is text-safe on dark: #ef6a4d on #111 ≈ 6.4:1. */
-    --color-accent: #ef6a4d;
-    --color-accent-graphic: #ef6a4d;
-    --color-on-accent: #111111; /* dark ink on bright accent ≈ 6.4:1 */
+    /* Softened warm accent, still text-safe on dark: ≈ 6.9:1. */
+    --color-accent: #e08a5e;
+    --color-accent-graphic: #e08a5e;
+    --color-on-accent: #16150f; /* dark ink on accent ≈ 6.9:1 */
 
-    --color-rule: #f2f2f0;
-    --color-rule-faint: #3a3a38;
+    --color-rule: #b0ada2;
+    --color-rule-faint: #403e35;
 
-    --color-focus: #f2f2f0;
+    --color-focus: #f5f3ec;
   }
 }

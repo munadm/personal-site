@@ -1,87 +1,282 @@
 ---
 import Base from '../layouts/Base.astro';
+import CheckerLogo from '../components/CheckerLogo.astro';
+import ConcentricRingsMuted from '../components/ConcentricRingsMuted.astro';
+
+const caseStudies = [
+  {
+    label: 'Case study 01',
+    title: 'BNPL at $40B scale',
+    blurb:
+      'Leading the engineering org behind a Buy-Now-Pay-Later platform processing tens of billions in annual volume — reliability, risk, and velocity.',
+    href: '/work',
+  },
+  {
+    label: 'Case study 02',
+    title: 'LLM PII scanner',
+    blurb:
+      'Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs.',
+    href: '/work',
+  },
+  {
+    label: 'Essay',
+    title: 'How I built this site with an agent workforce',
+    blurb:
+      'A point-of-view essay on directing a small team of AI agents through design, build, and accessibility verification.',
+    href: '/writing',
+  },
+];
 ---
 
 <Base
-  title="Prototype chooser — Munad Mahinoor site relaunch"
-  description="Temporary chooser between two homepage prototype directions: Signal and Ledger."
+  title="Munad Mahinoor — Engineering leader"
+  description="Engineering leader for AI-enabled, remote-first teams. Payments at scale."
+  personSchema
 >
-  <section class="chooser">
+  <header slot="header" class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="/">
+        <CheckerLogo />
+        <span class="brand__name">Munad Mahinoor</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav">
+          <li><a href="/work">Work</a></li>
+          <li><a href="/writing">Writing</a></li>
+          <li><a href="/resume">Resume</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__text">
+        <h1>Munad Mahinoor</h1>
+        <p class="hero__subhead">
+          Engineering leader for AI-enabled, remote-first teams. Payments at scale.
+        </p>
+        <div class="hero__actions">
+          <a class="btn" href="#work">Read the case studies <span aria-hidden="true">&rarr;</span></a>
+          <a class="btn-secondary" href="/resume.pdf">Download resume (PDF)</a>
+        </div>
+      </div>
+      <div class="hero__motif">
+        <ConcentricRingsMuted />
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section id="work" class="work">
     <div class="container">
-      <p class="kicker">Site relaunch — prototype review</p>
-      <h1>Pick a direction</h1>
-      <p class="lede">
-        Two throwaway homepage prototypes share the same design tokens. Open each,
-        compare, and choose the direction to build out.
-      </p>
-      <ul class="options">
-        <li>
-          <a class="option" href="/proto/signal">
-            <span class="option__name">Signal</span>
-            <span class="option__desc">
-              Bold geometric hero, concentric-circle motif, striped dividers, case-study cards.
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="option" href="/proto/ledger">
-            <span class="option__name">Ledger</span>
-            <span class="option__desc">
-              Editorial ruled grid, line-weight logo mark, table-of-contents index.
-            </span>
-          </a>
-        </li>
+      <h2>Selected work</h2>
+      <ul class="cards">
+        {
+          caseStudies.map((c) => (
+            <li class="card">
+              <a class="card__link" href={c.href}>
+                <p class="kicker">{c.label}</p>
+                <h3>{c.title}</h3>
+                <p>{c.blurb}</p>
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
+
+  <footer slot="footer" class="site-footer">
+    <div class="container site-footer__inner">
+      <p class="footer-note">
+        &copy; {new Date().getFullYear()} Munad Mahinoor
+      </p>
+      <ul class="footer-links">
+        <li><a href="mailto:nobodylikesmoe@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
 </Base>
 
 <style>
-  .chooser {
-    padding-block: var(--space-6);
+  .site-header {
+    border-bottom: var(--border-hair) solid var(--color-rule-faint);
   }
-  .lede {
-    font-size: var(--fs-18);
-    color: var(--color-muted);
-    max-width: 52ch;
-    margin-bottom: var(--space-4);
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding-block: var(--space-2);
   }
-  .options {
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-ink);
+    text-decoration: none;
+    font-weight: var(--fw-bold);
+  }
+  .brand__name {
+    font-size: var(--fs-16);
+    letter-spacing: var(--tracking-tight);
+  }
+  .nav {
+    display: flex;
+    gap: var(--space-3);
     list-style: none;
     margin: 0;
+    padding: 0;
+  }
+  .nav a {
+    color: var(--color-ink);
+    text-decoration: none;
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+  }
+  .nav a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .hero {
+    padding-block: var(--space-7);
+    overflow: hidden;
+  }
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    align-items: center;
+  }
+  .hero__subhead {
+    font-size: var(--fs-24);
+    line-height: var(--lh-heading);
+    color: var(--color-muted);
+    margin-bottom: var(--space-4);
+    max-width: 34ch;
+  }
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .btn-secondary {
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .btn-secondary:hover {
+    color: var(--color-accent);
+  }
+  .hero__motif {
+    max-width: 300px;
+    justify-self: center;
+    opacity: 0.9;
+  }
+
+  h1 {
+    font-size: var(--fs-48);
+  }
+
+  @media (min-width: 52rem) {
+    .hero__inner {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+    h1 {
+      font-size: 3.5rem; /* 56px — within the 48-56px muted display range */
+    }
+    /* Bleed the motif off the right edge, at reduced weight. */
+    .hero__motif {
+      justify-self: end;
+      margin-right: calc(-1 * var(--space-6));
+      max-width: 380px;
+    }
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  .cards {
+    list-style: none;
+    margin: var(--space-4) 0 0;
     padding: 0;
     display: grid;
     gap: var(--space-3);
     grid-template-columns: 1fr;
   }
   @media (min-width: 44rem) {
-    .options {
+    .cards {
       grid-template-columns: 1fr 1fr;
     }
+    .cards li:last-child {
+      grid-column: 1 / -1;
+    }
   }
-  .option {
+  .card {
+    border: var(--border-hair) solid var(--color-rule-faint);
+    background: var(--color-bg);
+  }
+  .card__link {
     display: block;
-    border: var(--border-hair) solid var(--color-rule);
     padding: var(--space-3);
     color: var(--color-ink);
     text-decoration: none;
   }
-  .option:hover {
-    background: var(--color-surface);
+  .card:hover {
+    border-color: var(--color-rule);
   }
-  .option__name {
-    display: block;
-    font-size: var(--fs-32);
-    font-weight: var(--fw-bold);
-    letter-spacing: var(--tracking-tight);
-    margin-bottom: var(--space-1);
+  .card h3 {
+    margin-top: var(--space-1);
   }
-  .option:hover .option__name {
+  .card:hover h3 {
     color: var(--color-accent);
   }
-  .option__desc {
-    display: block;
+  .card p:last-child {
+    margin-bottom: 0;
     color: var(--color-muted);
-    font-size: var(--fs-16);
+  }
+
+  .site-footer {
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+    margin-top: var(--space-7);
+    padding-block: var(--space-3);
+  }
+  .site-footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .footer-note {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .footer-links {
+    display: flex;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .footer-links a {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+  }
+  .footer-links a:hover {
+    color: var(--color-accent);
   }
 </style>

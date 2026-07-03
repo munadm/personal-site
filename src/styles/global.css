@@ -190,6 +190,21 @@ svg {
   );
 }
 
+/* ---- Muted striped divider (thinner, lower-contrast variant) ---- */
+.divider-stripe--muted {
+  height: var(--space-1);
+  border: 0;
+  margin: var(--space-6) 0;
+  opacity: 0.6;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-rule) 0,
+    var(--color-rule) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
 /* ---- Fine horizontal-rule pattern strip (static) ---- */
 .divider-rules {
   height: var(--space-4);
