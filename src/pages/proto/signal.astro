@@ -1,0 +1,205 @@
+---
+import Base from '../../layouts/Base.astro';
+import CheckerLogo from '../../components/CheckerLogo.astro';
+import ConcentricRings from '../../components/ConcentricRings.astro';
+
+const caseStudies = [
+  {
+    label: 'Case study 01',
+    title: 'BNPL at $40B scale',
+    blurb:
+      'Leading the engineering org behind a Buy-Now-Pay-Later platform processing tens of billions in annual volume — reliability, risk, and velocity.',
+  },
+  {
+    label: 'Case study 02',
+    title: 'LLM PII scanner',
+    blurb:
+      'Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs.',
+  },
+];
+---
+
+<Base
+  title="Munad Mahinoor — Engineering leader (Signal prototype)"
+  description="Engineering leader for AI-enabled, remote-first teams. Payments at scale."
+  personSchema
+>
+  <header slot="header" class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="/proto/signal">
+        <CheckerLogo />
+        <span class="brand__name">Munad Mahinoor</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#writing">Writing</a></li>
+          <li><a href="#resume">Resume</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__text">
+        <h1>Munad Mahinoor</h1>
+        <p class="hero__subhead">
+          Engineering leader for AI-enabled, remote-first teams. Payments at scale.
+        </p>
+        <a class="btn" href="#work">Read the case studies <span aria-hidden="true">&rarr;</span></a>
+      </div>
+      <div class="hero__motif">
+        <ConcentricRings />
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider-stripe container-hr" />
+
+  <section id="work" class="work">
+    <div class="container">
+      <h2>Selected work</h2>
+      <ul class="cards">
+        {
+          caseStudies.map((c) => (
+            <li class="card">
+              <p class="kicker">{c.label}</p>
+              <h3>{c.title}</h3>
+              <p>{c.blurb}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <footer slot="footer" class="site-footer">
+    <div class="container">
+      <p class="footer-note">Signal prototype — one of two directions. <a href="/">Back to chooser</a></p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .site-header {
+    border-bottom: var(--border-hair) solid var(--color-rule);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding-block: var(--space-2);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-ink);
+    text-decoration: none;
+    font-weight: var(--fw-bold);
+  }
+  .brand__name {
+    font-size: var(--fs-16);
+    letter-spacing: var(--tracking-tight);
+  }
+  .nav {
+    display: flex;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav a {
+    color: var(--color-ink);
+    text-decoration: none;
+    font-size: var(--fs-14);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  .nav a:hover {
+    color: var(--color-accent);
+  }
+
+  .hero {
+    padding-block: var(--space-7);
+    overflow: hidden;
+  }
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    align-items: center;
+  }
+  .hero__subhead {
+    font-size: var(--fs-24);
+    line-height: var(--lh-heading);
+    color: var(--color-muted);
+    margin-bottom: var(--space-4);
+    max-width: 34ch;
+  }
+  .hero__motif {
+    max-width: 340px;
+    justify-self: center;
+  }
+
+  @media (min-width: 52rem) {
+    .hero__inner {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+    h1 {
+      font-size: var(--fs-72);
+    }
+    /* Bleed the motif off the right edge. */
+    .hero__motif {
+      justify-self: end;
+      margin-right: calc(-1 * var(--space-6));
+      max-width: 440px;
+    }
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  .cards {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 44rem) {
+    .cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .card {
+    border: var(--border-hair) solid var(--color-rule);
+    padding: var(--space-3);
+    background: var(--color-bg);
+  }
+  .card h3 {
+    margin-top: var(--space-1);
+  }
+  .card p:last-child {
+    margin-bottom: 0;
+  }
+
+  .site-footer {
+    border-top: var(--border-hair) solid var(--color-rule);
+    margin-top: var(--space-7);
+    padding-block: var(--space-3);
+  }
+  .footer-note {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+    margin: 0;
+  }
+</style>

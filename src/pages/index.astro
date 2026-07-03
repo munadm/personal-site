@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Prototype chooser — Munad Mahinoor site relaunch"
+  description="Temporary chooser between two homepage prototype directions: Signal and Ledger."
+>
+  <section class="chooser">
+    <div class="container">
+      <p class="kicker">Site relaunch — prototype review</p>
+      <h1>Pick a direction</h1>
+      <p class="lede">
+        Two throwaway homepage prototypes share the same design tokens. Open each,
+        compare, and choose the direction to build out.
+      </p>
+      <ul class="options">
+        <li>
+          <a class="option" href="/proto/signal">
+            <span class="option__name">Signal</span>
+            <span class="option__desc">
+              Bold geometric hero, concentric-circle motif, striped dividers, case-study cards.
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="option" href="/proto/ledger">
+            <span class="option__name">Ledger</span>
+            <span class="option__desc">
+              Editorial ruled grid, line-weight logo mark, table-of-contents index.
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .chooser {
+    padding-block: var(--space-6);
+  }
+  .lede {
+    font-size: var(--fs-18);
+    color: var(--color-muted);
+    max-width: 52ch;
+    margin-bottom: var(--space-4);
+  }
+  .options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 44rem) {
+    .options {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .option {
+    display: block;
+    border: var(--border-hair) solid var(--color-rule);
+    padding: var(--space-3);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .option:hover {
+    background: var(--color-surface);
+  }
+  .option__name {
+    display: block;
+    font-size: var(--fs-32);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-1);
+  }
+  .option:hover .option__name {
+    color: var(--color-accent);
+  }
+  .option__desc {
+    display: block;
+    color: var(--color-muted);
+    font-size: var(--fs-16);
+  }
+</style>
