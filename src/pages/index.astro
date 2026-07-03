@@ -149,20 +149,20 @@ const caseStudies = [
   }
 
   .hero {
-    padding-block: var(--space-7);
+    padding-block: var(--space-1);
     overflow: hidden;
   }
   .hero__inner {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-5);
+    gap: var(--space-1);
     align-items: center;
   }
   .hero__subhead {
     font-size: var(--fs-24);
     line-height: var(--lh-heading);
     color: var(--color-muted);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-1);
     max-width: 34ch;
   }
   .hero__actions {
@@ -182,7 +182,7 @@ const caseStudies = [
     text-decoration-thickness: 2px;
   }
   .hero__motif {
-    max-width: 300px;
+    max-width: 90px;
     justify-self: center;
     opacity: 0.9;
   }
@@ -192,8 +192,15 @@ const caseStudies = [
   }
 
   @media (min-width: 52rem) {
+    .hero {
+      padding-block: var(--space-7);
+    }
     .hero__inner {
       grid-template-columns: 1.2fr 0.8fr;
+      gap: var(--space-5);
+    }
+    .hero__subhead {
+      margin-bottom: var(--space-4);
     }
     h1 {
       font-size: 3.5rem; /* 56px — within the 48-56px muted display range */
@@ -209,6 +216,13 @@ const caseStudies = [
   .container-hr {
     max-width: var(--container);
     margin-inline: auto;
+    margin-block: var(--space-1);
+  }
+
+  @media (min-width: 52rem) {
+    .container-hr {
+      margin-block: var(--space-6);
+    }
   }
 
   .cards {
