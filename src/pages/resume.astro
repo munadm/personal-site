@@ -92,7 +92,7 @@ const skills = [
         <div class="resume__actions">
           <a class="btn" href="/resume.pdf">Download PDF <span aria-hidden="true">&darr;</span></a>
           <ul class="resume__links">
-            <li><a href="mailto:nobodylikesmoe@gmail.com">nobodylikesmoe@gmail.com</a></li>
+            <li><a href="mailto:mahinoormunad@gmail.com">mahinoormunad@gmail.com</a></li>
             <li>
               <a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">
                 linkedin.com/in/munadmahinoor
@@ -311,8 +311,14 @@ const skills = [
     :global(body) {
       background: #fff !important;
       color: #000 !important;
-      font-size: 10.5pt !important;
-      line-height: 1.35 !important;
+      font-size: 10pt !important;
+      line-height: 1.15 !important;
+    }
+    :global(ul),
+    :global(ol),
+    :global(li),
+    :global(p) {
+      line-height: 1.15 !important;
     }
     .resume-page {
       padding: 0;
@@ -323,51 +329,83 @@ const skills = [
     .resume__actions .btn {
       display: none;
     }
+    .resume__section > p,
+    .job__bullets {
+      max-width: none !important;
+    }
     :global(a) {
       color: #000 !important;
       text-decoration: none !important;
     }
     :global(h1) {
-      font-size: 20pt !important;
+      font-size: 17pt !important;
+      line-height: 1.05 !important;
     }
     :global(h2) {
-      font-size: 13pt !important;
+      font-size: 11.5pt !important;
+      line-height: 1.05 !important;
     }
     :global(h3) {
-      font-size: 11pt !important;
+      font-size: 10.5pt !important;
+      line-height: 1.05 !important;
     }
     :global(p) {
-      margin: 0 0 4pt !important;
+      margin: 0 0 3pt !important;
     }
     .resume__header {
-      margin-bottom: 4pt;
+      margin-bottom: 1pt;
+      gap: 6pt !important;
     }
-    .resume__links {
-      font-size: 9pt !important;
-    }
-    .resume .divider-stripe {
-      margin-block: 8pt !important;
-      height: 4pt !important;
-    }
-    .resume__section {
-      margin-bottom: 10pt !important;
-    }
-    .resume__section h2 {
-      padding-bottom: 2pt !important;
-      margin-bottom: 6pt !important;
-    }
-    .job {
-      margin-bottom: 8pt !important;
-      break-inside: avoid;
-    }
-    .job__bullets {
-      margin-top: 4pt !important;
-    }
-    .job__bullets li {
+    .resume__heading h1 {
       margin-bottom: 1pt !important;
     }
+    .resume__links {
+      font-size: 8.5pt !important;
+      gap: 1pt !important;
+    }
+    .resume .divider-stripe {
+      margin-block: 1.5pt !important;
+      height: 2pt !important;
+    }
+    .resume__section {
+      margin-bottom: 1.5pt !important;
+    }
+    .resume__section h2 {
+      padding-bottom: 0.5pt !important;
+      margin-bottom: 1.5pt !important;
+    }
+    .job {
+      margin-bottom: 1.5pt !important;
+      break-inside: avoid;
+    }
+    .job__header {
+      gap: 4pt !important;
+    }
+    .job__header h3 {
+      margin-bottom: 0 !important;
+    }
+    .job__bullets {
+      margin-top: 1.5pt !important;
+      padding-left: 13pt !important;
+    }
+    .job__bullets li {
+      margin-bottom: 0 !important;
+    }
     .skills__row {
-      padding-block: 3pt !important;
+      padding-block: 1pt !important;
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: baseline !important;
+      gap: 6pt !important;
+    }
+    .skills__row dt {
+      flex: 0 0 auto !important;
+      width: 118pt !important;
+      white-space: normal !important;
+    }
+    .skills__row dd {
+      margin: 0 !important;
+      flex: 1 1 auto !important;
     }
   }
 </style>

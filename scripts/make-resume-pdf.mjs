@@ -61,7 +61,7 @@ async function main() {
       path: outPath,
       format: 'Letter',
       printBackground: false,
-      margin: { top: '0.4in', bottom: '0.4in', left: '0.5in', right: '0.5in' },
+      margin: { top: '0.35in', bottom: '0.35in', left: '0.4in', right: '0.4in' },
     });
 
     await browser.close();
