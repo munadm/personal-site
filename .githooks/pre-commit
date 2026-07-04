@@ -1,0 +1,17 @@
+#!/bin/sh
+# Pre-commit gate: every commit must comply with the project's first
+# principles, which are codified as the executable test suite —
+# accessibility wins every conflict (axe light+dark, keyboard-complete,
+# forced-colors, no motion, 320px reflow, ARIA tree, screen-reader
+# narration) plus the mobile fold contract.
+#
+# Escape hatch for emergencies only: git commit --no-verify
+set -e
+
+echo "pre-commit: building site..."
+npm run build
+
+echo "pre-commit: running full Playwright suite (fold + a11y)..."
+npx playwright test
+
+echo "pre-commit: all first-principles checks green."

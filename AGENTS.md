@@ -1,3 +1,13 @@
+## First principles (enforced)
+
+Accessibility wins every conflict. The principles are codified as the Playwright suite (`npx playwright test`), and a pre-commit hook runs the build plus the full suite before every commit. One-time setup per clone:
+
+```
+git config core.hooksPath .githooks
+```
+
+Do not bypass with `--no-verify` except for emergencies; CI runs the same suite on every push and PR.
+
 ## Development
 
 When starting the dev server, use background mode:
