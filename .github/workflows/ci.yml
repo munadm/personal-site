@@ -3,6 +3,9 @@ name: CI
 # Build the static site and run the full Playwright suite (fold + a11y) on
 # every push to main and every pull request. The VoiceOver launch gate is NOT
 # run here — see voiceover-gate.yml.
+#
+# On push to main only, a deploy job then publishes dist/ to Cloudflare Pages.
+# See deploy_guide.md for setup and debugging.
 on:
   push:
     branches: [main]
@@ -47,3 +50,33 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # Publish to Cloudflare Pages. Gated to pushes on main (never PRs) and only
+  # runs after build-and-test passes. Requires the CLOUDFLARE_API_TOKEN and
+  # CLOUDFLARE_ACCOUNT_ID repo secrets — see deploy_guide.md.
+  deploy:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=personal-site --branch=main
