@@ -1,0 +1,94 @@
+name: Rollback
+
+# Redeploy a previous known-good state to Cloudflare Pages, tracked entirely
+# in GitHub. Trigger from the Actions tab ("Run workflow") or:
+#
+#   gh workflow run rollback.yml                 # roll back to previous deploy
+#   gh workflow run rollback.yml -f target=...   # roll back to a specific tag/SHA
+#
+# Leaving the input blank auto-picks the deploy-* tag before the newest one
+# (the newest is assumed to be the bad deploy currently in production).
+#
+# This deliberately skips the Playwright suite: the target ref already passed
+# CI when it originally deployed, and rollback speed matters. It fixes
+# PRODUCTION, not git history — follow up with a revert PR on main so the
+# next merge doesn't re-deploy the bad version. See deploy_guide.md.
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy tag or commit SHA to restore (blank = previous deploy-* tag)'
+        required: false
+        type: string
+
+concurrency:
+  group: rollback
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # contents: write lets the job push the rollback-* audit tag.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history + tags so deploy-* tags and arbitrary SHAs resolve.
+          fetch-depth: 0
+
+      - name: Resolve rollback target
+        id: target
+        env:
+          TARGET_INPUT: ${{ inputs.target }}
+        run: |
+          if [ -n "$TARGET_INPUT" ]; then
+            TARGET="$TARGET_INPUT"
+          else
+            # Newest deploy-* tag is what's in production now; restore the
+            # one before it.
+            TARGET=$(git tag -l 'deploy-*' --sort=-creatordate | sed -n '2p')
+            if [ -z "$TARGET" ]; then
+              echo "::error::No previous deploy-* tag to fall back to; pass an explicit target." >&2
+              exit 1
+            fi
+          fi
+          SHA=$(git rev-parse --verify "$TARGET^{commit}") || {
+            echo "::error::'$TARGET' does not resolve to a commit." >&2
+            exit 1
+          }
+          echo "Rolling back to $TARGET ($SHA)"
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Check out target
+        run: git checkout --detach ${{ steps.target.outputs.sha }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=personal-site --branch=main
+
+      # Audit record: rollback-* tag on the restored commit. The run itself
+      # (actor, timestamp, logs) is the primary event; the tag makes it
+      # visible from plain git.
+      - name: Tag restored commit
+        run: |
+          TAG="rollback-$(date -u +%Y%m%d-%H%M%S)"
+          git tag "$TAG" ${{ steps.target.outputs.sha }}
+          git push origin "$TAG"
