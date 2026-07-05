@@ -59,6 +59,9 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # contents: write lets the job push the deploy-* tag below.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -80,3 +83,11 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=personal-site --branch=main
+
+      # Record what went to production and when. Deliberately deploy-*, NOT
+      # v* — v* tags are the VoiceOver launch gate (voiceover-gate.yml).
+      - name: Tag deployed commit
+        run: |
+          TAG="deploy-$(date -u +%Y%m%d-%H%M%S)"
+          git tag "$TAG" "$GITHUB_SHA"
+          git push origin "$TAG"
