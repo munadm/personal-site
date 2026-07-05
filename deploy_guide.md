@@ -19,6 +19,12 @@ debug it when it breaks.
   `wrangler pages deploy dist --project-name=personal-site --branch=main`,
   authenticated with an API token stored as a GitHub secret. `--branch=main`
   is what makes the deployment *production* rather than a preview.
+- **Deploy tags:** after a successful deploy, the job tags the deployed commit
+  `deploy-<UTC timestamp>` (e.g. `deploy-20260705-041502`) and pushes the tag.
+  `git tag -l 'deploy-*'` is the deployment history from git's point of view.
+  The prefix is deliberately **not** `v*` — `v*` tags trigger the VoiceOver
+  launch gate (`voiceover-gate.yml`) and stay reserved for intentional
+  releases.
 
 There is no git integration on the Cloudflare side — Cloudflare never reads
 the repo. GitHub Actions builds and uploads the files.
@@ -69,6 +75,7 @@ step below is a distinct failure point — debug in this order.
 | 4 | wrangler-action auth | `Authentication error [code: 10000]` → `CLOUDFLARE_API_TOKEN` secret is missing, expired, revoked, or lacks the Pages:Edit permission. |
 | 5 | wrangler-action project lookup | `Project not found [code: 8000007]` → project name mismatch or wrong `CLOUDFLARE_ACCOUNT_ID`. Verify with `npx wrangler pages project list`. |
 | 6 | Upload + deploy | Transient Cloudflare errors — re-run the failed job from the Actions UI. |
+| 7 | Tag push | Needs the job's `permissions: contents: write`. If tagging fails the deploy itself already succeeded — the site is live, only the git record is missing. Tag manually: `git tag deploy-<timestamp> <sha> && git push origin <tag>`. |
 
 ## Debugging checklist
 
