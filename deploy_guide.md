@@ -111,7 +111,36 @@ URL, production untouched).
 
 ## Rollback
 
-Cloudflare dashboard → Workers & Pages → personal-site → Deployments → pick a
-previous production deployment → **Rollback**. This is instant and does not
-touch git; follow up with a revert commit on `main` so the next merge doesn't
-re-deploy the bad version.
+Primary path: the **Rollback** workflow
+([.github/workflows/rollback.yml](.github/workflows/rollback.yml)). Every
+rollback is then a GitHub Actions run — actor, timestamp, target, and logs all
+tracked in the repo, plus a `rollback-*` tag on the restored commit.
+
+1. GitHub → **Actions** tab → **Rollback** → **Run workflow**.
+2. Leave the input **blank** to restore the previous `deploy-*` tag (the
+   newest one is assumed to be the bad deploy currently in production), or
+   type a specific `deploy-*` tag or commit SHA.
+3. Click the green button. The workflow checks out that ref, rebuilds,
+   deploys to production (~2 minutes), and pushes a `rollback-<timestamp>`
+   tag.
+
+CLI equivalent:
+
+```sh
+gh workflow run rollback.yml                              # previous deploy
+gh workflow run rollback.yml -f target=deploy-20260705-042439   # specific
+```
+
+The workflow skips the Playwright suite on purpose — the target ref already
+passed CI when it originally deployed, and rollback speed matters.
+
+**Rollback fixes production, not git.** `main` still contains the bad code,
+so follow up with a revert PR (GitHub's **Revert** button on the merged PR)
+— otherwise the next merge re-deploys the bad version. The revert PR flowing
+through the normal pipeline is also a valid *fix-forward* alternative to the
+Rollback workflow when the breakage isn't urgent.
+
+Break-glass fallback (e.g. GitHub Actions itself is down): Cloudflare
+dashboard → Workers & Pages → personal-site → Deployments → pick a previous
+production deployment → **Rollback**. Instant, but invisible to GitHub —
+still follow up with the revert PR.
