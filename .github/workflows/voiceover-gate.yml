@@ -43,7 +43,7 @@ jobs:
       # equivalent of running `npx guidepup setup` locally once. Without this
       # the voiceover project cannot drive VoiceOver.
       - name: Set up guidepup / VoiceOver
-        uses: guidepup/setup-action@0.14.0
+        uses: guidepup/setup-action@0.21.0
 
       # Only the `voiceover` project runs here. VOICEOVER=1 registers it in
       # playwright.config.ts (it is not part of the default suite). The
