@@ -144,3 +144,25 @@ Break-glass fallback (e.g. GitHub Actions itself is down): Cloudflare
 dashboard → Workers & Pages → personal-site → Deployments → pick a previous
 production deployment → **Rollback**. Instant, but invisible to GitHub —
 still follow up with the revert PR.
+
+## Domain & email
+
+State as of 2026-07-09 (registrar transfer completed):
+
+- **Registrar:** Cloudflare Registrar. `munadmahinoor.com` transferred from
+  Squarespace 2026-07-09; expires 2028-06-23, auto-renews at cost.
+- **DNSSEC:** enabled. Cloudflare publishes the DS record at the registry
+  automatically (it is both DNS host and registrar) — verify with
+  `dig DS munadmahinoor.com +short`.
+- **Email:** Cloudflare Email Routing, enabled and locked. A catch-all rule
+  forwards `*@munadmahinoor.com` → `mahinoormunad@gmail.com` (verified
+  destination). This replaced the old Squarespace forwarding (Mailgun MX +
+  SPF records, deleted at transfer completion — they died with the
+  Squarespace subscription). Verify with `dig MX munadmahinoor.com +short`
+  (expect `route1/2/3.mx.cloudflare.net`).
+- **Web traffic:** the apex/`www` still point at the legacy Google-hosted
+  site by explicit decision — cutover to the Pages project is deferred until
+  content is launch-ready and the VoiceOver gate has run. The cutover
+  checklist (attach apex+www to Pages, SSL Flexible → Full (strict), delete
+  the `_domainconnect` record, set `site` in `astro.config.mjs`) lives in the
+  project plan.
