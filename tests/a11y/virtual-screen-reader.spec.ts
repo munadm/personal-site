@@ -96,6 +96,23 @@ test('virtual SR narrates the home page landmarks and h1 in order', async () => 
   ]);
 });
 
+/*
+ * Local pre-flight mirror of the REAL VoiceOver launch gate
+ * (tests/voiceover/homepage.voiceover.spec.ts). That gate drives macOS
+ * VoiceOver and only runs in CI on a macOS runner (slow, macOS-bound). This
+ * test asserts the SAME two narration beats using the gate's exact patterns,
+ * but via the virtual screen reader in jsdom — so it runs on every PR and
+ * pre-commit with no VoiceOver and no permissions. If the homepage stops
+ * announcing the skip link or the h1, this fails locally FIRST, before anyone
+ * spends a macOS CI run discovering it in the gate. Keep the two patterns in
+ * sync with the gate spec.
+ */
+test('virtual SR mirrors the VoiceOver launch-gate narration beats (home)', async () => {
+  const joined = (await narrate('/')).join(' | ');
+  expect(joined).toMatch(/skip to main content/i);
+  expect(joined).toMatch(/Munad Mahinoor/);
+});
+
 test('virtual SR narrates the work page landmarks and h1 in order', async () => {
   const log = await narrate('/work');
 
