@@ -100,17 +100,26 @@ test('virtual SR narrates the home page landmarks and h1 in order', async () => 
  * Local pre-flight mirror of the REAL VoiceOver launch gate
  * (tests/voiceover/homepage.voiceover.spec.ts). That gate drives macOS
  * VoiceOver and only runs in CI on a macOS runner (slow, macOS-bound). This
- * test asserts the SAME two narration beats using the gate's exact patterns,
- * but via the virtual screen reader in jsdom — so it runs on every PR and
- * pre-commit with no VoiceOver and no permissions. If the homepage stops
- * announcing the skip link or the h1, this fails locally FIRST, before anyone
- * spends a macOS CI run discovering it in the gate. Keep the two patterns in
- * sync with the gate spec.
+ * test asserts the SAME narration beats via the virtual screen reader in
+ * jsdom — so it runs on every PR and pre-commit with no VoiceOver and no
+ * permissions, failing locally FIRST before anyone spends a macOS CI run.
+ * Keep the beats in sync with the gate spec (phrasing differs: VoiceOver says
+ * "link Work" / "Primary navigation"; the virtual SR says "link, Work" /
+ * "navigation, Primary").
+ *
+ * One deliberate difference: the skip link IS asserted here but NOT in the
+ * real gate. It is offscreen until :focus, and real VoiceOver skips offscreen
+ * elements during sequential reading by design; the virtual SR (no layout)
+ * still proves the skip link's accessible content exists, and its real
+ * interaction (Tab → visible → jumps to #main) is covered by keyboard.spec.ts.
  */
 test('virtual SR mirrors the VoiceOver launch-gate narration beats (home)', async () => {
   const joined = (await narrate('/')).join(' | ');
-  expect(joined).toMatch(/skip to main content/i);
-  expect(joined).toMatch(/Munad Mahinoor/);
+  expect(joined).toMatch(/skip to main content/i); // content exists (gate: covered by keyboard.spec.ts instead)
+  expect(joined).toMatch(/banner/i); // header landmark
+  expect(joined).toMatch(/navigation, Primary/i); // nav landmark, by name
+  expect(joined).toMatch(/link, Work/i); // nav links narrated as links
+  expect(joined).toMatch(/heading, Munad Mahinoor, level 1/i); // the h1
 });
 
 test('virtual SR narrates the work page landmarks and h1 in order', async () => {
