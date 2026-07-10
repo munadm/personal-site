@@ -47,6 +47,10 @@ test.describe('VoiceOver — homepage narration (launch gate)', () => {
 
     const joined = phrases.join(' | ');
     // Stable, meaningful beats — not full-log equality.
+    // These two patterns are mirrored by a fast, no-permissions local
+    // pre-flight in tests/a11y/virtual-screen-reader.spec.ts ("mirrors the
+    // VoiceOver launch-gate narration beats") that runs on every PR/pre-commit.
+    // Keep them in sync: if you change these, update that test too.
     expect(joined).toMatch(/skip to main content/i);
     expect(joined).toMatch(/Munad Mahinoor/);
   });
