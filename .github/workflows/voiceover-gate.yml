@@ -8,14 +8,32 @@ name: VoiceOver launch gate
 # (guidepup/setup-action), which is the CI equivalent of running
 # `npx guidepup setup` locally. Because it's slow and macOS-bound, it is
 # deliberately kept OUT of ci.yml / PR checks and gated to run only:
-#   - manually (workflow_dispatch), and
-#   - on release tags (push of a v* tag),
-# i.e. right before/at a launch.
+#   - manually (workflow_dispatch),
+#   - on release tags (push of a v* tag), i.e. right before/at a launch, and
+#   - on pushes to main that touch narration-relevant files (paths below) —
+#     dynamic confidence: changes that CAN'T alter what the homepage narrates
+#     cost no macOS minutes; changes that can get the real check automatically,
+#     with no one having to remember to run it.
 on:
   workflow_dispatch:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+    # Keep this list in sync with what the gate actually narrates: the
+    # homepage (skip link, header/nav, h1) plus the harness itself.
+    paths:
+      - 'src/pages/index.astro'
+      - 'src/layouts/**'
+      - 'src/components/SiteHeader.astro'
+      - 'src/components/SiteFooter.astro'
+      - 'src/components/ThemeToggle.astro'
+      - 'src/components/RuleLogo.astro'
+      - 'src/components/HeroRules.astro'
+      - 'tests/voiceover/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/voiceover-gate.yml'
 
 jobs:
   voiceover:
