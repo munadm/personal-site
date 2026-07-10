@@ -35,7 +35,10 @@ test.describe('VoiceOver — homepage narration (launch gate)', () => {
   test('announces skip link, landmarks, and the h1', async ({ page, voiceOver }) => {
     await page.goto('/', { waitUntil: 'load' });
     // Wait for the page to be ready before moving the screen reader in.
-    await page.locator('header[role="banner"]').waitFor();
+    // getByRole matches the <header>'s IMPLICIT banner role; a CSS attribute
+    // selector like header[role="banner"] only matches an explicit role
+    // attribute, which this site's header (correctly) doesn't set.
+    await page.getByRole('banner').waitFor();
 
     // Move VoiceOver INTO the browser's web content. This is guidepup's
     // canonical helper: it activates the browser (brings it to front), focuses
