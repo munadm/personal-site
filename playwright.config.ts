@@ -49,6 +49,11 @@ export default defineConfig({
             name: 'voiceover',
             testDir: './tests/voiceover',
             testMatch: ['**/*.voiceover.spec.ts'],
+            // Real VoiceOver startup is intermittently slow on CI runners
+            // ("Timed out waiting for VoiceOver to be running"); a couple of
+            // retries absorbs that flake without masking a genuine failure,
+            // which reproduces across all attempts.
+            retries: 2,
             // VoiceOver narrates the REAL on-screen browser window via the
             // macOS accessibility tree, so the browser must be headed — a
             // headless browser has no window to read and every spoken phrase

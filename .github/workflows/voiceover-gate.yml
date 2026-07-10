@@ -19,7 +19,12 @@ on:
 
 jobs:
   voiceover:
-    runs-on: macos-latest
+    # Pinned to a settled macOS rather than macos-latest. macos-latest currently
+    # resolves to macOS 26, on which guidepup's real-VoiceOver startup timed out
+    # ("Timed out waiting for VoiceOver to be running"). guidepup drives the OS
+    # screen reader, so it is sensitive to the macOS image; macos-15 is a
+    # well-exercised platform for it. Revisit when guidepup officially supports 26.
+    runs-on: macos-15
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
