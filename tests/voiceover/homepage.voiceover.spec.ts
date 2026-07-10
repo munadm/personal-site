@@ -33,14 +33,20 @@ const { voiceOverTest: test } = guidepup as unknown as {
 
 test.describe('VoiceOver — homepage narration (launch gate)', () => {
   test('announces skip link, landmarks, and the h1', async ({ page, voiceOver }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'load' });
+    // Wait for the page to be ready before moving the screen reader in.
+    await page.locator('header[role="banner"]').waitFor();
 
-    // Move VoiceOver into the web content and walk the top of the document.
-    await voiceOver.interact();
-    await voiceOver.perform(voiceOver.keyboardCommands.jumpToLeftEdge);
+    // Move VoiceOver INTO the browser's web content. This is guidepup's
+    // canonical helper: it activates the browser (brings it to front), focuses
+    // the document, jumps to the start of the web content, and clears the log.
+    // Without it, VoiceOver starts on the browser CHROME (toolbar/omnibox) and
+    // narrates "Search", "pop up button", etc. — never the page — which is
+    // exactly what the hand-rolled interact()+jumpToLeftEdge walk did.
+    await voiceOver.navigateToWebContent();
 
     const phrases: string[] = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 14; i++) {
       await voiceOver.next();
       phrases.push(await voiceOver.lastSpokenPhrase());
     }
