@@ -48,7 +48,12 @@ test.describe('VoiceOver — homepage narration (launch gate)', () => {
     // exactly what the hand-rolled interact()+jumpToLeftEdge walk did.
     await voiceOver.navigateToWebContent();
 
-    const phrases: string[] = [];
+    // navigateToWebContent() leaves the cursor ON the first element (the skip
+    // link) and clears the spoken-phrase log — so its announcement is gone and
+    // the first next() would step past it unread. The proof: a CI run whose
+    // captured log started at "banner" (the skip link's next sibling) while
+    // narrating everything after it perfectly. Read the current item first.
+    const phrases: string[] = [await voiceOver.itemText()];
     for (let i = 0; i < 14; i++) {
       await voiceOver.next();
       phrases.push(await voiceOver.lastSpokenPhrase());
