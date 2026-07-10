@@ -20,12 +20,15 @@
  * the jsdom virtual-screen-reader coverage in tests/a11y that runs on every PR.
  */
 
-// @guidepup/playwright ships as CommonJS; import the default and destructure
-// so this loads cleanly under Playwright's ESM/TS loader.
+// @guidepup/playwright ships as CommonJS and exports `voiceOverTest` (a
+// Playwright test extended with the VoiceOver fixture) but NOT `expect`.
+// Import the default and destructure the test so it loads cleanly under
+// Playwright's ESM/TS loader; take `expect` from Playwright, as the rest of
+// the suite does.
+import { expect } from 'playwright/test';
 import guidepup from '@guidepup/playwright';
-const { voiceOverTest: test, expect } = guidepup as unknown as {
+const { voiceOverTest: test } = guidepup as unknown as {
   voiceOverTest: typeof import('@guidepup/playwright').voiceOverTest;
-  expect: typeof import('@guidepup/playwright').expect;
 };
 
 test.describe('VoiceOver — homepage narration (launch gate)', () => {
