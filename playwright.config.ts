@@ -49,6 +49,11 @@ export default defineConfig({
             name: 'voiceover',
             testDir: './tests/voiceover',
             testMatch: ['**/*.voiceover.spec.ts'],
+            // VoiceOver narrates the REAL on-screen browser window via the
+            // macOS accessibility tree, so the browser must be headed — a
+            // headless browser has no window to read and every spoken phrase
+            // comes back empty. This is a hard guidepup requirement.
+            use: { headless: false },
           },
         ]
       : []),
