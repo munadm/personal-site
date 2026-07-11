@@ -1,6 +1,6 @@
 - main:
   - heading "Selected work" [level=1]
-  - paragraph: A few of the efforts I've led — platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. The first full case study is live; the rest are on the way.
+  - paragraph: "A few of the efforts I've led: platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. Two full case studies are live; the rest are on the way."
   - separator
   - list:
     - listitem:
@@ -15,10 +15,14 @@
           - /url: /work/bnpl-platform
     - listitem:
       - paragraph: /Case study \d+/
-      - heading "A KCS innersource API adopted cross-org" [level=2]
-      - paragraph: Built and championed an innersource program around a shared API, applying Knowledge-Centered Service practices so contribution and review knowledge compounded instead of living in one team’s heads. Adoption spread organically to other engineering groups, cutting review cycles and duplicated work.
-      - paragraph: Adopted by multiple engineering teams beyond the originating org
-      - paragraph: Case study in progress.
+      - heading "The simplification layer that shipped a rewrite's outcome without the rewrite" [level=2]:
+        - link "The simplification layer that shipped a rewrite's outcome without the rewrite":
+          - /url: /work/simplification-layer
+      - paragraph: "Owned how the credit domain would position itself in a ground-up rewrite of PayPal's checkout, on an aggressive next-quarter deadline in a system that sits on top of payments. When the two options on the table were both wrong, I found a third: a deliberate, throwaway simplification layer over the legacy system that forced every business case into the open before we touched the new architecture. It shipped on deadline with full credit parity from day one."
+      - paragraph: Shipped on the go-to-market deadline · the pattern replicated by other domains
+      - paragraph:
+        - link "Read the case study":
+          - /url: /work/simplification-layer
     - listitem:
       - paragraph: /Case study \d+/
       - heading "An LLM-driven PII scanner" [level=2]
