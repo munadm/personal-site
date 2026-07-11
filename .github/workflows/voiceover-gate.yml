@@ -70,7 +70,7 @@ jobs:
 
       # Only the `voiceover` project runs here. VOICEOVER=1 registers it in
       # playwright.config.ts (it is not part of the default suite). The
-      # config's webServer rebuilds + previews the site on :4321.
+      # config's webServer rebuilds + previews the site on :4173.
       - name: Run VoiceOver narration gate
         run: VOICEOVER=1 npx playwright test --project=voiceover
 

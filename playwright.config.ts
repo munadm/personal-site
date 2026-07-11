@@ -5,7 +5,10 @@ import { defineConfig } from 'playwright/test';
  *
  * The default `test` run covers the fold-affordance suite (tests/fold.spec.ts)
  * and the accessibility harness (tests/a11y/*.spec.ts). Both build the static
- * site once and preview it on :4321 via the shared webServer block below.
+ * site once and preview it on :4173 via the shared webServer block below.
+ * :4173 is reserved for the test preview — dev servers live on :4321/:4322,
+ * so the suite can never silently attach to `astro dev` (whose toolbar
+ * injects extra h1s into open shadow DOM and breaks the structure specs).
  *
  * The `voiceover` project (tests/voiceover/*.voiceover.spec.ts) is a launch
  * gate that drives REAL VoiceOver via @guidepup/playwright. It requires macOS
@@ -33,7 +36,7 @@ export default defineConfig({
   reporter: isCI ? [['list'], ['html', { open: 'never' }]] : 'list',
   timeout: 30_000,
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: 'http://localhost:4173',
   },
   projects: [
     {
@@ -64,12 +67,15 @@ export default defineConfig({
       : []),
   ],
   webServer: {
-    // Build the static site, then preview it. Mirrors the pre-existing pattern
-    // (fold.spec.ts already relied on `npm run preview` on :4321); we prepend a
-    // build so a fresh checkout/CI has dist/ before preview serves it.
-    command: 'npm run build && npm run preview',
-    url: 'http://localhost:4321',
-    reuseExistingServer: !isCI,
+    // Build the static site, then preview it on the dedicated test port. The
+    // suite must always exercise the production build: reusing a server that
+    // happens to be listening let `astro dev` on :4321 stand in for the
+    // preview, and its toolbar's shadow-DOM h1s made structure.spec.ts fail
+    // as phantom flakes. A port no dev server uses plus never reusing an
+    // existing server guarantees a fresh build+preview every run.
+    command: 'npm run build && npm run preview -- --port 4173',
+    url: 'http://localhost:4173',
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });
