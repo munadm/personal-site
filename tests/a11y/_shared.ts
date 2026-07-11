@@ -32,6 +32,10 @@ export function routeId(route: Route): string {
  * the [data-theme] attribute on <html>, mirrored into localStorage so a
  * reload would keep it. Applied before any scan so axe sees the real
  * rendered colors for that theme.
+ *
+ * Waits for any CSS transitions the flip triggers (e.g. .btn animates
+ * background/color over 120ms) — otherwise a scan can read interpolated
+ * mid-transition colors and report phantom contrast failures.
  */
 export async function setTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
   await page.evaluate((t) => {
@@ -42,6 +46,9 @@ export async function setTheme(page: Page, theme: 'light' | 'dark'): Promise<voi
       /* ignore */
     }
   }, theme);
+  await page.evaluate(() =>
+    Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))),
+  );
 }
 
 /**
