@@ -1,0 +1,191 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+
+const facts = [
+  { term: 'Role', detail: 'Engineering Manager' },
+  {
+    term: 'Span',
+    detail: 'From a code-review observation to an organization-wide compliance control',
+  },
+  { term: 'Scale', detail: 'Every current and legacy product in the CI/CD pipeline' },
+  {
+    term: 'Headline outcomes',
+    detail:
+      'Standing PII gate in CI · catches semantic exposure classical tools miss · an afternoon prototype turned permanent control',
+  },
+];
+---
+
+<Base
+  title="An LLM-driven PII scanner that ships as a standing compliance control: Munad Mahinoor"
+  description="A case study in using an LLM where it genuinely beats classical tooling, and shipping it as a boring, reliable deploy gate rather than a demo."
+>
+  <SiteHeader slot="header" currentPath="/work" />
+
+  <section class="page-intro">
+    <div class="container">
+      <p class="kicker">Case study 03</p>
+      <h1>An LLM-driven PII scanner that ships as a standing compliance control</h1>
+      <p class="standfirst">
+        At a previous company, a routine code review surfaced a class of privacy risk that our
+        pattern-matching tools could not see. A quick prototype proved the gap was real and the
+        existing safety net was thinner than anyone assumed. Turning that afternoon demo into a
+        control the whole organization could rely on was the actual work, and most of it happened
+        through the engineers I led rather than in the code I wrote.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="case-body">
+    <div class="container">
+      <dl class="facts" aria-label="At a glance">
+        {
+          facts.map((f) => (
+            <div class="facts__row">
+              <dt>{f.term}</dt>
+              <dd>{f.detail}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p>
+        During a routine code review, one of our engineers flagged personally identifiable
+        information being written somewhere it did not belong. What caught my attention was that
+        no regex or classical scanner would have caught it. A leak like that is semantic, not
+        lexical: a variable holding a national ID is still a national ID no matter what it is
+        named, and pattern matching only sees the name. I built a quick prototype to test the
+        idea, a small suite that used an LLM to fail whenever a customer flow wrote any of a
+        defined list of PII fields into a place it should not go. It worked in a few hours, and
+        it did two things at once: it confirmed the risk class was real, and it showed our
+        existing tooling was blind to it.
+      </p>
+      <p>
+        A prototype is not a control. It ran on my machine, it caught what I pointed it at, and
+        it proved nothing about whether the organization was safe. The task I owned was
+        turning that demo into something the company could depend on every day, across products
+        it had shipped years ago and products it was shipping that week. As the engineering
+        manager, I owned making that happen through the team rather than building it myself, so
+        my job was to define what good looked like and then get out of the way of the people who
+        would build it.
+      </p>
+      <p>
+        I made the case to our security and compliance stakeholders that an LLM-based check
+        belonged in the pipeline alongside the classical tools, arguing from the gap the
+        prototype had already demonstrated rather than from novelty. I defined the false-positive rate CI could tolerate before
+        engineers would start resenting the gate and routing around it, and I required the
+        scanner to be evaluated against known-good and known-bad code before we trusted it to
+        block a single deploy. A probabilistic tool earns the right to stop a release only after
+        it has proven it knows the difference. Then I staffed the productization to engineers and
+        led it through them, keeping myself accountable for the standard while they owned the
+        build.
+      </p>
+      <p>
+        The scanner has run across the CI/CD pipeline ever since, on every current and legacy
+        product, as a standing compliance control. It catches the semantic PII exposure that
+        pattern-matching tools miss, and its false-positive overhead stays low enough that
+        engineers keep trusting the gate instead of fighting it. What started as an afternoon
+        prototype became a permanent, organization-wide control: unglamorous infrastructure that
+        runs quietly on every change.
+      </p>
+
+      <hr class="divider-stripe divider-stripe--muted cta-hr" />
+
+      <p class="cta">
+        Getting an organization to trust a probabilistic tool as a deploy gate took more than a
+        working demo, and clearing the skepticism and the bar it had to meet is the part that does
+        not fit on a page. There is also an origin story behind why this was built at all, better
+        told in person. If it resonates, I would genuinely enjoy comparing notes. Find me on
+        {' '}
+        <a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">
+          LinkedIn
+        </a>
+        {' '}or{' '}
+        <a href="mailto:mahinoormunad@gmail.com">email me directly</a>.
+      </p>
+
+      <p class="back-link">
+        <a href="/work">Back to selected work</a>
+      </p>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .standfirst {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: var(--measure);
+    margin-top: var(--space-2);
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .case-body {
+    padding-block: var(--space-2) var(--space-7);
+  }
+  .case-body p {
+    max-width: var(--measure);
+  }
+
+  /* At a glance facts block: semantic definition list, not a layout table. */
+  .facts {
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    max-width: var(--measure);
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .facts__row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) 1fr;
+    gap: var(--space-2) var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .facts dt {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .facts dd {
+    margin: 0;
+    color: var(--color-ink);
+  }
+  @media (max-width: 34rem) {
+    .facts__row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+
+  .cta-hr {
+    margin-block: var(--space-6) var(--space-4);
+  }
+  .cta {
+    max-width: var(--measure);
+    font-size: var(--fs-18);
+  }
+
+  .back-link {
+    margin-top: var(--space-6);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+  }
+</style>
