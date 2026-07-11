@@ -1,0 +1,218 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+
+const facts = [
+  { term: 'Role', detail: 'Senior Engineering Manager, BNPL platform' },
+  { term: 'Span', detail: 'From a seven-person team to a first-class Checkout partner' },
+  { term: 'Scale', detail: "~$40B in annual platform volume across international markets" },
+  {
+    term: 'Headline outcomes',
+    detail:
+      'Maintainer access to Checkout in two quarters · review cycle from two weeks to ship-when-done · $180M incremental TPV from five experiments in one quarter',
+  },
+];
+---
+
+<Base
+  title="Leading BNPL platform engineering at PayPal — Munad Mahinoor"
+  description="A case study in earning a team the right to operate as a first-class engineering partner inside one of PayPal's most critical codebases."
+>
+  <SiteHeader slot="header" currentPath="/work" />
+
+  <section class="page-intro">
+    <div class="container">
+      <p class="kicker">Case study 01</p>
+      <h1>Leading BNPL platform engineering at PayPal</h1>
+      <p class="standfirst">
+        When I joined PayPal's Buy-Now-Pay-Later team in 2022, we were seven engineers with an
+        ambitious roadmap and no way to ship it. Every change we owned ran through PayPal
+        Checkout, and we had no standing there. This is how I turned a dependent team into a
+        first-class engineering partner in one of the company's most critical codebases &mdash;
+        and the framework we left behind so other teams could do the same.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="case-body">
+    <div class="container">
+      <dl class="facts" aria-label="At a glance">
+        {
+          facts.map((f) => (
+            <div class="facts__row">
+              <dt>{f.term}</dt>
+              <dd>{f.detail}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <h2>The blocker</h2>
+      <p>
+        BNPL was a fast-growing credit business, but structurally it was a passenger. Every
+        change we needed to make lived inside PayPal Checkout, and we had no independent
+        presence there. Our pull requests sat behind weeks of manual walkthroughs with the
+        Checkout team. Prioritization ran on personal relationships rather than any agreed
+        process, which meant our roadmap was only ever as fast as the goodwill we could borrow.
+      </p>
+      <p>
+        The real problem wasn't the review queue. It was that no one had defined what my team
+        was: what we owned, what we were accountable for, and on what terms we were allowed to
+        touch a codebase other people depended on to keep the company running. Until that was
+        settled, every delivery conversation would keep collapsing back into a negotiation.
+      </p>
+
+      <h2>The give-get</h2>
+      <p>
+        I started with the politics, not the code. I went to Checkout leadership with a
+        deliberately lopsided proposal: we would make no claim on ownership of their codebase,
+        their architecture, or their roadmap. In return, I asked them to treat my engineers
+        like new Checkout hires &mdash; the same onboarding, the same access, the same ramp-up
+        anyone joining their team would get.
+      </p>
+      <p>
+        That framing mattered. I wasn't asking for a shortcut or an exception; I was asking to
+        be held to their standard. Alongside it, I formalized my team as the single point of
+        accountability for all BNPL changes. If something we shipped broke, the buck stopped
+        with us, not with a Checkout engineer who happened to approve the PR. For a team that
+        had been treated as a risk to be managed, becoming the clear owner of that risk was the
+        thing that made trust possible.
+      </p>
+
+      <h2>Earning it</h2>
+      <p>
+        Access on paper isn't the same as trust in practice, so I structured the next two
+        quarters to earn it in the open. I integrated my team into both the BNPL and Checkout
+        roadmaps and paired junior engineers as genuine capacity against Checkout's own goals,
+        not just ours &mdash; if we wanted to be treated as insiders, we had to carry insider
+        work. I built relationships at the staff-engineer level so the technical trust ran
+        peer-to-peer and didn't depend on me being in the room.
+      </p>
+      <p>
+        Then I proposed a one-quarter probationary period and asked for the opposite of a light
+        touch: I invited extreme scrutiny of everything we shipped. That was the whole point. A
+        team that welcomes hard review is a team you stop needing to police. Once we had proven
+        the model held, I wrote it up as a repeatable "ladder of trust" &mdash; the concrete
+        stages a partner team moves through, from supervised contributions to full maintainer
+        standing &mdash; so the next team wouldn't have to reinvent the path we'd walked.
+      </p>
+
+      <h2>What it produced</h2>
+      <p>
+        Within two quarters my team held maintainer access and the L2 designation for all BNPL
+        production issues &mdash; we owned our own incidents end to end. The review cycle went
+        from a two-week walkthrough to ship-when-done, which roughly doubled our project output
+        inside Checkout. The quarter after full integration, we shipped five experiments that
+        generated nearly $180M in additional total payment volume.
+      </p>
+      <p>
+        The innersource model outgrew my team. The onboarding program we owned grew the
+        Checkout contributor roster to twenty engineers across multiple teams, run as a
+        quarterly intake. The following year, my team was named a critical partner on PayPal's
+        full Checkout overhaul spanning the entire credit portfolio &mdash; the clearest signal
+        that we'd stopped being a team that needed permission and become one the platform
+        planned around.
+      </p>
+
+      <h2>Scaling the team behind it</h2>
+      <p>
+        All of this ran on a team I built from scratch, fully remote, in the years after the
+        pandemic. I grew it from ten to twenty-six engineers using a pod model &mdash; three to
+        four engineers and a lead per pod &mdash; and leaned on Tuckman's forming-storming-
+        norming-performing stages to be honest with myself about where each pod actually was
+        rather than where the org chart said it should be. Pods demoed culture wins alongside
+        delivery wins, because a team that only ever measures shipped tickets quietly stops
+        investing in how it works. The product org later mirrored the same pod structure across
+        two of its verticals, and I promoted one of my strongest tech leads into an engineering
+        manager role.
+      </p>
+
+      <h2>What I'd tell another EM</h2>
+      <p>
+        The instinct when your team is blocked is to escalate the blocker. What actually worked
+        was the opposite: I gave up every claim I didn't need, took on more accountability than
+        anyone asked for, and invited the scrutiny most people spend their energy avoiding.
+        Trust in a shared codebase isn't granted by leadership and it isn't won in a
+        negotiation &mdash; it's earned in public, on someone else's standard, and then written
+        down so the next team doesn't have to earn it from zero.
+      </p>
+
+      <p class="back-link">
+        <a href="/work">Back to selected work</a>
+      </p>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .standfirst {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: var(--measure);
+    margin-top: var(--space-2);
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .case-body {
+    padding-block: var(--space-2) var(--space-7);
+  }
+  .case-body h2 {
+    margin-top: var(--space-6);
+  }
+  .case-body p {
+    max-width: var(--measure);
+  }
+
+  /* At a glance facts block — semantic definition list, not a layout table. */
+  .facts {
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    max-width: var(--measure);
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .facts__row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) 1fr;
+    gap: var(--space-2) var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .facts dt {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .facts dd {
+    margin: 0;
+    color: var(--color-ink);
+  }
+  @media (max-width: 34rem) {
+    .facts__row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+
+  .back-link {
+    margin-top: var(--space-6);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+  }
+</style>

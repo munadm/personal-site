@@ -1,14 +1,18 @@
 - main:
   - heading "Selected work" [level=1]
-  - paragraph: A few of the efforts I've led — platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. Full case studies are coming; for now, here's the shape of each.
+  - paragraph: A few of the efforts I've led — platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. The first full case study is live; the rest are on the way.
   - separator
   - list:
     - listitem:
       - paragraph: /Case study \d+/
-      - heading "Leading BNPL platform engineering at PayPal" [level=2]
+      - heading "Leading BNPL platform engineering at PayPal" [level=2]:
+        - link "Leading BNPL platform engineering at PayPal":
+          - /url: /work/bnpl-platform
       - paragraph: /Led the engineering organization behind PayPal's Buy-Now-Pay-Later platform, a credit business processing roughly \$[\d,.]+[bkmBKM]+ in annual volume across multiple international markets\. Set technical direction and org structure for a team of full-stack engineers, balancing reliability and risk controls against the velocity a fast-growing credit product demands\./
       - paragraph: /~\$[\d,.]+[bkmBKM]+ annual platform volume · \$[\d,.]+[bkmBKM]+ incremental TPV from led initiatives/
-      - paragraph: Case study in progress.
+      - paragraph:
+        - link "Read the case study":
+          - /url: /work/bnpl-platform
     - listitem:
       - paragraph: /Case study \d+/
       - heading "A KCS innersource API adopted cross-org" [level=2]

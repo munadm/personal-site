@@ -10,6 +10,7 @@ const caseStudies = [
     summary:
       "Led the engineering organization behind PayPal's Buy-Now-Pay-Later platform, a credit business processing roughly $40B in annual volume across multiple international markets. Set technical direction and org structure for a team of full-stack engineers, balancing reliability and risk controls against the velocity a fast-growing credit product demands.",
     metrics: '~$40B annual platform volume · $180M incremental TPV from led initiatives',
+    href: '/work/bnpl-platform',
   },
   {
     label: 'Case study 02',
@@ -39,8 +40,8 @@ const caseStudies = [
       <h1>Selected work</h1>
       <p class="page-intro__lede">
         A few of the efforts I've led — platform-scale engineering organizations, internal
-        tooling that spread past its own team, and applied AI for compliance. Full case
-        studies are coming; for now, here's the shape of each.
+        tooling that spread past its own team, and applied AI for compliance. The first full
+        case study is live; the rest are on the way.
       </p>
     </div>
   </section>
@@ -54,10 +55,18 @@ const caseStudies = [
           caseStudies.map((c) => (
             <li class="case">
               <p class="kicker">{c.label}</p>
-              <h2>{c.title}</h2>
+              <h2>
+                {c.href ? <a href={c.href}>{c.title}</a> : c.title}
+              </h2>
               <p class="case__summary">{c.summary}</p>
               <p class="case__metrics">{c.metrics}</p>
-              <p class="case__status">Case study in progress.</p>
+              {c.href ? (
+                <p class="case__cta">
+                  <a href={c.href}>Read the case study</a>
+                </p>
+              ) : (
+                <p class="case__status">Case study in progress.</p>
+              )}
             </li>
           ))
         }
@@ -116,6 +125,11 @@ const caseStudies = [
     font-size: var(--fs-14);
     color: var(--color-muted);
     font-style: italic;
+    margin-bottom: 0;
+  }
+  .case__cta {
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
     margin-bottom: 0;
   }
 </style>
