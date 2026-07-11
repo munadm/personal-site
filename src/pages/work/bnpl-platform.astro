@@ -5,12 +5,15 @@ import SiteFooter from '../../components/SiteFooter.astro';
 
 const facts = [
   { term: 'Role', detail: 'Senior Engineering Manager, BNPL platform' },
-  { term: 'Span', detail: 'From a seven-person team to a first-class Checkout partner' },
+  {
+    term: 'Span',
+    detail: 'From a seven-person team to a first-class partner on the core checkout platform',
+  },
   { term: 'Scale', detail: "~$40B in annual platform volume across international markets" },
   {
     term: 'Headline outcomes',
     detail:
-      'Maintainer access to Checkout in two quarters · review cycle from two weeks to ship-when-done · $180M incremental TPV from five experiments in one quarter',
+      'Maintainer standing in the shared checkout codebase in two quarters · review cycle from two weeks to ship-when-done · $180M incremental TPV from five experiments in one quarter',
   },
 ];
 ---
@@ -27,8 +30,8 @@ const facts = [
       <h1>Leading BNPL platform engineering at PayPal</h1>
       <p class="standfirst">
         When I joined PayPal's Buy-Now-Pay-Later team in 2022, we were seven engineers with an
-        ambitious roadmap and no way to ship it. Every change we owned ran through PayPal
-        Checkout, and we had no standing there. This is how I turned a dependent team into a
+        ambitious roadmap and no way to ship it. Every change we owned ran through PayPal's
+        core checkout platform, and we had no standing there. This is how I turned a dependent team into a
         first-class engineering partner in one of the company's most critical codebases &mdash;
         and the framework we left behind so other teams could do the same.
       </p>
@@ -52,10 +55,11 @@ const facts = [
 
       <h2>The blocker</h2>
       <p>
-        BNPL was a fast-growing credit business, but structurally it was a passenger. Every
-        change we needed to make lived inside PayPal Checkout, and we had no independent
-        presence there. Our pull requests sat behind weeks of manual walkthroughs with the
-        Checkout team. Prioritization ran on personal relationships rather than any agreed
+        Our credit business was fast-growing, but structurally it was a passenger. Every
+        change we needed to make lived inside the core checkout codebase, and we had no
+        independent presence there. As with any critical shared codebase, changes from outside
+        teams moved through conservative, high-touch review, and our pull requests sat behind
+        weeks of manual walkthroughs. Priority depended on relationships rather than an agreed
         process, which meant our roadmap was only ever as fast as the goodwill we could borrow.
       </p>
       <p>
@@ -67,17 +71,17 @@ const facts = [
 
       <h2>The give-get</h2>
       <p>
-        I started with the politics, not the code. I went to Checkout leadership with a
+        I started with the politics, not the code. I went to the platform's leadership with a
         deliberately lopsided proposal: we would make no claim on ownership of their codebase,
         their architecture, or their roadmap. In return, I asked them to treat my engineers
-        like new Checkout hires &mdash; the same onboarding, the same access, the same ramp-up
-        anyone joining their team would get.
+        like new hires on their own team &mdash; the same onboarding, the same access, the same
+        ramp-up anyone joining their team would get.
       </p>
       <p>
         That framing mattered. I wasn't asking for a shortcut or an exception; I was asking to
         be held to their standard. Alongside it, I formalized my team as the single point of
         accountability for all BNPL changes. If something we shipped broke, the buck stopped
-        with us, not with a Checkout engineer who happened to approve the PR. For a team that
+        with us, not with a platform engineer who happened to approve the PR. For a team that
         had been treated as a risk to be managed, becoming the clear owner of that risk was the
         thing that made trust possible.
       </p>
@@ -85,9 +89,9 @@ const facts = [
       <h2>Earning it</h2>
       <p>
         Access on paper isn't the same as trust in practice, so I structured the next two
-        quarters to earn it in the open. I integrated my team into both the BNPL and Checkout
-        roadmaps and paired junior engineers as genuine capacity against Checkout's own goals,
-        not just ours &mdash; if we wanted to be treated as insiders, we had to carry insider
+        quarters to earn it in the open. I integrated my team into both our own roadmap and the
+        platform's, and paired junior engineers as genuine capacity against the platform team's
+        own goals, not just ours &mdash; if we wanted to be treated as insiders, we had to carry insider
         work. I built relationships at the staff-engineer level so the technical trust ran
         peer-to-peer and didn't depend on me being in the room.
       </p>
@@ -105,14 +109,14 @@ const facts = [
         Within two quarters my team held maintainer access and the L2 designation for all BNPL
         production issues &mdash; we owned our own incidents end to end. The review cycle went
         from a two-week walkthrough to ship-when-done, which roughly doubled our project output
-        inside Checkout. The quarter after full integration, we shipped five experiments that
+        inside the shared codebase. The quarter after full integration, we shipped five experiments that
         generated nearly $180M in additional total payment volume.
       </p>
       <p>
         The innersource model outgrew my team. The onboarding program we owned grew the
-        Checkout contributor roster to twenty engineers across multiple teams, run as a
-        quarterly intake. The following year, my team was named a critical partner on PayPal's
-        full Checkout overhaul spanning the entire credit portfolio &mdash; the clearest signal
+        platform's contributor roster to twenty engineers across multiple teams, run as a
+        quarterly intake. The following year, my team was named a critical partner on a
+        ground-up overhaul of the checkout experience spanning the entire credit portfolio &mdash; the clearest signal
         that we'd stopped being a team that needed permission and become one the platform
         planned around.
       </p>
