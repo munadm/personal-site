@@ -29,7 +29,7 @@ const facts = [
       <p class="kicker">Case study 03</p>
       <h1>An LLM-driven PII scanner that ships as a standing compliance control</h1>
       <p class="standfirst">
-        At a previous company, a routine code review surfaced a class of privacy risk that our
+        A routine code review surfaced a class of privacy risk that our
         pattern-matching tools could not see. A quick prototype proved the gap was real and the
         existing safety net was thinner than anyone assumed. Turning that afternoon demo into a
         control the whole organization could rely on was the actual work, and most of it happened
@@ -54,9 +54,10 @@ const facts = [
       </dl>
 
       <p>
-        During a routine code review, one of our engineers flagged personally identifiable
-        information being written somewhere it did not belong. What caught my attention was that
-        no regex or classical scanner would have caught it. A leak like that is semantic, not
+        During a routine code review, one of our engineers flagged a change that would have
+        written personally identifiable information somewhere it did not belong. The review
+        caught it before it shipped. What stayed with me was that no regex or classical scanner
+        would have caught it. A leak like that is semantic, not
         lexical: a variable holding a national ID is still a national ID no matter what it is
         named, and pattern matching only sees the name. I built a quick prototype to test the
         idea, a small suite that used an LLM to fail whenever a customer flow wrote any of a
