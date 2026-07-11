@@ -1,0 +1,29 @@
+- main:
+  - paragraph: /Case study \d+/
+  - heading "Leading BNPL platform engineering at PayPal" [level=1]
+  - paragraph: /When I joined PayPal's Buy-Now-Pay-Later team in \d+, we were seven engineers with an ambitious roadmap and no way to ship it\. Every change we owned ran through PayPal's core checkout platform, and we had no standing there\. This is how I turned a dependent team into a first-class engineering partner in one of the company's most critical codebases, and the framework we left behind so other teams could do the same\./
+  - separator
+  - term: Role
+  - definition: Senior Engineering Manager, BNPL platform
+  - term: Span
+  - definition: From a seven-person team to a first-class partner on the core checkout platform
+  - term: Scale
+  - definition: /~\$[\d,.]+[bkmBKM]+ in annual platform volume across international markets/
+  - term: Headline outcomes
+  - definition: /Maintainer standing in the shared checkout codebase in two quarters · review cycle from two weeks to ship-when-done · 4× experiment throughput driving \$[\d,.]+[bkmBKM]+ incremental TPV/
+  - paragraph: /I joined PayPal's Buy-Now-Pay-Later team in \d+ to lead seven engineers with an ambitious credit product roadmap and no way to ship it\. Every change we owned ran through the company's core checkout codebase, a domain where we had no independent standing\. As with any critical shared codebase, changes from outside teams moved through conservative, high touch review, and our pull requests sat behind weeks of manual walkthroughs\. Priority depended on relationships rather than an agreed process, so our roadmap was only ever as fast as the goodwill we could borrow\./
+  - paragraph: "The real problem was not the review queue. No one had defined what my team actually was: what we owned, what we were accountable for, and on what terms we were allowed to touch a codebase the company depended on to keep running. Until that was settled, every delivery conversation kept collapsing back into a negotiation. The goal became clear: stop operating as a supervised guest in someone else's codebase and become a first-class engineering partner with standing of our own."
+  - paragraph: "I started with the politics, not the code. I went to the platform's leadership with a deliberately lopsided proposal: we would make no claim on ownership of their codebase, their architecture, or their roadmap, and in return they would treat my engineers like new hires on their own team, with the same onboarding, the same access, and the same ramp up anyone joining their team would get. I paired that with a single point of accountability: if something we shipped broke, the buck stopped with us, not with a platform engineer who happened to approve the pull request. Over the next two quarters I earned that access in the open. I integrated my team into both our own roadmap and the platform's, put junior engineers to work as genuine capacity against the platform team's own goals, and built relationships at the staff engineer level so the technical trust ran peer to peer. Then I proposed a one quarter probationary period and invited extreme scrutiny of everything we shipped, because a team that welcomes hard review is a team you stop needing to police. Once the model held, I wrote it up as a repeatable ladder of trust: the concrete stages a partner team moves through, from supervised contributions to full maintainer standing, so the next team would not have to reinvent the path we had walked."
+  - paragraph: /Within two quarters my team held maintainer standing and owned production issues end to end\. The review cycle went from a two-week walkthrough to ship-when-done, which roughly doubled our project output inside the shared codebase\. After full integration, the team delivered four times as many experiments per quarter, generating nearly \$[\d,.]+[bkmBKM]+ in additional total payment volume\. The onboarding program we built grew the platform's contributor roster to twenty engineers across multiple teams through a quarterly intake, and the following year my team was named a critical partner on a ground-up overhaul of the checkout experience\./
+  - separator
+  - paragraph:
+    - text: "There is more to this story than fits on a page: the failures along the way, what I would do differently, and how the framework traveled. If it resonates, I would genuinely enjoy comparing notes. Find me on"
+    - link "LinkedIn":
+      - /url: https://www.linkedin.com/in/munadmahinoor
+    - text: or
+    - link "email me directly":
+      - /url: mailto:mahinoormunad@gmail.com
+    - text: .
+  - paragraph:
+    - link "Back to selected work":
+      - /url: /work
