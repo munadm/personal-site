@@ -1,0 +1,29 @@
+- main:
+  - paragraph: /Case study \d+/
+  - heading "An LLM-driven PII scanner that ships as a standing compliance control" [level=1]
+  - paragraph: A routine code review surfaced a class of privacy risk that our pattern-matching tools could not see. A quick prototype proved the gap was real and the existing safety net was thinner than anyone assumed. Turning that afternoon demo into a control the whole organization could rely on was the actual work, and most of it happened through the engineers I led rather than in the code I wrote.
+  - separator
+  - term: Role
+  - definition: Engineering Manager
+  - term: Span
+  - definition: From a code-review observation to an organization-wide compliance control
+  - term: Scale
+  - definition: Every current and legacy product in the CI/CD pipeline
+  - term: Headline outcomes
+  - definition: Standing PII gate in CI · catches semantic exposure classical tools miss · an afternoon prototype turned permanent control
+  - paragraph: "During a routine code review, one of our engineers flagged a change that would have written personally identifiable information somewhere it did not belong. The review caught it before it shipped. What stayed with me was that no regex or classical scanner would have caught it. A leak like that is semantic, not lexical: a variable holding a national ID is still a national ID no matter what it is named, and pattern matching only sees the name. I built a quick prototype to test the idea, a small suite that used an LLM to fail whenever a customer flow wrote any of a defined list of PII fields into a place it should not go. It worked in a few hours, and it did two things at once: it confirmed the risk class was real, and it showed our existing tooling was blind to it."
+  - paragraph: A prototype is not a control. It ran on my machine, it caught what I pointed it at, and it proved nothing about whether the organization was safe. The task I owned was turning that demo into something the company could depend on every day, across products it had shipped years ago and products it was shipping that week. As the engineering manager, I owned making that happen through the team rather than building it myself, so my job was to define what good looked like and then get out of the way of the people who would build it.
+  - paragraph: I made the case to our security and compliance stakeholders that an LLM-based check belonged in the pipeline alongside the classical tools, arguing from the gap the prototype had already demonstrated rather than from novelty. I defined the false-positive rate CI could tolerate before engineers would start resenting the gate and routing around it, and I required the scanner to be evaluated against known-good and known-bad code before we trusted it to block a single deploy. A probabilistic tool earns the right to stop a release only after it has proven it knows the difference. Then I staffed the productization to engineers and led it through them, keeping myself accountable for the standard while they owned the build.
+  - paragraph: "The scanner has run across the CI/CD pipeline ever since, on every current and legacy product, as a standing compliance control. It catches the semantic PII exposure that pattern-matching tools miss, and its false-positive overhead stays low enough that engineers keep trusting the gate instead of fighting it. What started as an afternoon prototype became a permanent, organization-wide control: unglamorous infrastructure that runs quietly on every change."
+  - separator
+  - paragraph:
+    - text: Getting an organization to trust a probabilistic tool as a deploy gate took more than a working demo, and clearing the skepticism and the bar it had to meet is the part that does not fit on a page. There is also an origin story behind why this was built at all, better told in person. If it resonates, I would genuinely enjoy comparing notes. Find me on
+    - link "LinkedIn":
+      - /url: https://www.linkedin.com/in/munadmahinoor
+    - text: or
+    - link "email me directly":
+      - /url: mailto:mahinoormunad@gmail.com
+    - text: .
+  - paragraph:
+    - link "Back to selected work":
+      - /url: /work

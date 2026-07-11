@@ -1,6 +1,6 @@
 - main:
   - heading "Selected work" [level=1]
-  - paragraph: "A few of the efforts I've led: platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. Two full case studies are live; the rest are on the way."
+  - paragraph: "A few of the efforts I've led: platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. All three case studies are live."
   - separator
   - list:
     - listitem:
@@ -25,7 +25,11 @@
           - /url: /work/simplification-layer
     - listitem:
       - paragraph: /Case study \d+/
-      - heading "An LLM-driven PII scanner" [level=2]
+      - heading "An LLM-driven PII scanner" [level=2]:
+        - link "An LLM-driven PII scanner":
+          - /url: /work/llm-pii-scanner
       - paragraph: Directed the design and delivery of an internal scanner that uses an LLM to flag personally identifiable information in code and logs before it ships, catching a class of privacy risk that pattern-matching tools miss. Built for CI integration with low false-positive overhead.
       - paragraph: Integrated into CI/CD pipelines as a standing compliance control
-      - paragraph: Case study in progress.
+      - paragraph:
+        - link "Read the case study":
+          - /url: /work/llm-pii-scanner
