@@ -62,10 +62,9 @@ const facts = [
         behind our credit logic, and this was the rare clean slate that let us walk away from it.
         The obvious ask was a brand-new interface API that made data-driven decisions about which
         credit products to surface. It was a technically sound ambition. What worried me was the
-        timing: the business had set an aggressive next-quarter deadline to go to market, inside
+        timing. The business had set an aggressive next-quarter deadline to go to market, inside
         the most sweeping checkout change the company had attempted in years, in a system that
-        sits directly on top of payments. That is a lot of things changing at once, on a short
-        clock, in exactly the place you least want a surprise.
+        sits directly on top of payments, leaving little room to absorb a surprise.
       </p>
       <p>
         The choice, as it had been framed for me, was binary: migrate the existing debt into the
@@ -73,18 +72,18 @@ const facts = [
         meant carrying years of tangled logic into a fresh codebase on day one. Rewriting meant
         betting a payments-critical launch on brand-new code with no time to prove it. So I
         changed the question. Instead of asking what we wanted to build, I asked what the new
-        checkout codebase actually needed from credit. The answer was narrow: one clean endpoint
-        that handed checkout everything it needed to render a credit offer, and nothing more.
+        checkout codebase actually needed from credit. It needed one clean endpoint that handed
+        checkout everything necessary to render a credit offer, and nothing more.
       </p>
       <p>
         I proposed building that endpoint as a deliberate simplification layer over the existing
         legacy system. It was throwaway work by design, an abstraction sitting on top of code we
-        already planned to replace, and that was the point. Building it forced the team to map
+        already planned to replace. Building it forced the team to map
         every business case our credit logic quietly serviced before anyone touched the new
         architecture, so the landmines surfaced as design notes instead of production incidents.
         When my engineering leads pushed back, watching partner teams do full rewrites while we
         built scaffolding, I ran a capacity-versus-runway exercise with them: the scope of the
-        right build on paper, set against the weeks we actually had. The math was not close. We
+        right build on paper, set against the weeks we actually had. We
         did not have the capacity to ship something we would be proud to own on that timeline. To
         prove I was protecting the vision rather than quietly killing it, I wrote the long-term
         goal into the architecture decision record, a committed path to retiring the legacy
@@ -105,9 +104,9 @@ const facts = [
       <hr class="divider-stripe divider-stripe--muted cta-hr" />
 
       <p class="cta">
-        The hardest part was never the architecture. It was asking engineers who had waited years
-        for a clean slate to build something designed to be discarded, and trusting that the
-        throwaway bet was the fastest safe way through. There is more to that conversation, and to
+        Asking engineers who had waited years for a clean slate to build something designed to be
+        discarded was the harder part, and it took trusting that the throwaway bet was the fastest
+        safe way through. There is more to that conversation, and to
         why the bet paid off, than fits here. If it resonates, I would genuinely enjoy comparing
         notes. Find me on
         {' '}
