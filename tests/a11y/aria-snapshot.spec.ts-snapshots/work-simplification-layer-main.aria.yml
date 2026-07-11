@@ -17,7 +17,7 @@
   - paragraph: "We shipped on the go-to-market deadline. The mapping exercise had pulled undocumented business logic and flows that had not been exercised in years into the open, before any of it could become a production incident, and those findings fed directly into the next design. We entered the new checkout paradigm with full credit-product parity from day one, every credit offering universally compatible, while peer groups were still mid-rewrite. And the layer traveled in both forms: other teams integrated directly against it as consumers, and other domains copied the simplification-layer approach to de-risk their own moves into the new architecture."
   - separator
   - paragraph:
-    - text: Asking engineers who had waited years for a clean slate to build something designed to be discarded was the harder part, and it took trusting that the throwaway bet was the fastest safe way through. There is more to that conversation, and to why the bet paid off, than fits here. If it resonates, I would genuinely enjoy comparing notes. Find me on
+    - text: Asking engineers who had waited years for a clean slate to build something designed to be discarded was harder than any of the architecture, and it took trusting that the throwaway bet was the fastest safe way through. There is more to that conversation, and to why the bet paid off, than fits here. If it resonates, I would genuinely enjoy comparing notes. Find me on
     - link "LinkedIn":
       - /url: https://www.linkedin.com/in/munadmahinoor
     - text: or
