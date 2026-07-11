@@ -33,9 +33,9 @@ const facts = [
         In 2023, PayPal undertook the most radical overhaul of its checkout architecture in
         recent memory. I owned the recommendation for how the credit domain would position
         itself in the new system. My engineers wanted the clean slate they had waited years
-        for. The business wanted it shipped next quarter. This is how I found a third path when
-        both of the options on the table were wrong, and why the safest fast route was to build
-        something we knew we would throw away.
+        for. The business wanted it shipped next quarter. The path we found came from treating
+        the moment differently, less a clean slate than an honest inventory of what checkout
+        actually needed. It shipped on time, and the approach outlived the project.
       </p>
     </div>
   </section>
@@ -71,8 +71,8 @@ const facts = [
         new architecture, or rewrite the credit interface outright. Neither was right. Migrating
         meant carrying years of tangled logic into a fresh codebase on day one. Rewriting meant
         betting a payments-critical launch on brand-new code with no time to prove it. Rather than
-        starting from what we wanted to build, I scoped what the new checkout codebase actually
-        needed from credit. It needed one clean endpoint that handed checkout everything necessary
+        starting from what we wanted to build, we worked back from what the new checkout codebase
+        actually needed from credit. It needed one clean endpoint that handed checkout everything necessary
         to render a credit offer, and nothing more.
       </p>
       <p>
