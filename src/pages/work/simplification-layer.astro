@@ -1,0 +1,201 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+
+const facts = [
+  { term: 'Role', detail: 'Engineering Manager, credit in checkout' },
+  {
+    term: 'Span',
+    detail:
+      "Recommendation owner for how the credit domain would position itself in a ground-up rewrite of PayPal's checkout",
+  },
+  { term: 'Scale', detail: 'Every credit product PayPal surfaces at checkout' },
+  {
+    term: 'Headline outcomes',
+    detail:
+      'Shipped on the go-to-market deadline · full credit parity from day one · the pattern replicated by other domains',
+  },
+];
+---
+
+<Base
+  title="The simplification layer that shipped a rewrite's outcome without the rewrite: Munad Mahinoor"
+  description="A case study in finding the third path when the two framed options are both bad, and changing fewer things at once in a system that touches payments."
+>
+  <SiteHeader slot="header" currentPath="/work" />
+
+  <section class="page-intro">
+    <div class="container">
+      <p class="kicker">Case study 02</p>
+      <h1>The simplification layer that shipped a rewrite's outcome without the rewrite</h1>
+      <p class="standfirst">
+        In 2023, PayPal undertook the most radical overhaul of its checkout architecture in
+        recent memory. I owned the recommendation for how the credit domain would position
+        itself in the new system. My engineers wanted the clean slate they had waited years
+        for. The business wanted it shipped next quarter. This is how I found a third path when
+        both of the options on the table were wrong, and why the safest fast route was to build
+        something we knew we would throw away.
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider-stripe divider-stripe--muted container-hr" />
+
+  <section class="case-body">
+    <div class="container">
+      <dl class="facts" aria-label="At a glance">
+        {
+          facts.map((f) => (
+            <div class="facts__row">
+              <dt>{f.term}</dt>
+              <dd>{f.detail}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p>
+        In 2023, PayPal rebuilt its checkout architecture from the ground up, and I was the
+        engineering manager responsible for recommending how the credit domain should live in
+        the new system. My team was energized. Years of accumulated interface debt had piled up
+        behind our credit logic, and this was the rare clean slate that let us walk away from it.
+        The obvious ask was a brand-new interface API that made data-driven decisions about which
+        credit products to surface. It was a technically sound ambition. What worried me was the
+        timing: the business had set an aggressive next-quarter deadline to go to market, inside
+        the most sweeping checkout change the company had attempted in years, in a system that
+        sits directly on top of payments. That is a lot of things changing at once, on a short
+        clock, in exactly the place you least want a surprise.
+      </p>
+      <p>
+        The choice, as it had been framed for me, was binary: migrate the existing debt into the
+        new architecture, or rewrite the credit interface outright. Neither was right. Migrating
+        meant carrying years of tangled logic into a fresh codebase on day one. Rewriting meant
+        betting a payments-critical launch on brand-new code with no time to prove it. So I
+        changed the question. Instead of asking what we wanted to build, I asked what the new
+        checkout codebase actually needed from credit. The answer was narrow: one clean endpoint
+        that handed checkout everything it needed to render a credit offer, and nothing more.
+      </p>
+      <p>
+        I proposed building that endpoint as a deliberate simplification layer over the existing
+        legacy system. It was throwaway work by design, an abstraction sitting on top of code we
+        already planned to replace, and that was the point. Building it forced the team to map
+        every business case our credit logic quietly serviced before anyone touched the new
+        architecture, so the landmines surfaced as design notes instead of production incidents.
+        When my engineering leads pushed back, watching partner teams do full rewrites while we
+        built scaffolding, I ran a capacity-versus-runway exercise with them: the scope of the
+        right build on paper, set against the weeks we actually had. The math was not close. We
+        did not have the capacity to ship something we would be proud to own on that timeline. To
+        prove I was protecting the vision rather than quietly killing it, I wrote the long-term
+        goal into the architecture decision record, a committed path to retiring the legacy
+        controller for the real target state, and put a standing weekly working session on the
+        calendar to keep that goal alive.
+      </p>
+      <p>
+        We shipped on the go-to-market deadline. The mapping exercise had pulled undocumented
+        business logic and flows that had not been exercised in years into the open, before any
+        of it could become a production incident, and those findings fed directly into the next
+        design. We entered the new checkout paradigm with full credit-product parity from day
+        one, every credit offering universally compatible, while peer groups were still mid-rewrite.
+        And the layer traveled in both forms: other teams integrated directly against it as
+        consumers, and other domains copied the simplification-layer approach to de-risk their own
+        moves into the new architecture.
+      </p>
+
+      <hr class="divider-stripe divider-stripe--muted cta-hr" />
+
+      <p class="cta">
+        The hardest part was never the architecture. It was asking engineers who had waited years
+        for a clean slate to build something designed to be discarded, and trusting that the
+        throwaway bet was the fastest safe way through. There is more to that conversation, and to
+        why the bet paid off, than fits here. If it resonates, I would genuinely enjoy comparing
+        notes. Find me on
+        {' '}
+        <a href="https://www.linkedin.com/in/munadmahinoor" target="_blank" rel="noreferrer">
+          LinkedIn
+        </a>
+        {' '}or{' '}
+        <a href="mailto:mahinoormunad@gmail.com">email me directly</a>.
+      </p>
+
+      <p class="back-link">
+        <a href="/work">Back to selected work</a>
+      </p>
+    </div>
+  </section>
+
+  <SiteFooter slot="footer" />
+</Base>
+
+<style>
+  .page-intro {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .standfirst {
+    font-size: var(--fs-subhead);
+    line-height: var(--leading-heading);
+    color: var(--color-muted);
+    max-width: var(--measure);
+    margin-top: var(--space-2);
+  }
+
+  .container-hr {
+    max-width: var(--container);
+    margin-inline: auto;
+    margin-block: var(--space-3);
+  }
+
+  .case-body {
+    padding-block: var(--space-2) var(--space-7);
+  }
+  .case-body p {
+    max-width: var(--measure);
+  }
+
+  /* At a glance facts block: semantic definition list, not a layout table. */
+  .facts {
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    max-width: var(--measure);
+    border-top: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .facts__row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) 1fr;
+    gap: var(--space-2) var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: var(--border-hair) solid var(--color-rule-faint);
+  }
+  .facts dt {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 0;
+  }
+  .facts dd {
+    margin: 0;
+    color: var(--color-ink);
+  }
+  @media (max-width: 34rem) {
+    .facts__row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+
+  .cta-hr {
+    margin-block: var(--space-6) var(--space-4);
+  }
+  .cta {
+    max-width: var(--measure);
+    font-size: var(--fs-18);
+  }
+
+  .back-link {
+    margin-top: var(--space-6);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+  }
+</style>

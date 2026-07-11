@@ -1,7 +1,7 @@
 import type { Page } from 'playwright/test';
 
 /**
- * The nine public, static routes the accessibility harness must enforce.
+ * The ten public, static routes the accessibility harness must enforce.
  * Excludes the /proto/* pages, which are unlinked prototypes and not part of
  * the shipped site surface.
  */
@@ -9,6 +9,7 @@ export const ROUTES = [
   '/',
   '/work',
   '/work/bnpl-platform',
+  '/work/simplification-layer',
   '/writing',
   '/resume',
   '/contact',
