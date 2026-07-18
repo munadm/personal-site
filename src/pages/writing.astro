@@ -15,28 +15,29 @@ import SiteFooter from '../components/SiteFooter.astro';
       <h1>Writing</h1>
       <p class="page-intro__lede">
         Essays live on the blog, at
-        {' '}<span class="blog-domain">blog.munadmahinoor.com</span> — launching soon.
-        Nothing is published there yet, so there's nothing to link to. This page will list
-        each essay as it goes live.
+        {' '}<a href="https://blog.munadmahinoor.com">blog.munadmahinoor.com</a>.
+        Each essay is listed here as it goes live.
       </p>
     </div>
   </section>
 
   <hr class="divider-stripe divider-stripe--muted container-hr" />
 
-  <section class="upcoming">
+  <section class="published">
     <div class="container">
-      <h2>Forthcoming</h2>
+      <h2>Essays</h2>
       <ul class="essay-list">
         <li class="essay">
           <p class="kicker">Essay</p>
-          <h3>How I built this site with an agent workforce</h3>
+          <h3>
+            <a href="https://blog.munadmahinoor.com/agent-workforce/">
+              How I built this site with an agent workforce
+            </a>
+          </h3>
           <p>
-            A point-of-view piece on directing a small team of AI agents through design, build,
-            and accessibility verification — what worked, what needed a firm hand, and what I'd
-            do differently.
+            Directing coding agents like ramping a new direct report. The bar flows
+            from you to the agent, not the other way around.
           </p>
-          <p class="essay__status">Forthcoming.</p>
         </li>
       </ul>
     </div>
@@ -55,10 +56,6 @@ import SiteFooter from '../components/SiteFooter.astro';
     color: var(--color-muted);
     max-width: 60ch;
   }
-  .blog-domain {
-    color: var(--color-ink);
-    font-weight: var(--fw-medium);
-  }
 
   .container-hr {
     max-width: var(--container);
@@ -66,7 +63,7 @@ import SiteFooter from '../components/SiteFooter.astro';
     margin-block: var(--space-3);
   }
 
-  .upcoming {
+  .published {
     padding-block: var(--space-2) var(--space-7);
   }
 
@@ -80,12 +77,10 @@ import SiteFooter from '../components/SiteFooter.astro';
     padding: var(--space-3);
     max-width: 44rem;
   }
+  .essay h3 a {
+    color: var(--color-ink);
+  }
   .essay p:last-child {
     margin-bottom: 0;
-  }
-  .essay__status {
-    font-size: var(--fs-14);
-    color: var(--color-muted);
-    font-style: italic;
   }
 </style>

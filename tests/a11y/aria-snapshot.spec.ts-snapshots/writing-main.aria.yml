@@ -1,11 +1,16 @@
 - main:
   - heading "Writing" [level=1]
-  - paragraph: Essays live on the blog, at blog.munadmahinoor.com — launching soon. Nothing is published there yet, so there's nothing to link to. This page will list each essay as it goes live.
+  - paragraph:
+    - text: Essays live on the blog, at
+    - link "blog.munadmahinoor.com":
+      - /url: https://blog.munadmahinoor.com
+    - text: . Each essay is listed here as it goes live.
   - separator
-  - heading "Forthcoming" [level=2]
+  - heading "Essays" [level=2]
   - list:
     - listitem:
       - paragraph: Essay
-      - heading "How I built this site with an agent workforce" [level=3]
-      - paragraph: A point-of-view piece on directing a small team of AI agents through design, build, and accessibility verification — what worked, what needed a firm hand, and what I'd do differently.
-      - paragraph: Forthcoming.
+      - heading "How I built this site with an agent workforce" [level=3]:
+        - link "How I built this site with an agent workforce":
+          - /url: https://blog.munadmahinoor.com/agent-workforce/
+      - paragraph: Directing coding agents like ramping a new direct report. The bar flows from you to the agent, not the other way around.
