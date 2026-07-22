@@ -4,23 +4,18 @@ import '../styles/global.css';
 export interface Props {
   title: string;
   description: string;
-  /** Path-relative canonical, e.g. "/proto/signal". Defaults to current URL. */
-  canonicalPath?: string;
   /** Emit JSON-LD Person schema (home / bio pages). */
   personSchema?: boolean;
-  ogType?: string;
 }
 
 const {
   title,
   description,
-  canonicalPath,
   personSchema = false,
-  ogType = 'website',
 } = Astro.props;
 
 const siteName = 'Munad Mahinoor';
-const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/favicon.svg', Astro.site).href;
 
 const personLd = {
@@ -58,7 +53,7 @@ const personLd = {
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <meta property="og:type" content={ogType} />
+    <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
