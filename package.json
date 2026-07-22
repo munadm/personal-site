@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "playwright test",
-    "resume:pdf": "node scripts/make-resume-pdf.mjs"
+    "resume:pdf": "node scripts/make-resume-pdf.mjs",
+    "audio": "node scripts/audio/make-audio.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

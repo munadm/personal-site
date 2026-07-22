@@ -62,6 +62,30 @@ npm run build    # static build to ./dist
 npm run preview  # serve the build locally
 ```
 
+### Audio narration
+
+The case studies carry an AI-narrated reading, synthesized at build time with
+[Kokoro](https://github.com/hexgrad/kokoro) (open-weights, MIT, runs locally, no API).
+
+```sh
+npm run audio    # (re)generate changed narrations into public/audio/
+```
+
+The generated mp3s are committed like `public/resume.pdf`, so the deploy build never loads
+a model — Cloudflare just serves static files. The generator **discovers case studies from
+the build itself** (no hardcoded list), so a new post can't be missed; it hash-caches in
+`public/audio/manifest.json` and only re-synthesizes pages whose prose (or the voice/pacing)
+actually changed. The ~500MB TTS toolchain is isolated in `scripts/audio/` with its own
+`package.json`, deliberately kept out of the root dependency graph so it never slows CI
+`npm ci`. Requires `ffmpeg` on `PATH`.
+
+You rarely run it by hand: the **pre-commit hook builds narration just in time**. When a
+commit touches a case study (`src/pages/work/*.astro`), the hook reconciles the audio —
+building any missing or changed narration and staging it into the same commit — so audio
+never drifts from the text. Commits that don't touch a case study skip it entirely. Voice
+and pacing live as constants at the top of `scripts/audio/make-audio.mjs` (`VOICE`, `SPEED`,
+`GAP_SECONDS`); mispronunciations are fixed with a small verified respelling `LEXICON`.
+
 ## License
 
 Content and design © Munad Mahinoor. Code is provided for reference.

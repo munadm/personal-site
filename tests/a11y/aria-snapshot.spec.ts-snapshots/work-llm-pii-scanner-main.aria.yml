@@ -2,6 +2,11 @@
   - paragraph: /Case study \d+/
   - heading "An LLM-driven PII scanner that ships as a standing compliance control" [level=1]
   - paragraph: A routine code review surfaced a class of privacy risk that our pattern-matching tools could not see. A quick prototype proved the gap was real and the existing safety net was thinner than anyone assumed. Turning that afternoon demo into a control the whole organization could rely on was the actual work, and most of it happened through the engineers I led rather than in the code I wrote.
+  - paragraph: AI-narrated 3 min
+  - paragraph:
+    - text: A synthetic voice reading the text on this page.
+    - link "How it is made.":
+      - /url: /colophon
   - separator
   - term: Role
   - definition: Engineering Manager

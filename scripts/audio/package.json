@@ -1,0 +1,13 @@
+{
+  "name": "personal-site-audio-tool",
+  "private": true,
+  "type": "module",
+  "description": "Isolated build-time TTS toolchain (Kokoro) for narration mp3s. Kept out of the root dependency graph so onnxruntime never taxes CI/pre-commit `npm ci`.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "kokoro-js": "^1.2.1",
+    "node-html-parser": "^7.0.1"
+  }
+}

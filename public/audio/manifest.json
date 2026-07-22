@@ -1,0 +1,17 @@
+{
+  "bnpl-platform": {
+    "route": "/work/bnpl-platform",
+    "hash": "f1622cc07dbb9554",
+    "minutes": 4
+  },
+  "llm-pii-scanner": {
+    "route": "/work/llm-pii-scanner",
+    "hash": "c842f8d2460779fe",
+    "minutes": 3
+  },
+  "simplification-layer": {
+    "route": "/work/simplification-layer",
+    "hash": "effeb5fef4ff68e1",
+    "minutes": 4
+  }
+}

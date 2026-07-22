@@ -1,0 +1,118 @@
+---
+/*
+ * AudioNarration — a native <audio> player for the AI-narrated reading of a
+ * page. Renders nothing until `npm run audio` has generated the mp3 and
+ * recorded it in public/audio/manifest.json, so a missing narration never
+ * ships a broken player. The page itself is the transcript.
+ *
+ * Native <audio controls> is keyboard- and screen-reader-accessible for free;
+ * the a11y suite (tests/a11y/audio.spec.ts) enforces the accessible name,
+ * the visible "AI-narrated" label, and that the mp3 actually resolves.
+ */
+import manifest from '../../public/audio/manifest.json';
+
+interface Props {
+  /** Page slug — the manifest key and the /audio/<slug>.mp3 basename. */
+  slug: string;
+}
+
+type Entry = { minutes: number };
+const { slug } = Astro.props;
+const entry = (manifest as Record<string, Entry>)[slug];
+const src = `/audio/${slug}.mp3`;
+const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minutes` : '';
+---
+
+{
+  entry && (
+    <div class="narration">
+      <p class="narration__head">
+        <svg class="narration__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M4 9v6h3l5 4V5L7 9H4z"
+            fill="currentColor"
+          />
+          <path
+            d="M16 8.5a4 4 0 0 1 0 7M18.5 6a7.5 7.5 0 0 1 0 12"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+          />
+        </svg>
+        <span class="narration__label">AI-narrated</span>
+        <span class="narration__dot" aria-hidden="true">·</span>
+        <span class="narration__meta">{entry.minutes} min</span>
+      </p>
+      <audio
+        class="narration__player"
+        controls
+        preload="none"
+        src={src}
+        aria-label={label}
+      />
+      <p class="narration__note">
+        A synthetic voice reading the text on this page.{' '}
+        <a href="/colophon">How it is made.</a>
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .narration {
+    max-width: var(--measure);
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-3) var(--space-3);
+    border: var(--border-hair) solid var(--color-rule-faint);
+    background: var(--color-surface);
+  }
+
+  .narration__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0 0 var(--space-2);
+  }
+  .narration__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    color: var(--color-accent);
+  }
+  .narration__label {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .narration__meta {
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Decorative separator. A real aria-hidden element rather than CSS
+     ::before content, which Chromium folds into the accessible name and
+     some screen readers announce ("middle dot"). */
+  .narration__dot {
+    color: var(--color-rule-faint);
+    user-select: none;
+  }
+
+  .narration__player {
+    display: block;
+    width: 100%;
+    height: 40px;
+  }
+  .narration__player:focus-visible {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .narration__note {
+    margin: var(--space-2) 0 0;
+    font-size: var(--fs-14);
+    color: var(--color-muted);
+  }
+</style>

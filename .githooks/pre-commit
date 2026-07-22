@@ -11,6 +11,20 @@ set -e
 echo "pre-commit: building site..."
 npm run build
 
+# JIT narration audio: when a case study is added or edited, (re)build its
+# AI-narrated mp3 from the freshly built prose and stage it into THIS commit,
+# so audio never drifts from the text and a new post can't ship without it.
+# Skipped entirely when no case study changed, so ordinary commits stay fast.
+# make-audio discovers case studies from the build itself and is hash-cached,
+# so an edit that doesn't touch narrated prose is a quick no-op.
+if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^src/pages/work/[^/]+\.astro$'; then
+  echo "pre-commit: case study change detected — reconciling narration audio..."
+  node scripts/audio/make-audio.mjs --skip-build
+  git add public/audio
+else
+  echo "pre-commit: no case study changes — skipping narration build."
+fi
+
 echo "pre-commit: running full Playwright suite (fold + a11y)..."
 npx playwright test
 

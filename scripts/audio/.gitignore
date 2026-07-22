@@ -1,0 +1,5 @@
+# The 500MB TTS dependency tree is installed on demand and never committed.
+node_modules/
+package-lock.json
+# Scratch WAVs before mp3 encoding.
+*.wav

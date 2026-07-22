@@ -46,6 +46,16 @@ import SiteFooter from '../components/SiteFooter.astro';
         {' '}<a href="/writing">writing</a> page.
       </p>
 
+      <h2>Audio narration</h2>
+      <p>
+        The case studies carry an AI-narrated reading, labelled plainly as such. The voice is
+        synthesized at build time with <a href="https://github.com/hexgrad/kokoro" target="_blank" rel="noreferrer">Kokoro</a>,
+        an open-weights text-to-speech model that runs locally with no API and no subscription.
+        Each reading is generated from the page's own text, encoded to a small mp3, and served as
+        a static file through a native audio player, so there is nothing to load unless you press
+        play. The page you are reading is the transcript.
+      </p>
+
       <h2>Privacy</h2>
       <p>
         No analytics, no cookies, no tracking scripts of any kind. I don't know who visits
