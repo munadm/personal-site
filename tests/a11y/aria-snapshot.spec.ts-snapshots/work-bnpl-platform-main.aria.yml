@@ -2,6 +2,11 @@
   - paragraph: /Case study \d+/
   - heading "Leading BNPL platform engineering at PayPal" [level=1]
   - paragraph: /When I joined PayPal's Buy-Now-Pay-Later team in \d+, we were seven engineers with an ambitious roadmap and no reliable path to ship it\. Every change we owned ran through PayPal's core checkout platform, and we had no standing there\. Earning first-class partnership in one of the company's most critical codebases meant leading with accountability before access was ever granted\. The framework that came out of it let other teams follow the same path\./
+  - paragraph: AI-narrated 4 min
+  - paragraph:
+    - text: A synthetic voice reading the text on this page.
+    - link "How it is made.":
+      - /url: /colophon
   - separator
   - term: Role
   - definition: Senior Engineering Manager, BNPL platform

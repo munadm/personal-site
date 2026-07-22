@@ -2,6 +2,11 @@
   - paragraph: /Case study \d+/
   - heading "The simplification layer that shipped a rewrite's outcome without the rewrite" [level=1]
   - paragraph: /In \d+, PayPal undertook the most radical overhaul of its checkout architecture in recent memory\. I owned the recommendation for how the credit domain would position itself in the new system\. My engineers wanted the clean slate they had waited years for\. The business wanted it shipped next quarter\. The path we found came from treating the moment differently, less a clean slate than an honest inventory of what checkout actually needed\. It shipped on time, and the approach outlived the project\./
+  - paragraph: AI-narrated 4 min
+  - paragraph:
+    - text: A synthetic voice reading the text on this page.
+    - link "How it is made.":
+      - /url: /colophon
   - separator
   - term: Role
   - definition: Engineering Manager, credit in checkout
