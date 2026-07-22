@@ -106,7 +106,6 @@ function normalizeForSpeech(text) {
     .replace(/\$(\d+)K\b/g, '$1 thousand dollars')
     .replace(/\$(\d+)\b/g, '$1 dollars')
     .replace(/(\d+)\s*×/g, '$1 times')
-    .replace(/×/g, ' times ')
     .replace(/CI\/CD/g, 'C I C D')
     .replace(/·/g, ', ')
     .replace(/\s+/g, ' ')
@@ -199,19 +198,6 @@ async function main() {
     process.exit(1);
   }
 
-  // Drop audio for case studies that no longer exist, so the manifest always
-  // maps exactly to the real posts.
-  let manifestChanged = false;
-  const liveSlugs = new Set(pages.map((p) => p.slug));
-  for (const key of Object.keys(manifest)) {
-    if (!liveSlugs.has(key)) {
-      console.log(`⤫ ${key} — case study removed, dropping its audio`);
-      rmSync(join(OUT_DIR, `${key}.mp3`), { force: true });
-      delete manifest[key];
-      manifestChanged = true;
-    }
-  }
-
   // Decide what needs (re)generating, so the model only loads on a real miss
   // or change. A page with no manifest entry is a miss; a hash mismatch means
   // the prose (or voice/pacing) changed.
@@ -228,17 +214,11 @@ async function main() {
       console.log(`✓ ${page.slug} — up to date`);
       continue;
     }
-    const reason = !prev
-      ? 'new case study, no audio yet'
-      : !existsSync(mp3Path)
-        ? 'mp3 missing'
-        : 'prose or voice changed';
-    console.log(`● ${page.slug} — ${reason}`);
+    console.log(`● ${page.slug} — ${prev ? 'prose or voice changed' : 'new case study, no audio yet'}`);
     jobs.push({ ...page, text, hash, mp3Path });
   }
 
   if (jobs.length === 0) {
-    if (manifestChanged) writeManifest(manifest);
     console.log('All narrations up to date.');
     return;
   }
@@ -286,12 +266,8 @@ async function main() {
     const bytes = readFileSync(job.mp3Path).length;
     manifest[job.slug] = {
       route: job.route,
-      voice: VOICE,
       hash: job.hash,
-      seconds: Math.round(seconds),
       minutes: Math.max(1, Math.round(seconds / 60)),
-      bytes,
-      chars: job.text.length,
     };
     console.log(
       `  → ${(seconds / 60).toFixed(1)} min, ${(bytes / 1024 / 1024).toFixed(2)} MB`,

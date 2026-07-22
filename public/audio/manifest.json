@@ -1,29 +1,17 @@
 {
   "bnpl-platform": {
     "route": "/work/bnpl-platform",
-    "voice": "am_onyx",
     "hash": "f1622cc07dbb9554",
-    "seconds": 212,
-    "minutes": 4,
-    "bytes": 1700457,
-    "chars": 3761
+    "minutes": 4
   },
   "llm-pii-scanner": {
     "route": "/work/llm-pii-scanner",
-    "voice": "am_onyx",
     "hash": "c842f8d2460779fe",
-    "seconds": 193,
-    "minutes": 3,
-    "bytes": 1547627,
-    "chars": 3339
+    "minutes": 3
   },
   "simplification-layer": {
     "route": "/work/simplification-layer",
-    "voice": "am_onyx",
     "hash": "effeb5fef4ff68e1",
-    "seconds": 235,
-    "minutes": 4,
-    "bytes": 1879984,
-    "chars": 4039
+    "minutes": 4
   }
 }

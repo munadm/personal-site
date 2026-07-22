@@ -15,7 +15,7 @@ import { test, expect } from 'playwright/test';
  * generator and it is enforced here with no test edit.
  */
 
-type Entry = { route: string; minutes: number; bytes: number };
+type Entry = { route: string; minutes: number };
 const manifest: Record<string, Entry> = JSON.parse(
   readFileSync(new URL('../../public/audio/manifest.json', import.meta.url), 'utf8'),
 );

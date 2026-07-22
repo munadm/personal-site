@@ -16,7 +16,7 @@ interface Props {
   slug: string;
 }
 
-type Entry = { minutes: number; voice: string };
+type Entry = { minutes: number };
 const { slug } = Astro.props;
 const entry = (manifest as Record<string, Entry>)[slug];
 const src = `/audio/${slug}.mp3`;
