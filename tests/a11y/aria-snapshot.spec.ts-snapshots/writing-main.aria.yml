@@ -10,6 +10,12 @@
   - list:
     - listitem:
       - paragraph: Essay
+      - heading "You can't vibe feels" [level=3]:
+        - link "You can't vibe feels":
+          - /url: https://blog.munadmahinoor.com/vibe-feels/
+      - paragraph: Agentic coding can produce what it cannot judge. When the quality bar is a feeling, your intuition is the part worth sharpening.
+    - listitem:
+      - paragraph: Essay
       - heading "How I built this site with an agent workforce" [level=3]:
         - link "How I built this site with an agent workforce":
           - /url: https://blog.munadmahinoor.com/agent-workforce/
