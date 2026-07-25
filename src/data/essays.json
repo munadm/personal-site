@@ -1,0 +1,18 @@
+{
+  "essays": [
+    {
+      "slug": "vibe-feels",
+      "title": "You can't vibe feels",
+      "description": "Agentic coding can produce what it cannot judge. When the quality bar is a feeling, your intuition is the part worth sharpening.",
+      "pubDate": "2026-07-24T00:00:00.000Z",
+      "url": "https://blog.munadmahinoor.com/vibe-feels/"
+    },
+    {
+      "slug": "agent-workforce",
+      "title": "How I built this site with an agent workforce",
+      "description": "Directing coding agents like ramping a new direct report. The bar flows from you to the agent, not the other way around.",
+      "pubDate": "2026-07-18T00:00:00.000Z",
+      "url": "https://blog.munadmahinoor.com/agent-workforce/"
+    }
+  ]
+}
