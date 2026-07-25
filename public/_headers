@@ -3,3 +3,9 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+
+# Everything Astro emits under /_astro/ is content-hashed, so the filename
+# changes whenever the bytes do. Cloudflare's default (4h, must-revalidate)
+# makes repeat visitors re-validate fonts that can never go stale.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
