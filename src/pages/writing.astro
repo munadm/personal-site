@@ -2,6 +2,19 @@
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import essayData from '../data/essays.json';
+
+/*
+ * The essay list is owned by blog-vault, not retyped here. That repo publishes
+ * the posts it flags as essays at blog.munadmahinoor.com/essays.json, and its
+ * deploy job writes the same file into src/data/essays.json here, which
+ * rebuilds this site. Publishing an essay on the blog is therefore the only
+ * step needed to list it on this page.
+ *
+ * Reading a committed file rather than fetching at build time keeps this build
+ * hermetic, so an outage on the blog can never fail a deploy of this site.
+ */
+const essays = essayData.essays;
 ---
 
 <Base
@@ -27,30 +40,17 @@ import SiteFooter from '../components/SiteFooter.astro';
     <div class="container">
       <h2>Essays</h2>
       <ul class="essay-list">
-        <li class="essay">
-          <p class="kicker">Essay</p>
-          <h3>
-            <a href="https://blog.munadmahinoor.com/vibe-feels/">
-              You can't vibe feels
-            </a>
-          </h3>
-          <p>
-            Agentic coding can produce what it cannot judge. When the quality bar is a
-            feeling, your intuition is the part worth sharpening.
-          </p>
-        </li>
-        <li class="essay">
-          <p class="kicker">Essay</p>
-          <h3>
-            <a href="https://blog.munadmahinoor.com/agent-workforce/">
-              How I built this site with an agent workforce
-            </a>
-          </h3>
-          <p>
-            Directing coding agents like ramping a new direct report. The bar flows
-            from you to the agent, not the other way around.
-          </p>
-        </li>
+        {
+          essays.map((essay) => (
+            <li class="essay">
+              <p class="kicker">Essay</p>
+              <h3>
+                <a href={essay.url}>{essay.title}</a>
+              </h3>
+              <p>{essay.description}</p>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
