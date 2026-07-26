@@ -45,8 +45,8 @@ const MP3_BITRATE = '64k';
 // silence inserted between sentences. The default (1.0 / 0.28) read as slow
 // and halting, so speech is nudged faster and the dead air between sentences
 // cut back. Listeners can still speed up further in the native player.
-const SPEED = 1.15;
-const GAP_SECONDS = 0.1;
+const SPEED = 1.28;
+const GAP_SECONDS = 0.07;
 
 /*
  * Pronunciation fixes. Kokoro phonemizes via espeak-ng, which mis-stresses a
@@ -62,9 +62,42 @@ const GAP_SECONDS = 0.1;
  * Keys are matched whole-word, case-insensitively.
  */
 const LEXICON = {
+  // "re-" as a real prefix. espeak reduces it to ɹᵻ, which swallows the beat
+  // that makes the word mean "again". Whether "re-" or "ree-" reads better is
+  // per-word and was chosen by ear with scripts/audio/candidates.mjs.
   rewrite: 're-write',
   rewrites: 're-writes',
   rewriting: 're-writing',
+  replan: 're-plan',
+  replans: 're-plans',
+  replanning: 're-planning',
+  repaint: 're-paint',
+  repaints: 're-paints',
+  relaunch: 'ree-launch',
+  relaunched: 'ree-launched',
+  relaunching: 'ree-launching',
+  rebuild: 'ree-build',
+  rebuilt: 'ree-built',
+  rebuilding: 'ree-building',
+  restructure: 'ree-structure',
+  restructured: 'ree-structured',
+  restructuring: 'ree-structuring',
+
+  // "ea" read as a short vowel: "reading" came out as "riding".
+  reading: 'reeding',
+  // Chosen over five hyphenated shapes: any break makes it two beats.
+  narration: 'nehrayshin',
+  narrations: 'nehrayshins',
+  leadership: 'leedership',
+
+  // Initialisms. Spelling the letters phonetically keeps them from being read
+  // as a word and drops the halting pause between each letter.
+  RSS: 'arr-ess-ess',
+  // BNPL reads better spaced than run together; PII, LLM, API and URL were
+  // checked by ear and already land, so they are deliberately absent.
+  BNPL: 'B N P L',
+
+  // Vowel and stress fixes.
   domain: 'demain',
   domains: 'demains',
   endpoint: 'end point',
@@ -107,6 +140,8 @@ function normalizeForSpeech(text) {
     .replace(/\$(\d+)\b/g, '$1 dollars')
     .replace(/(\d+)\s*×/g, '$1 times')
     .replace(/CI\/CD/g, 'C I C D')
+    // A bare domain in prose is read as one mangled word, swallowing the TLD.
+    .replace(/\.(com|io|dev|org|net|ai)\b/gi, ' dot $1')
     .replace(/·/g, ', ')
     .replace(/\s+/g, ' ')
     .trim();
