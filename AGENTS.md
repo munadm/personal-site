@@ -23,7 +23,7 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 Every PR shows the change, it does not just describe it.
 
 - **Before and after.** If the change alters how the system behaves, state both sides: the old path and the new one, the old value and the new value. A table or a short two-column contrast beats a paragraph. If a number moved (a runtime, a file size, a test count), give both numbers.
-- **Screenshots for anything visible.** Capture the same page or component before and after and put them side by side, so a reviewer validates by eye instead of by trusting the description. Build the previous state from `main` in a scratch worktree, serve it on another port, and shoot both with the same viewport and colour scheme.
+- **Screenshots for anything visible.** Capture the same page or component before and after so a reviewer validates by eye instead of by trusting the description. Build the previous state from `main` in a scratch worktree, serve it on another port, and shoot both with the same viewport and colour scheme. **Never commit screenshots**, not to the branch and not to an assets branch: review images are not source, and git history is forever. Attach them by dragging the files into the PR body on github.com, which uploads them to GitHub's own CDN. Since that upload needs the web UI, an agent preparing a PR leaves the captured files on disk, says where they are, and writes the before/after in words so the description stands on its own if nobody attaches anything.
 - **Say what did not change.** Reviewers spend their attention on the parts you leave silent. Call out what was deliberately left alone and why.
 - **Show the check.** Paste the result of the suite that proves it, with counts.
 
