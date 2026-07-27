@@ -15,7 +15,7 @@ debug it when it breaks.
   It runs **only on a push to `main`** (i.e. merging a PR), never on PRs, and
   only after the `build-and-test` job (build + Playwright fold/a11y suite)
   passes.
-- **Mechanism:** `cloudflare/wrangler-action@v3` runs
+- **Mechanism:** `cloudflare/wrangler-action@v4` runs
   `wrangler pages deploy dist --project-name=personal-site --branch=main`,
   authenticated with an API token stored as a GitHub secret. `--branch=main`
   is what makes the deployment *production* rather than a preview.

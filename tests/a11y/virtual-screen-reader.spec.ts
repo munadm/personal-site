@@ -93,6 +93,7 @@ test('virtual SR narrates the home page landmarks and h1 in order', async () => 
     'main', // main landmark
     'heading, Munad Mahinoor, level 1', // the h1
     'contentinfo', // footer landmark
+    'link, GitHub', // external profile links live in the footer
   ]);
 });
 
