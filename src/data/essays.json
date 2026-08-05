@@ -1,6 +1,13 @@
 {
   "essays": [
     {
+      "slug": "headcount-you-did-not-ask-for",
+      "title": "What to do with headcount you did not ask for",
+      "description": "Growing a team while the industry contracts, and what to do with the headcount you did not choose. A reorg transfer, a contractor against a budget line you never saw, a req nobody asked you whether you wanted.",
+      "pubDate": "2026-08-04T00:00:00.000Z",
+      "url": "https://blog.munadmahinoor.com/headcount-you-did-not-ask-for/"
+    },
+    {
       "slug": "vibe-feels",
       "title": "You can't vibe feels",
       "description": "Agentic coding can produce what it cannot judge. When the quality bar is a feeling, your intuition is the part worth sharpening.",
