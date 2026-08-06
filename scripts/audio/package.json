@@ -2,12 +2,11 @@
   "name": "personal-site-audio-tool",
   "private": true,
   "type": "module",
-  "description": "Isolated build-time TTS toolchain (Kokoro) for narration mp3s. Kept out of the root dependency graph so onnxruntime never taxes CI/pre-commit `npm ci`.",
+  "description": "Isolated build-time TTS toolchain for narration mp3s. Synthesis is a plain fetch to the Gemini TTS API, so the only dependency is the HTML parser used to scrape prose out of the built pages.",
   "engines": {
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "kokoro-js": "^1.2.1",
     "node-html-parser": "^7.0.1"
   }
 }
