@@ -144,9 +144,25 @@ const TRUNCATION_FLOOR = 0.7;
 const MIN_GUARDED_SECONDS = 8;
 const MIN_AUDIBLE_SECONDS = 0.2;
 
-// The free tier allows 10 requests/minute, so a full catalogue rebuild waits
-// out the quota window a couple of times rather than failing.
+/*
+ * Rate limits. The free tier allows 10 requests/minute, so a full catalogue
+ * rebuild waits out the quota window a couple of times rather than failing —
+ * but only for delays that represent throttling.
+ *
+ * A 429 can mean two very different things. A per-minute throttle reports a
+ * delay of seconds and clears on its own. An exhausted DAILY quota reports the
+ * time until it resets, which is up to ~20 hours: obeying that literally means
+ * sleeping until tomorrow, which looks exactly like a hung build and silently
+ * leaves the run half-finished. Anything past this ceiling is treated as
+ * "come back later", not "wait here".
+ */
 const RATE_LIMIT_RETRIES = 6;
+const MAX_RATE_LIMIT_WAIT_SECONDS = 300;
+
+// Transient transport failures (ECONNRESET, TLS drops, timeouts) get their own
+// budget — see synthesize(). A long case study is dozens of requests, so one
+// reset somewhere in the run is close to expected and must not discard the page.
+const NETWORK_RETRIES = 4;
 
 /**
  * Discover every narratable case study from the built site rather than a
@@ -345,7 +361,17 @@ function retryDelaySeconds(bodyText) {
 }
 
 /**
- * One TTS request, waiting out free-tier rate limits. Returns raw 16-bit PCM.
+ * One TTS request, riding out rate limits and transient network failures.
+ * Returns raw 16-bit PCM.
+ *
+ * Two independent retry budgets, because the failures are unrelated: a 429 is
+ * the server saying "slow down" (wait the delay it reports), while a dropped
+ * TLS connection is the network saying nothing at all (wait a moment and try
+ * again). Sharing one counter would let a burst of connection resets eat the
+ * allowance for legitimate throttling, and vice versa.
+ *
+ * The transport budget covers the body read as well as the request, because
+ * fetch() settling does not mean the response arrived — see below.
  *
  * `voice` and `direction` default to the shipping configuration; auditioning
  * tools override them so a sample is generated through this exact path — same
@@ -354,41 +380,97 @@ function retryDelaySeconds(bodyText) {
  * `direction`, which is why it is a parameter rather than a hardcoded prefix.
  */
 export async function synthesize(text, apiKey, { label = '', voice = VOICE, direction = DIRECTION } = {}) {
-  let res;
-  for (let attempt = 0; ; attempt++) {
-    res = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `${direction}\n\n${text}` }] }],
-        generationConfig: {
-          responseModalities: ['AUDIO'],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
-        },
-      }),
-    });
-    if (res.status !== 429) break;
+  let rateLimitAttempts = 0;
+  let networkAttempts = 0;
 
-    const text429 = await res.text();
-    const wait = retryDelaySeconds(text429);
-    if (wait === null || attempt >= RATE_LIMIT_RETRIES) {
-      throw new Error(`Gemini TTS HTTP 429: ${text429.slice(0, 500)}`);
+  for (;;) {
+    let status;
+    let ok;
+    let body;
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${direction}\n\n${text}` }] }],
+          generationConfig: {
+            responseModalities: ['AUDIO'],
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+          },
+        }),
+      });
+      ({ status, ok } = res);
+      // The body read belongs INSIDE this try. fetch() settles as soon as the
+      // status and headers arrive, so a connection dropped while the (multi-MB,
+      // base64) audio is still streaming rejects here rather than above —
+      // outside the try that would be a lost page despite the retry budget.
+      //
+      // Read it as text, not json(): that keeps the retry boundary around
+      // transport only. A body that arrives intact but malformed is parsed
+      // below and fails fast, because retrying it would just fail again.
+      body = await res.text();
+    } catch (err) {
+      // Transport failure — DNS, TLS, ECONNRESET, timeout — either before the
+      // headers or midway through the body. An HTTP error status is NOT an
+      // exception and is handled below. Over a 24-request page one reset is
+      // close to expected, and without this a single blip discards the page.
+      networkAttempts += 1;
+      const code = err?.cause?.code ?? err?.message ?? 'network error';
+      if (networkAttempts > NETWORK_RETRIES) {
+        throw new Error(
+          `Gemini TTS network failure after ${NETWORK_RETRIES} retries (${code}). ` +
+            'Completed pages are already saved, so rerunning resumes where this stopped.',
+        );
+      }
+      const backoff = 2 ** networkAttempts; // 2s, 4s, 8s, 16s
+      console.log(`  … ${label} ${code}, retrying in ${backoff}s`);
+      await sleep(backoff * 1000);
+      continue;
+    }
+
+    if (status !== 429) {
+      if (!ok) {
+        throw new Error(`Gemini TTS HTTP ${status}: ${body.slice(0, 500)}`);
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(body);
+      } catch {
+        // Deliberately not retried: the bytes all arrived, they are just not
+        // the JSON this endpoint promises (a proxy error page, a truncation
+        // the transport never reported). Say so rather than surfacing a bare
+        // SyntaxError with no hint of where it came from.
+        throw new Error(`Gemini TTS returned unparseable JSON: ${body.slice(0, 500)}`);
+      }
+      const encoded = parsed?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (!encoded) {
+        throw new Error(`Gemini TTS returned no audio: ${body.slice(0, 500)}`);
+      }
+      return Buffer.from(encoded, 'base64');
+    }
+
+    rateLimitAttempts += 1;
+    const wait = retryDelaySeconds(body);
+    if (wait !== null && wait > MAX_RATE_LIMIT_WAIT_SECONDS) {
+      const hours = (wait / 3600).toFixed(1);
+      throw new Error(
+        `Gemini TTS quota exhausted: the API wants ${hours}h before the next request, ` +
+          'which is a daily quota reset rather than a throttle — not waiting.\n' +
+          'Completed pages are already saved, so rerunning after the reset picks up ' +
+          'exactly where this stopped.\n' +
+          `API said: ${body.slice(0, 400)}`,
+      );
+    }
+    if (wait === null || rateLimitAttempts > RATE_LIMIT_RETRIES) {
+      throw new Error(`Gemini TTS HTTP 429: ${body.slice(0, 500)}`);
     }
     // +1s of headroom: the quota window is measured server-side and coming
-    // back a hair early just earns another 429.
-    console.log(`  … ${label} rate limited, waiting ${Math.ceil(wait + 1)}s`);
+    // back a hair early just earns another 429. Log the API's own reason —
+    // "throttled" and "out of quota" look identical without it.
+    const reason = /Quota exceeded for metric: (\S+)/.exec(body)?.[1] ?? 'rate limit';
+    console.log(`  … ${label} ${reason}, waiting ${Math.ceil(wait + 1)}s`);
     await sleep((wait + 1) * 1000);
   }
-
-  if (!res.ok) {
-    throw new Error(`Gemini TTS HTTP ${res.status}: ${(await res.text()).slice(0, 500)}`);
-  }
-  const body = await res.json();
-  const encoded = body?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  if (!encoded) {
-    throw new Error(`Gemini TTS returned no audio: ${JSON.stringify(body).slice(0, 500)}`);
-  }
-  return Buffer.from(encoded, 'base64');
 }
 
 /** Synthesize with the truncation guard: measure what came back against what

@@ -1,6 +1,6 @@
 ## First principles (enforced)
 
-Accessibility wins every conflict. The principles are codified as the Playwright suite (`npx playwright test`), and a pre-commit hook runs the build plus the full suite before every commit. One-time setup per clone:
+Accessibility wins every conflict. The principles are codified as the suite `npm test` runs — the audio generator's self-checks, then Playwright — and a pre-commit hook runs the build plus that same suite before every commit. CI runs the identical command, so keep new checks inside `npm test` rather than beside it. One-time setup per clone:
 
 ```
 git config core.hooksPath .githooks

@@ -25,7 +25,11 @@ else
   echo "pre-commit: no case study changes — skipping narration build."
 fi
 
-echo "pre-commit: running full Playwright suite (fold + a11y)..."
-npx playwright test
+# `npm test`, not `npx playwright test`, so this hook and CI run the SAME
+# command. The audio generator's self-checks live in there too: they guard
+# bad-day branches (quota exhaustion, dropped connections) that no browser
+# test can reach, and a gate nobody runs is not a gate.
+echo "pre-commit: running the full suite (audio self-checks + fold + a11y)..."
+npm test
 
 echo "pre-commit: all first-principles checks green."
