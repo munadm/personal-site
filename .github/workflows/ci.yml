@@ -6,10 +6,21 @@ name: CI
 #
 # On push to main only, a deploy job then publishes dist/ to Cloudflare Pages.
 # See deploy_guide.md for setup and debugging.
+#
+# workflow_dispatch re-fires the same build-test-deploy path without a commit,
+# for when a deploy failed on something outside the code (an expired token, a
+# Cloudflare blip). Run it from the Actions tab or:
+#
+#   gh workflow run ci.yml
+#
+# Run it against main to deploy; from any other ref it builds and tests only.
+# This redeploys the CURRENT main — to put an older state back into
+# production, use rollback.yml instead.
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -51,12 +62,15 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Publish to Cloudflare Pages. Gated to pushes on main (never PRs) and only
-  # runs after build-and-test passes. Requires the CLOUDFLARE_API_TOKEN and
+  # Publish to Cloudflare Pages. Gated to main (never PRs) and only runs after
+  # build-and-test passes. Requires the CLOUDFLARE_API_TOKEN and
   # CLOUDFLARE_ACCOUNT_ID repo secrets — see deploy_guide.md.
+  #
+  # The gate is "not a PR" rather than "is a push" so a manual re-run deploys
+  # too; the ref check still keeps a dispatch from another branch off prod.
   deploy:
     needs: build-and-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # contents: write lets the job push the deploy-* tag below.
