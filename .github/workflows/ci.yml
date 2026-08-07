@@ -48,10 +48,13 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      # `npm test` == `playwright test`; the config's webServer rebuilds and
-      # previews the site, and the default projects cover fold + a11y (the
-      # voiceover project is excluded unless VOICEOVER=1).
-      - name: Run Playwright suite (fold + a11y)
+      # `npm test` runs the audio generator's self-checks and then Playwright.
+      # The self-checks need no browser and no API key, and cover the retry
+      # branches Playwright cannot reach; they run first so a regression there
+      # fails in seconds. The config's webServer then rebuilds and previews the
+      # site, and the default projects cover fold + a11y (the voiceover project
+      # is excluded unless VOICEOVER=1). Same command as .githooks/pre-commit.
+      - name: Run full suite (audio self-checks + fold + a11y)
         run: npm test
 
       - name: Upload Playwright report
