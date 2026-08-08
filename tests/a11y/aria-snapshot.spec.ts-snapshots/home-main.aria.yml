@@ -21,8 +21,8 @@
         - heading "LLM PII scanner" [level=3]
         - paragraph: Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs.
     - listitem:
-      - link "Essay How I built this site with an agent workforce A point-of-view essay on directing a small team of AI agents through design, build, and accessibility verification.":
-        - /url: /writing
+      - link /Essay .+/:
+        - /url: /https:\/\/blog\.munadmahinoor\.com\/.+/
         - paragraph: Essay
-        - heading "How I built this site with an agent workforce" [level=3]
-        - paragraph: A point-of-view essay on directing a small team of AI agents through design, build, and accessibility verification.
+        - heading /.+/ [level=3]
+        - paragraph: /.+/
