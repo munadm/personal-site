@@ -3,6 +3,14 @@ import Base from '../layouts/Base.astro';
 import HeroRules from '../components/HeroRules.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import essayData from '../data/essays.json';
+
+/*
+ * The essay card always shows the newest post from src/data/essays.json, the
+ * file blog-vault's deploy job writes here (see writing.astro). Publishing on
+ * the blog is the only step needed to swap the card.
+ */
+const latestEssay = [...essayData.essays].sort((a, b) => b.pubDate.localeCompare(a.pubDate))[0];
 
 const caseStudies = [
   {
@@ -19,13 +27,16 @@ const caseStudies = [
       'Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs.',
     href: '/work',
   },
-  {
-    label: 'Essay',
-    title: 'How I built this site with an agent workforce',
-    blurb:
-      'A point-of-view essay on directing a small team of AI agents through design, build, and accessibility verification.',
-    href: '/writing',
-  },
+  ...(latestEssay
+    ? [
+        {
+          label: 'Essay',
+          title: latestEssay.title,
+          blurb: latestEssay.description,
+          href: latestEssay.url,
+        },
+      ]
+    : []),
 ];
 ---
 
