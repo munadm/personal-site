@@ -31,8 +31,10 @@ for (const route of ROUTES) {
           bad.push(
             el.tagName.toLowerCase() +
               (el.id ? '#' + el.id : '') +
-              (typeof el.className === 'string' && el.className
-                ? '.' + el.className.split(/\s+/)[0]
+              // getAttribute rather than .className: on SVG elements the
+              // latter is an SVGAnimatedString, not a string.
+              ((el.getAttribute('class') ?? '')
+                ? '.' + (el.getAttribute('class') ?? '').split(/\s+/)[0]
                 : '') +
               ` [left=${Math.round(rect.left)}, right=${Math.round(rect.right)}]`,
           );

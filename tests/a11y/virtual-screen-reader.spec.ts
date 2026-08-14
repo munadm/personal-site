@@ -22,6 +22,15 @@ const distFor = (route: string) => {
   return fileURLToPath(new URL(`../../dist/${rel}`, import.meta.url));
 };
 
+/** The DOM globals the virtual screen reader reads off the ambient scope. */
+type SRGlobals = {
+  window: Window;
+  document: Document;
+  Node: typeof Node;
+  NodeFilter: typeof NodeFilter;
+  getComputedStyle: typeof getComputedStyle;
+};
+
 /** Run the virtual SR over the built page and return the ordered spoken log. */
 async function narrate(route: string, steps = 200): Promise<string[]> {
   const html = readFileSync(distFor(route), 'utf8');
@@ -29,7 +38,10 @@ async function narrate(route: string, steps = 200): Promise<string[]> {
   const { window } = dom;
 
   // The virtual SR reads from the ambient globals.
-  const g = globalThis as Record<string, unknown>;
+  // SAFETY: these five DOM globals are absent under Node, so the ambient scope
+  // is only *partially* this shape — hence Partial. This test owns them for
+  // the duration of narrate() and restores the originals in the finally block.
+  const g = globalThis as Partial<SRGlobals>;
   const saved = {
     window: g.window,
     document: g.document,
@@ -66,7 +78,7 @@ function expectInOrder(log: string[], needles: (string | RegExp)[]) {
   for (const needle of needles) {
     const idx = log.findIndex((phrase, i) => {
       if (i < cursor) return false;
-      return typeof needle === 'string' ? phrase.includes(needle) : needle.test(phrase);
+      return needle instanceof RegExp ? needle.test(phrase) : phrase.includes(needle);
     });
     expect(
       idx,

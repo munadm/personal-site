@@ -37,9 +37,16 @@ interface FocusInfo {
   boxShadow: string;
 }
 
+/** Drop focus to <body> so a following Tab starts from the top of the page. */
+function blurActive(page: import('playwright/test').Page): Promise<void> {
+  return page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+}
+
 async function activeInfo(page: import('playwright/test').Page): Promise<FocusInfo> {
   return page.evaluate(() => {
-    const el = document.activeElement as HTMLElement | null;
+    const el = document.activeElement;
     if (!el) {
       return {
         tag: '',
@@ -56,7 +63,9 @@ async function activeInfo(page: import('playwright/test').Page): Promise<FocusIn
     return {
       tag: el.tagName.toLowerCase(),
       id: el.id,
-      className: typeof el.className === 'string' ? el.className : '',
+      // getAttribute rather than .className: on SVG elements the latter is an
+      // SVGAnimatedString, not a string.
+      className: el.getAttribute('class') ?? '',
       href: el.getAttribute('href'),
       text: (el.textContent || '').trim().slice(0, 40),
       outlineStyle: cs.outlineStyle,
@@ -74,7 +83,7 @@ for (const path of PAGES) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(path);
     // Ensure focus starts from the top of the document.
-    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await blurActive(page);
 
     // Skip link should be visually retracted (translated above the viewport)
     // before focus — its top edge is negative.
@@ -95,7 +104,7 @@ for (const path of PAGES) {
 
   test(`keyboard: skip link jumps to #main on ${path}`, async ({ page }) => {
     await page.goto(path);
-    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await blurActive(page);
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(new RegExp('#main$'));
@@ -105,7 +114,7 @@ for (const path of PAGES) {
 
   test(`keyboard: nav links + theme toggle reachable in DOM order on ${path}`, async ({ page }) => {
     await page.goto(path);
-    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await blurActive(page);
 
     const seen: FocusInfo[] = [];
     // Tab through enough stops to cover the whole header chrome.
@@ -144,7 +153,7 @@ for (const path of PAGES) {
 
   test(`keyboard: no trap — Tab cycles past the last focusable on ${path}`, async ({ page }) => {
     await page.goto(path);
-    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await blurActive(page);
 
     // Tab many times; the active element must change over time and eventually
     // return to <body> (focus leaves the document) rather than sticking on one

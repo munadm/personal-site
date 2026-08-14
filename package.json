@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "npm run test:audio && playwright test",
+    "lint": "oxlint",
+    "test": "npm run lint && npm run test:audio && playwright test",
     "test:audio": "node scripts/audio/test-chunking.mjs && node scripts/audio/test-retries.mjs",
     "resume:pdf": "node scripts/make-resume-pdf.mjs",
     "audio": "node scripts/audio/make-audio.mjs"
@@ -24,8 +25,10 @@
     "@axe-core/playwright": "^4.12.1",
     "@guidepup/playwright": "^0.17.0",
     "@guidepup/virtual-screen-reader": "^0.32.1",
+    "@oxlint/plugins": "^1.78.0",
     "@types/jsdom": "^28.0.3",
     "jsdom": "^29.1.1",
+    "oxlint": "^1.78.0",
     "playwright": "^1.61.1"
   }
 }

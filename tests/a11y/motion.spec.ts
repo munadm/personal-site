@@ -29,8 +29,10 @@ async function collectAnimations(page: import('playwright/test').Page) {
           dur.endsWith('ms') ? parseFloat(dur) : parseFloat(dur) * 1000;
         if (name && name !== 'none' && durMs > 0) {
           offenders.push({
+            // getAttribute rather than .className: on SVG elements the latter
+            // is an SVGAnimatedString, not a string.
             selector: el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') +
-              (typeof el.className === 'string' && el.className ? '.' + el.className.split(/\s+/)[0] : ''),
+              ((el.getAttribute('class') ?? '') ? '.' + (el.getAttribute('class') ?? '').split(/\s+/)[0] : ''),
             animationName: name,
             duration: dur,
           });
@@ -53,7 +55,7 @@ async function collectAnimations(page: import('playwright/test').Page) {
     // Also: are any Web Animations API animations actually running?
     const running = (document.getAnimations?.() ?? [])
       .filter((a) => a.playState === 'running')
-      .map((a) => (a as CSSAnimation).animationName ?? 'web-animation');
+      .map((a) => (a instanceof CSSAnimation ? a.animationName : 'web-animation'));
     return { offenders, running };
   });
 }

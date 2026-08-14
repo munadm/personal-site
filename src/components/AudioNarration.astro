@@ -17,8 +17,12 @@ interface Props {
 }
 
 type Entry = { minutes: number };
+// Annotated, not asserted: the manifest is generated with one entry per
+// narrated slug, so its literal type has no index signature to look `slug` up
+// in. The assignment keeps the check that every entry really carries minutes.
+const entries: Record<string, Entry> = manifest;
 const { slug } = Astro.props;
-const entry = (manifest as Record<string, Entry>)[slug];
+const entry = entries[slug];
 const src = `/audio/${slug}.mp3`;
 const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minutes` : '';
 ---

@@ -27,7 +27,7 @@ for (const route of ROUTES) {
     // Every in-page link is visible and has a non-transparent computed color.
     const linkStats = await page.locator('a:visible').evaluateAll((els) =>
       els.map((el) => {
-        const cs = getComputedStyle(el as HTMLElement);
+        const cs = getComputedStyle(el);
         return {
           color: cs.color,
           opacity: cs.opacity,

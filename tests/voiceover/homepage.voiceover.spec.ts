@@ -27,9 +27,7 @@
 // the suite does.
 import { expect } from 'playwright/test';
 import guidepup from '@guidepup/playwright';
-const { voiceOverTest: test } = guidepup as unknown as {
-  voiceOverTest: typeof import('@guidepup/playwright').voiceOverTest;
-};
+const { voiceOverTest: test } = guidepup;
 
 test.describe('VoiceOver — homepage narration (launch gate)', () => {
   test('announces skip link, landmarks, and the h1', async ({ page, voiceOver }) => {
