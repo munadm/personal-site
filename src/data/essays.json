@@ -1,6 +1,13 @@
 {
   "essays": [
     {
+      "slug": "what-the-layoffs-teach-you",
+      "title": "What a few rounds of layoffs have taught me",
+      "description": "Layoffs stopped being an event and became a condition of the industry. Four things I have learned from sitting through more than one, written for the people who have too.",
+      "pubDate": "2026-09-04T00:00:00.000Z",
+      "url": "https://blog.munadmahinoor.com/what-the-layoffs-teach-you/"
+    },
+    {
       "slug": "headcount-you-did-not-ask-for",
       "title": "What to do with headcount you did not ask for",
       "description": "Growing a team while the industry contracts, and what to do with the headcount you did not choose. A reorg transfer, a contractor against a budget line you never saw, a req nobody asked you whether you wanted.",
