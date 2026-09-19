@@ -39,3 +39,7 @@ Consult these guides before working on related tasks:
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
+## Code Health (CodeScene MCP)
+
+Code Health is the source of truth for maintainability; target 10.0. Before each commit run `pre_commit_code_health_safeguard`; before opening a PR run `analyze_change_set` against `main`. On any regression, run `code_health_review`, refactor in small steps until restored, and do not declare done. When in doubt, call the tool instead of guessing.
