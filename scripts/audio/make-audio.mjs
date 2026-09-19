@@ -379,97 +379,112 @@ function retryDelaySeconds(bodyText) {
  * sound different from what actually ships. Pace is tuned by rewriting
  * `direction`, which is why it is a parameter rather than a hardcoded prefix.
  */
+/** One raw TTS request. Resolves with the status and the full body text; rejects
+ *  only on transport failure. The body read belongs INSIDE the same promise as
+ *  the fetch: fetch() settles as soon as the status and headers arrive, so a
+ *  connection dropped while the (multi-MB, base64) audio is still streaming
+ *  must reject here, where the retry budget can see it. Read as text, not
+ *  json(), so the boundary stays around transport only — a body that arrives
+ *  intact but malformed is decoded by decodeAudio() and fails fast. */
+async function requestSpeech(text, apiKey, voice, direction) {
+  const res = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: `${direction}\n\n${text}` }] }],
+      generationConfig: {
+        responseModalities: ['AUDIO'],
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+      },
+    }),
+  });
+  return { status: res.status, ok: res.ok, body: await res.text() };
+}
+
+/** PCM from a non-429 response, or a descriptive error. Nothing here is
+ *  retried: the bytes all arrived, so a second request would fail the same way. */
+function decodeAudio({ status, ok, body }) {
+  if (!ok) throw new Error(`Gemini TTS HTTP ${status}: ${body.slice(0, 500)}`);
+  const encoded = base64Audio(parseResponse(body));
+  if (!encoded) throw new Error(`Gemini TTS returned no audio: ${body.slice(0, 500)}`);
+  return Buffer.from(encoded, 'base64');
+}
+
+function parseResponse(body) {
+  try {
+    return JSON.parse(body);
+  } catch {
+    // A proxy error page, or a truncation the transport never reported. Say
+    // so rather than surfacing a bare SyntaxError with no hint of origin.
+    throw new Error(`Gemini TTS returned unparseable JSON: ${body.slice(0, 500)}`);
+  }
+}
+
+const base64Audio = (parsed) =>
+  parsed?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+/** Seconds to sleep before retrying a 429, or throws when waiting is pointless:
+ *  no delay reported (depleted prepay), the retry budget is spent, or the
+ *  delay is a daily quota reset rather than a throttle. */
+function rateLimitWait(body, attempts) {
+  const wait = retryDelaySeconds(body);
+  if (wait !== null && wait > MAX_RATE_LIMIT_WAIT_SECONDS) {
+    const hours = (wait / 3600).toFixed(1);
+    throw new Error(
+      `Gemini TTS quota exhausted: the API wants ${hours}h before the next request, ` +
+        'which is a daily quota reset rather than a throttle — not waiting.\n' +
+        'Completed pages are already saved, so rerunning after the reset picks up ' +
+        'exactly where this stopped.\n' +
+        `API said: ${body.slice(0, 400)}`,
+    );
+  }
+  if (wait === null || attempts > RATE_LIMIT_RETRIES) {
+    throw new Error(`Gemini TTS HTTP 429: ${body.slice(0, 500)}`);
+  }
+  // +1s of headroom: the quota window is measured server-side and coming back
+  // a hair early just earns another 429.
+  return wait + 1;
+}
+
+/** Backoff seconds before retrying a transport failure, or throws once the
+ *  budget is spent. An HTTP error status is NOT a transport failure. */
+function networkWait(err, attempts) {
+  const code = err?.cause?.code ?? err?.message ?? 'network error';
+  if (attempts > NETWORK_RETRIES) {
+    throw new Error(
+      `Gemini TTS network failure after ${NETWORK_RETRIES} retries (${code}). ` +
+        'Completed pages are already saved, so rerunning resumes where this stopped.',
+    );
+  }
+  return { code, seconds: 2 ** attempts }; // 2s, 4s, 8s, 16s
+}
+
 export async function synthesize(text, apiKey, { label = '', voice = VOICE, direction = DIRECTION } = {}) {
   let rateLimitAttempts = 0;
   let networkAttempts = 0;
 
   for (;;) {
-    let status;
-    let ok;
-    let body;
+    let res;
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `${direction}\n\n${text}` }] }],
-          generationConfig: {
-            responseModalities: ['AUDIO'],
-            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
-          },
-        }),
-      });
-      ({ status, ok } = res);
-      // The body read belongs INSIDE this try. fetch() settles as soon as the
-      // status and headers arrive, so a connection dropped while the (multi-MB,
-      // base64) audio is still streaming rejects here rather than above —
-      // outside the try that would be a lost page despite the retry budget.
-      //
-      // Read it as text, not json(): that keeps the retry boundary around
-      // transport only. A body that arrives intact but malformed is parsed
-      // below and fails fast, because retrying it would just fail again.
-      body = await res.text();
+      res = await requestSpeech(text, apiKey, voice, direction);
     } catch (err) {
-      // Transport failure — DNS, TLS, ECONNRESET, timeout — either before the
-      // headers or midway through the body. An HTTP error status is NOT an
-      // exception and is handled below. Over a 24-request page one reset is
-      // close to expected, and without this a single blip discards the page.
+      // DNS, TLS, ECONNRESET, timeout — before the headers or midway through
+      // the body. Over a 24-request page one reset is close to expected.
       networkAttempts += 1;
-      const code = err?.cause?.code ?? err?.message ?? 'network error';
-      if (networkAttempts > NETWORK_RETRIES) {
-        throw new Error(
-          `Gemini TTS network failure after ${NETWORK_RETRIES} retries (${code}). ` +
-            'Completed pages are already saved, so rerunning resumes where this stopped.',
-        );
-      }
-      const backoff = 2 ** networkAttempts; // 2s, 4s, 8s, 16s
-      console.log(`  … ${label} ${code}, retrying in ${backoff}s`);
-      await sleep(backoff * 1000);
+      const { code, seconds } = networkWait(err, networkAttempts);
+      console.log(`  … ${label} ${code}, retrying in ${seconds}s`);
+      await sleep(seconds * 1000);
       continue;
     }
 
-    if (status !== 429) {
-      if (!ok) {
-        throw new Error(`Gemini TTS HTTP ${status}: ${body.slice(0, 500)}`);
-      }
-      let parsed;
-      try {
-        parsed = JSON.parse(body);
-      } catch {
-        // Deliberately not retried: the bytes all arrived, they are just not
-        // the JSON this endpoint promises (a proxy error page, a truncation
-        // the transport never reported). Say so rather than surfacing a bare
-        // SyntaxError with no hint of where it came from.
-        throw new Error(`Gemini TTS returned unparseable JSON: ${body.slice(0, 500)}`);
-      }
-      const encoded = parsed?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (!encoded) {
-        throw new Error(`Gemini TTS returned no audio: ${body.slice(0, 500)}`);
-      }
-      return Buffer.from(encoded, 'base64');
-    }
+    if (res.status !== 429) return decodeAudio(res);
 
     rateLimitAttempts += 1;
-    const wait = retryDelaySeconds(body);
-    if (wait !== null && wait > MAX_RATE_LIMIT_WAIT_SECONDS) {
-      const hours = (wait / 3600).toFixed(1);
-      throw new Error(
-        `Gemini TTS quota exhausted: the API wants ${hours}h before the next request, ` +
-          'which is a daily quota reset rather than a throttle — not waiting.\n' +
-          'Completed pages are already saved, so rerunning after the reset picks up ' +
-          'exactly where this stopped.\n' +
-          `API said: ${body.slice(0, 400)}`,
-      );
-    }
-    if (wait === null || rateLimitAttempts > RATE_LIMIT_RETRIES) {
-      throw new Error(`Gemini TTS HTTP 429: ${body.slice(0, 500)}`);
-    }
-    // +1s of headroom: the quota window is measured server-side and coming
-    // back a hair early just earns another 429. Log the API's own reason —
-    // "throttled" and "out of quota" look identical without it.
-    const reason = /Quota exceeded for metric: (\S+)/.exec(body)?.[1] ?? 'rate limit';
-    console.log(`  … ${label} ${reason}, waiting ${Math.ceil(wait + 1)}s`);
-    await sleep((wait + 1) * 1000);
+    const seconds = rateLimitWait(res.body, rateLimitAttempts);
+    // Log the API's own reason — "throttled" and "out of quota" look identical without it.
+    const reason = /Quota exceeded for metric: (\S+)/.exec(res.body)?.[1] ?? 'rate limit';
+    console.log(`  … ${label} ${reason}, waiting ${Math.ceil(seconds)}s`);
+    await sleep(seconds * 1000);
   }
 }
 
@@ -497,6 +512,64 @@ async function synthesizeChecked(chunk, apiKey, label) {
   );
 }
 
+/** Hash of everything that changes the audio: prose, voice, model, pacing, direction. */
+function narrationHash(text) {
+  return createHash('sha256')
+    .update(`${MODEL_ID}|${VOICE}|${SENTENCE_GAP}|${PARAGRAPH_GAP}\n${DIRECTION}\n${text}`)
+    .digest('hex')
+    .slice(0, 16);
+}
+
+/** Decide what needs (re)generating, so we only spend on a real miss or
+ *  change. A page with no manifest entry is a miss; a hash mismatch means the
+ *  prose, the voice, the model or the delivery direction changed. */
+function planJobs(pages, manifest, parse) {
+  const jobs = [];
+  for (const page of pages) {
+    const text = extractNarration(readFileSync(page.htmlPath, 'utf8'), parse);
+    const hash = narrationHash(text);
+    const mp3Path = join(OUT_DIR, `${page.slug}.mp3`);
+    const prev = manifest[page.slug];
+    if (prev?.hash === hash && existsSync(mp3Path)) {
+      console.log(`✓ ${page.slug} — up to date`);
+      continue;
+    }
+    console.log(`● ${page.slug} — ${prev ? 'prose or delivery changed' : 'new case study, no audio yet'}`);
+    jobs.push({ ...page, text, hash, mp3Path });
+  }
+  return jobs;
+}
+
+/** Narrate one page: synthesize each chunk and join them with the gaps the
+ *  chunker assigned. Returns the full PCM stream. */
+async function renderPcm(job, apiKey) {
+  const chunks = toChunks(job.text);
+  console.log(`♪ ${job.slug} — ${chunks.length} chunks, ${countWords(job.text)} words…`);
+  const parts = [];
+  for (const [i, chunk] of chunks.entries()) {
+    parts.push(await synthesizeChecked(chunk, apiKey, `${job.slug} chunk ${i + 1}/${chunks.length}`));
+    if (chunk.gap > 0) {
+      parts.push(Buffer.alloc(Math.round(SAMPLE_RATE * chunk.gap) * BYTES_PER_SAMPLE));
+    }
+  }
+  return Buffer.concat(parts);
+}
+
+function encodeMp3(pcm, job) {
+  execFileSync(
+    'ffmpeg',
+    [
+      '-y',
+      '-f', 's16le', '-ar', String(SAMPLE_RATE), '-ac', '1', '-i', 'pipe:0',
+      '-codec:a', 'libmp3lame', '-b:a', MP3_BITRATE,
+      '-metadata', `title=${job.slug} (AI-narrated)`,
+      '-metadata', `artist=Gemini TTS (${MODEL_ID})`,
+      job.mp3Path,
+    ],
+    { input: pcm, stdio: ['pipe', 'ignore', 'ignore'], maxBuffer: 1024 * 1024 * 256 },
+  );
+}
+
 async function main() {
   if (!process.argv.includes('--skip-build')) buildSite();
   if (!existsSync(DIST)) {
@@ -516,26 +589,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Decide what needs (re)generating, so we only spend on a real miss or
-  // change. A page with no manifest entry is a miss; a hash mismatch means the
-  // prose, the voice, the model or the delivery direction changed.
-  const jobs = [];
-  for (const page of pages) {
-    const text = extractNarration(readFileSync(page.htmlPath, 'utf8'), parse);
-    const hash = createHash('sha256')
-      .update(`${MODEL_ID}|${VOICE}|${SENTENCE_GAP}|${PARAGRAPH_GAP}\n${DIRECTION}\n${text}`)
-      .digest('hex')
-      .slice(0, 16);
-    const mp3Path = join(OUT_DIR, `${page.slug}.mp3`);
-    const prev = manifest[page.slug];
-    if (prev && prev.hash === hash && existsSync(mp3Path)) {
-      console.log(`✓ ${page.slug} — up to date`);
-      continue;
-    }
-    console.log(`● ${page.slug} — ${prev ? 'prose or delivery changed' : 'new case study, no audio yet'}`);
-    jobs.push({ ...page, text, hash, mp3Path });
-  }
-
+  const jobs = planJobs(pages, manifest, parse);
   if (jobs.length === 0) {
     console.log('All narrations up to date.');
     return;
@@ -546,31 +600,8 @@ async function main() {
   console.log(`Synthesizing with ${MODEL_ID} (${VOICE})…`);
 
   for (const job of jobs) {
-    const chunks = toChunks(job.text);
-    console.log(`♪ ${job.slug} — ${chunks.length} chunks, ${countWords(job.text)} words…`);
-    const parts = [];
-    for (const [i, chunk] of chunks.entries()) {
-      const pcm = await synthesizeChecked(chunk, apiKey, `${job.slug} chunk ${i + 1}/${chunks.length}`);
-      parts.push(pcm);
-      if (chunk.gap > 0) {
-        parts.push(Buffer.alloc(Math.round(SAMPLE_RATE * chunk.gap) * BYTES_PER_SAMPLE));
-      }
-    }
-    const pcm = Buffer.concat(parts);
-
-    execFileSync(
-      'ffmpeg',
-      [
-        '-y',
-        '-f', 's16le', '-ar', String(SAMPLE_RATE), '-ac', '1', '-i', 'pipe:0',
-        '-codec:a', 'libmp3lame', '-b:a', MP3_BITRATE,
-        '-metadata', `title=${job.slug} (AI-narrated)`,
-        '-metadata', `artist=Gemini TTS (${MODEL_ID})`,
-        job.mp3Path,
-      ],
-      { input: pcm, stdio: ['pipe', 'ignore', 'ignore'], maxBuffer: 1024 * 1024 * 256 },
-    );
-
+    const pcm = await renderPcm(job, apiKey);
+    encodeMp3(pcm, job);
     const seconds = pcm.length / BYTES_PER_SAMPLE / SAMPLE_RATE;
     const bytes = readFileSync(job.mp3Path).length;
     manifest[job.slug] = {
@@ -582,9 +613,7 @@ async function main() {
     // network blip partway through a rebuild would otherwise discard the
     // pages already paid for and synthesized, and the rerun would redo them.
     writeManifest(manifest);
-    console.log(
-      `  → ${(seconds / 60).toFixed(1)} min, ${(bytes / 1024 / 1024).toFixed(2)} MB`,
-    );
+    console.log(`  → ${(seconds / 60).toFixed(1)} min, ${(bytes / 1024 / 1024).toFixed(2)} MB`);
   }
 
   console.log(`\nWrote ${jobs.length} narration(s) + manifest.json.`);
