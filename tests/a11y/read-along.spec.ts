@@ -20,6 +20,8 @@ import { PARAGRAPH_GAP } from '../../scripts/audio/make-audio.mjs';
  *     and an identical accessibility tree;
  *   - the marker survives forced colors and clears 3:1 non-text contrast in
  *     both themes;
+ *   - the lock screen names the reading, and its previous and next buttons
+ *     move a paragraph at a time;
  *   - without JavaScript the player is exactly what it was.
  *
  * Narrated routes come from the manifest, so a new case study is covered with
@@ -53,7 +55,34 @@ const lineBoxes = (page: Page) =>
 declare global {
   interface Window {
     recordMutation?: (entry: string) => void;
+    mediaHandlers?: Partial<Record<MediaSessionAction, () => void>>;
   }
+}
+
+/** Keep a handle on every Media Session action the page registers, so a test
+ *  can press the lock screen's buttons. Installed before the page loads. */
+async function captureMediaHandlers(page: Page) {
+  await page.addInitScript(() => {
+    const handlers: Partial<Record<MediaSessionAction, () => void>> = {};
+    window.mediaHandlers = handlers;
+    const register = navigator.mediaSession.setActionHandler.bind(navigator.mediaSession);
+    navigator.mediaSession.setActionHandler = (action, handler) => {
+      if (handler) handlers[action] = () => handler({ action });
+      register(action, handler);
+    };
+  });
+}
+
+/** Press a lock-screen button and wait for the seek it causes. */
+async function press(page: Page, action: MediaSessionAction) {
+  await page.locator('audio').evaluate(
+    (a: HTMLAudioElement, act) =>
+      new Promise<void>((resolve) => {
+        a.addEventListener('seeked', () => resolve(), { once: true });
+        window.mediaHandlers?.[act]?.();
+      }),
+    action,
+  );
 }
 
 /** Collect every DOM mutation from now on into a list on the test side, so a
@@ -220,6 +249,44 @@ for (const { slug, route, cues } of NARRATED) {
     // say) that the ARIA snapshot below does not print.
     expect([...new Set(touched)].sort()).toEqual(['h1[data-narrating]', 'p[data-narrating]']);
     expect(await main.ariaSnapshot()).toBe(atRest);
+  });
+
+  test(`read-along: ${slug} names the reading on the lock screen`, async ({ page }) => {
+    await page.goto(route);
+    await primePlayer(page.locator('audio'));
+    const metadata = await page.evaluate(() => {
+      const m = navigator.mediaSession.metadata;
+      return { title: m?.title, artist: m?.artist, artwork: m?.artwork.map((a) => a.src) };
+    });
+    expect(metadata.title).toBe((await page.locator('main h1').textContent())?.trim());
+    expect(metadata.artist).toBe('Munad Mahinoor');
+    const card = await page.locator('meta[property="og:image"]').getAttribute('content');
+    expect(metadata.artwork).toEqual([card]);
+  });
+
+  test(`read-along: ${slug} previous and next move a paragraph at a time`, async ({ page }) => {
+    await captureMediaHandlers(page);
+    await page.goto(route);
+    const audio = page.locator('audio');
+    const blocks = blocksOn(page);
+    const at = () => audio.evaluate((a: HTMLAudioElement) => a.currentTime);
+    await primePlayer(audio);
+
+    await seek(audio, cues[2] + 0.5);
+    await press(page, 'nexttrack');
+    await expect(blocks.nth(3)).toHaveAttribute('data-narrating', '');
+    expect(await at()).toBeCloseTo(cues[3], 1);
+
+    // Right after a paragraph starts, "previous" goes back one...
+    await press(page, 'previoustrack');
+    await expect(blocks.nth(2)).toHaveAttribute('data-narrating', '');
+    expect(await at()).toBeCloseTo(cues[2], 1);
+
+    // ...but a few seconds in, it restarts the paragraph being read.
+    await seek(audio, cues[4] + 5);
+    await press(page, 'previoustrack');
+    await expect(blocks.nth(4)).toHaveAttribute('data-narrating', '');
+    expect(await at()).toBeCloseTo(cues[4], 1);
   });
 
   for (const theme of ['light', 'dark'] as const) {

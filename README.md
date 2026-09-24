@@ -50,7 +50,7 @@ Each commitment above is a test. The suite is the specification.
 | `tests/a11y/aria-snapshot.spec.ts` | locks each route's `<main>` accessibility tree |
 | `tests/a11y/virtual-screen-reader.spec.ts` | virtual screen-reader narration of the built HTML, in order |
 | `tests/a11y/audio.spec.ts` | every narrated page exposes one native `<audio>` player, labelled honestly, with an mp3 that resolves |
-| `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 marker contrast in both themes and under forced colors |
+| `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 marker contrast in both themes and under forced colors; lock-screen title, artwork, and paragraph skip |
 | `tests/social-cards.spec.ts` | every route's share card matches the page as served, resolves as a 1200×630 PNG, and carries alt text |
 | `tests/fold.spec.ts` | the hero fits the fold on phone viewports with no horizontal scroll |
 | `tests/voiceover/` | real macOS VoiceOver narration of the homepage, run as a launch gate |
@@ -134,6 +134,11 @@ API key. A count that disagrees with the page fails instead of guessing.
 shared by the generator and the marker, so the two can never disagree about what a
 paragraph is. The marker is a few inline lines that set a `data-` attribute, which
 assistive technology never sees. Without JavaScript the player is unchanged.
+
+The same cues drive the Media Session, so a phone's lock screen, headphones and car
+controls show the case study's title with its social card as artwork, and their previous
+and next buttons move a paragraph at a time. "Previous" restarts the current paragraph
+when it is more than three seconds in, as it does in any audio player.
 
 ## Social cards
 
