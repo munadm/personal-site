@@ -142,29 +142,37 @@ async function seek(audio: Locator, seconds: number) {
   );
 }
 
-/** Where every long run of digital silence in the mp3 ends, decoded in-browser. */
-async function decodedBreaks(page: Page, src: string, minRun: number) {
+/** Every run of digital silence in the mp3 as [start, end) sample indices,
+ *  decoded by the browser that plays it. A run still open at the end of the
+ *  file is the tail, so it is never closed and never reported. */
+async function silentRuns(page: Page, src: string) {
   return page.evaluate(
-    async ({ src, floor, minRun }) => {
+    async ({ src, floor }) => {
       const bytes = await (await fetch(src)).arrayBuffer();
       const decoded = await new OfflineAudioContext(1, 1, 24000).decodeAudioData(bytes);
-      const data = decoded.getChannelData(0);
-      const rate = decoded.sampleRate;
-      const ends: number[] = [];
-      let runStart = -1;
-      for (let i = 0; i <= data.length; i++) {
-        const quiet = i < data.length && Math.abs(data[i]) < floor;
-        if (quiet && runStart < 0) runStart = i;
-        if (quiet || runStart < 0) continue;
-        // Runs touching either end of the file are lead-in or tail, not breaks.
-        const interior = runStart > 0 && i < data.length;
-        if (interior && (i - runStart) / rate >= minRun) ends.push(i / rate);
-        runStart = -1;
-      }
-      return ends;
+      const runs: [number, number][] = [];
+      let start = -1;
+      decoded.getChannelData(0).forEach((sample, i) => {
+        const quiet = Math.abs(sample) < floor;
+        if (quiet && start < 0) start = i;
+        if (!quiet && start >= 0) {
+          runs.push([start, i]);
+          start = -1;
+        }
+      });
+      return { runs, rate: decoded.sampleRate };
     },
-    { src, floor: SILENCE_AMPLITUDE, minRun },
+    { src, floor: SILENCE_AMPLITUDE },
   );
+}
+
+/** Where each paragraph break in the mp3 ends: silent runs at least minRun
+ *  long. A run starting at the first sample is lead-in, not a break. */
+async function decodedBreaks(page: Page, src: string, minRun: number) {
+  const { runs, rate } = await silentRuns(page, src);
+  return runs
+    .filter(([start, end]) => start > 0 && (end - start) / rate >= minRun)
+    .map(([, end]) => end / rate);
 }
 
 /** WCAG relative luminance of a computed `rgb(...)` color. */
