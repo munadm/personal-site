@@ -12,7 +12,7 @@
     "astro": "astro",
     "lint": "oxlint",
     "test": "npm run lint && npm run test:audio && playwright test",
-    "test:audio": "node scripts/audio/test-chunking.mjs && node scripts/audio/test-retries.mjs",
+    "test:audio": "node scripts/audio/test-chunking.mjs && node scripts/audio/test-retries.mjs && node scripts/audio/test-cues.mjs",
     "resume:pdf": "node scripts/make-resume-pdf.mjs",
     "audio": "node scripts/audio/make-audio.mjs"
   },

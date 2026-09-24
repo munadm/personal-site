@@ -2,16 +2,43 @@
   "bnpl-platform": {
     "route": "/work/bnpl-platform",
     "hash": "6dbb79448a222535",
-    "minutes": 4
+    "minutes": 4,
+    "cues": [
+      0,
+      4.65,
+      33.45,
+      72.69,
+      102.65,
+      181.25,
+      221.13
+    ]
   },
   "llm-pii-scanner": {
     "route": "/work/llm-pii-scanner",
     "hash": "2f87c6749e15c8e5",
-    "minutes": 4
+    "minutes": 4,
+    "cues": [
+      0,
+      12.25,
+      43.49,
+      91.65,
+      125.77,
+      167.14,
+      197.97
+    ]
   },
   "simplification-layer": {
     "route": "/work/simplification-layer",
     "hash": "1a00dbd88df538a3",
-    "minutes": 4
+    "minutes": 4,
+    "cues": [
+      0,
+      6.01,
+      40.37,
+      91.93,
+      133.37,
+      192.53,
+      231.01
+    ]
   }
 }

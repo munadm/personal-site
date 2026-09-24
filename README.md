@@ -30,6 +30,8 @@ Playwright suite enforces it rather than the README asserting it.
 - A visible `:focus-visible` outline on everything focusable.
 - Body text targets AAA (7:1) contrast. Text is never placed over a pattern.
 - Nothing animates in either motion mode. Decorative SVG is `aria-hidden`.
+- Narrated pages mark the paragraph being spoken, without moving a line of layout,
+  scrolling the page, or touching the accessibility tree.
 - Every route reflows to 320px with no horizontal scroll and stays readable under forced
   colors.
 - Both themes are scanned, so dark mode is held to the same bar as light.
@@ -48,6 +50,7 @@ Each commitment above is a test. The suite is the specification.
 | `tests/a11y/aria-snapshot.spec.ts` | locks each route's `<main>` accessibility tree |
 | `tests/a11y/virtual-screen-reader.spec.ts` | virtual screen-reader narration of the built HTML, in order |
 | `tests/a11y/audio.spec.ts` | every narrated page exposes one native `<audio>` player, labelled honestly, with an mp3 that resolves |
+| `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 marker contrast in both themes and under forced colors |
 | `tests/fold.spec.ts` | the hero fits the fold on phone viewports with no horizontal scroll |
 | `tests/voiceover/` | real macOS VoiceOver narration of the homepage, run as a launch gate |
 
@@ -94,9 +97,9 @@ to ask for it.
 
 ## Audio narration
 
-Each case study carries an AI-narrated reading, synthesized locally with
-[Kokoro](https://github.com/hexgrad/kokoro). No API is involved and the model never runs
-in CI.
+Each case study carries an AI-narrated reading, synthesized with
+[Gemini text-to-speech](https://ai.google.dev/gemini-api/docs/speech-generation) a
+paragraph at a time. The API is only called when prose changes, and never in CI.
 
 ```sh
 npm run audio    # regenerate changed narrations into public/audio/
@@ -105,17 +108,31 @@ npm run audio    # regenerate changed narrations into public/audio/
 The mp3s are committed like `public/resume.pdf`, so the deploy build only serves static
 files. The generator finds case studies in the build output instead of a hardcoded list,
 hashes their prose into `public/audio/manifest.json`, and re-synthesizes only what
-changed. Its large TTS toolchain lives in `scripts/audio/` with its own `package.json`,
-kept out of the root dependency graph so `npm ci` stays fast. It needs `ffmpeg` on `PATH`.
+changed. Its toolchain lives in `scripts/audio/` with its own `package.json`, kept out of
+the root dependency graph so `npm ci` stays fast. It needs `ffmpeg` on `PATH` and a
+`GEMINI_API_KEY` in a gitignored `.env`, the key only when something needs synthesizing.
 
 You rarely run it by hand. When a commit touches `src/pages/work/*.astro`, the pre-commit
 hook rebuilds the affected narration and stages it into the same commit, which stops the
-audio drifting from the text. Voice and pacing are constants at the top of
-`scripts/audio/make-audio.mjs`, and mispronunciations are fixed with a respelling table in
-the same file.
+audio drifting from the text. Delivery and pacing are constants at the top of
+`scripts/audio/make-audio.mjs`.
 
 The player is a native `<audio controls>` element, keyboard- and screen-reader-operable
 without any script of ours.
+
+### Read-along
+
+While a reading plays, the paragraph being spoken is marked with a rule in the margin.
+The generator joins paragraphs with 0.8 s of digital silence, which speech never reaches,
+so `scripts/audio/cues.mjs` finds every paragraph break in the mp3 itself with ffmpeg and
+writes one start time per block into the manifest as `cues`. That works the same for a
+reading synthesized a minute ago and one committed before cues existed, and it needs no
+API key. A count that disagrees with the page fails instead of guessing.
+
+`src/lib/narration.mjs` holds the one selector that decides which blocks are narrated,
+shared by the generator and the marker, so the two can never disagree about what a
+paragraph is. The marker is a few inline lines that set a `data-` attribute, which
+assistive technology never sees. Without JavaScript the player is unchanged.
 
 ## The Writing page
 
@@ -141,8 +158,8 @@ outage on the blog cannot fail a deploy here.
   graphics.
 - Type scale: 12 / 14 / 16 / 18 / 24 / 32 / 48 / 72 px.
 - The only script that runs unconditionally is a few inline lines in the head that restore
-  the stored theme before first paint. The theme toggle is the one other piece of client
-  JavaScript.
+  the stored theme before first paint. The theme toggle and the read-along marker on
+  narrated pages are the only other client JavaScript.
 
 ## Deploy and rollback
 

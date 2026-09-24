@@ -8,15 +8,27 @@
  * Native <audio controls> is keyboard- and screen-reader-accessible for free;
  * the a11y suite (tests/a11y/audio.spec.ts) enforces the accessible name,
  * the visible "AI-narrated" label, and that the mp3 actually resolves.
+ *
+ * Read-along: while the narration plays, the paragraph being spoken is marked
+ * with a rule in the left margin, so a reader can follow the voice through the
+ * text. The manifest carries one cue (a start time in seconds) per narrated
+ * block, measured from the mp3 itself by scripts/audio/cues.mjs, and
+ * NARRATED_BLOCKS is the same selector the generator used to write the script.
+ * The marker is visual only: it changes no text, no roles and no focus, so
+ * the accessibility tree is identical whether or not it is showing, and it
+ * never scrolls the page, which stays where the reader put it. Without
+ * JavaScript the player works exactly as before, minus the marker.
+ * tests/a11y/read-along.spec.ts enforces all of that.
  */
 import manifest from '../../public/audio/manifest.json';
+import { NARRATED_BLOCKS } from '../lib/narration.mjs';
 
 interface Props {
   /** Page slug — the manifest key and the /audio/<slug>.mp3 basename. */
   slug: string;
 }
 
-type Entry = { minutes: number };
+type Entry = { minutes: number; cues?: number[] };
 // Annotated, not asserted: the manifest is generated with one entry per
 // narrated slug, so its literal type has no index signature to look `slug` up
 // in. The assignment keeps the check that every entry really carries minutes.
@@ -25,6 +37,8 @@ const { slug } = Astro.props;
 const entry = entries[slug];
 const src = `/audio/${slug}.mp3`;
 const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minutes` : '';
+const cues = entry?.cues ?? [];
+const blocks = NARRATED_BLOCKS;
 ---
 
 {
@@ -60,6 +74,46 @@ const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minute
         <a href="/colophon">How it is made.</a>
       </p>
     </div>
+  )
+}
+
+{
+  cues.length > 0 && (
+    <script is:inline define:vars={{ cues, blocks }}>
+      (function () {
+        var audio = document.querySelector('.narration__player');
+        if (!audio) return;
+        // This script sits above the body copy, so wait for the rest of the
+        // page to parse before looking for its paragraphs.
+        document.addEventListener('DOMContentLoaded', function () {
+          var paragraphs = Array.prototype.filter.call(
+            document.querySelectorAll(blocks),
+            function (el) { return el.textContent.trim() !== ''; }
+          );
+          // Text edited since the audio was made: mark nothing rather than
+          // the wrong paragraph. The suite fails on this state before it ships.
+          if (paragraphs.length !== cues.length) return;
+          var current = -1;
+          function mark(i) {
+            if (i === current) return;
+            if (current >= 0) paragraphs[current].removeAttribute('data-narrating');
+            if (i >= 0) paragraphs[i].setAttribute('data-narrating', '');
+            current = i;
+          }
+          function follow() {
+            var i = cues.length - 1;
+            while (i > 0 && cues[i] > audio.currentTime) i--;
+            mark(i);
+          }
+          function clear() { mark(-1); }
+          audio.addEventListener('play', follow);
+          audio.addEventListener('timeupdate', follow);
+          audio.addEventListener('seeked', follow);
+          audio.addEventListener('ended', clear);
+          audio.addEventListener('emptied', clear);
+        });
+      })();
+    </script>
   )
 }
 
@@ -118,5 +172,46 @@ const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minute
     margin: var(--space-2) 0 0;
     font-size: var(--fs-14);
     color: var(--color-muted);
+  }
+
+  /* Read-along marker: two vertical rules, a hairline and a bold one, set in
+     the margin beside the paragraph being spoken. It is the site's rule
+     motif turned on its side, and it sits in the container's side padding
+     rather than behind the text, so nothing is ever drawn under words.
+     Absolutely positioned, so marking a paragraph cannot shift a single line
+     of layout, and it switches instantly with no transition. */
+  :global([data-narrating]) {
+    position: relative;
+  }
+  :global([data-narrating])::before {
+    content: '';
+    position: absolute;
+    inset-block: 0.2em;
+    inset-inline-start: calc(-1 * var(--space-2) - 2px);
+    width: 7px;
+    background: linear-gradient(
+      to right,
+      var(--color-accent-graphic) 0 1px,
+      transparent 1px 3px,
+      var(--color-accent-graphic) 3px 7px
+    );
+  }
+  /* Forced colors strips gradients, which would erase the marker. Opt the
+     marker alone out and paint it in the user's own Highlight color. */
+  @media (forced-colors: active) {
+    :global([data-narrating])::before {
+      forced-color-adjust: none;
+      background: linear-gradient(
+        to right,
+        Highlight 0 1px,
+        transparent 1px 3px,
+        Highlight 3px 7px
+      );
+    }
+  }
+  @media print {
+    :global([data-narrating])::before {
+      display: none;
+    }
   }
 </style>

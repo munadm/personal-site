@@ -36,6 +36,8 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { NARRATED_BLOCKS } from '../../src/lib/narration.mjs';
+import { hasCues, measureCues } from './cues.mjs';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(SCRIPT_DIR, '..', '..');
@@ -216,23 +218,16 @@ export function normalizeForSpeech(text) {
 }
 
 /**
- * Pull the spoken script out of a case study's built HTML: the heading, the
- * standfirst, and the body paragraphs — but not the "back to work" link or
- * the at-a-glance facts table, which read poorly aloud. node-html-parser
- * gives us stable selectors over the real rendered output.
+ * Pull the spoken script out of a case study's built HTML. Which elements are
+ * read is decided by NARRATED_BLOCKS, shared with the read-along marker so the
+ * script and the page can never disagree about what a "paragraph" is.
+ * node-html-parser gives us stable selectors over the real rendered output.
  */
 function extractNarration(html, parse) {
-  const root = parse(html);
-  const parts = [];
-  const h1 = root.querySelector('.page-intro h1');
-  if (h1) parts.push(h1.text.trim());
-  const standfirst = root.querySelector('.standfirst');
-  if (standfirst) parts.push(standfirst.text.trim());
-  for (const p of root.querySelectorAll('.case-body .container > p')) {
-    if (p.classList.contains('back-link')) continue;
-    const t = p.text.replace(/\s+/g, ' ').trim();
-    if (t) parts.push(t);
-  }
+  const parts = parse(html)
+    .querySelectorAll(NARRATED_BLOCKS)
+    .map((el) => el.text.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
   // Ensure every part ends with terminal punctuation so the heading reads as
   // its own utterance rather than running into the standfirst.
   const joined = parts
@@ -520,24 +515,48 @@ function narrationHash(text) {
     .slice(0, 16);
 }
 
+/** Read each page's script once, so planning, synthesis and cue measurement
+ *  all work from the same extraction. */
+function withScripts(pages, parse) {
+  return pages.map((page) => {
+    const text = extractNarration(readFileSync(page.htmlPath, 'utf8'), parse);
+    return { ...page, text, hash: narrationHash(text), mp3Path: join(OUT_DIR, `${page.slug}.mp3`) };
+  });
+}
+
+/** One block per line of the script: the unit a read-along cue marks. */
+const blockCount = (text) => text.split('\n').filter(Boolean).length;
+
 /** Decide what needs (re)generating, so we only spend on a real miss or
  *  change. A page with no manifest entry is a miss; a hash mismatch means the
  *  prose, the voice, the model or the delivery direction changed. */
-function planJobs(pages, manifest, parse) {
+function planJobs(pages, manifest) {
   const jobs = [];
   for (const page of pages) {
-    const text = extractNarration(readFileSync(page.htmlPath, 'utf8'), parse);
-    const hash = narrationHash(text);
-    const mp3Path = join(OUT_DIR, `${page.slug}.mp3`);
     const prev = manifest[page.slug];
-    if (prev?.hash === hash && existsSync(mp3Path)) {
+    if (prev?.hash === page.hash && existsSync(page.mp3Path)) {
       console.log(`✓ ${page.slug} — up to date`);
       continue;
     }
     console.log(`● ${page.slug} — ${prev ? 'prose or delivery changed' : 'new case study, no audio yet'}`);
-    jobs.push({ ...page, text, hash, mp3Path });
+    jobs.push(page);
   }
   return jobs;
+}
+
+/** Give every narration its read-along cues. Covers fresh synthesis and mp3s
+ *  committed before cues existed through the same measurement, and needs no
+ *  API key, so a backfill is free. See cues.mjs for why the mp3 is the source. */
+function reconcileCues(pages, manifest) {
+  const missing = pages.filter((page) => !hasCues(manifest[page.slug], blockCount(page.text)));
+  if (missing.length === 0) return;
+  ensureFfmpeg();
+  for (const page of missing) {
+    const cues = measureCues(page.mp3Path, blockCount(page.text), PARAGRAPH_GAP);
+    manifest[page.slug] = { ...manifest[page.slug], cues };
+    console.log(`⌖ ${page.slug} — ${cues.length} read-along cues`);
+  }
+  writeManifest(manifest);
 }
 
 /** Narrate one page: synthesize each chunk and join them with the gaps the
@@ -589,12 +608,14 @@ async function main() {
     process.exit(1);
   }
 
-  const jobs = planJobs(pages, manifest, parse);
-  if (jobs.length === 0) {
-    console.log('All narrations up to date.');
-    return;
-  }
+  const scripted = withScripts(pages, parse);
+  const jobs = planJobs(scripted, manifest);
+  if (jobs.length > 0) await synthesizeAll(jobs, manifest);
+  else console.log('All narrations up to date.');
+  reconcileCues(scripted, manifest);
+}
 
+async function synthesizeAll(jobs, manifest) {
   ensureFfmpeg();
   const apiKey = requireApiKey();
   console.log(`Synthesizing with ${MODEL_ID} (${VOICE})…`);
@@ -604,6 +625,7 @@ async function main() {
     encodeMp3(pcm, job);
     const seconds = pcm.length / BYTES_PER_SAMPLE / SAMPLE_RATE;
     const bytes = readFileSync(job.mp3Path).length;
+    // No cues yet: reconcileCues() measures them from the mp3 just written.
     manifest[job.slug] = {
       route: job.route,
       hash: job.hash,
