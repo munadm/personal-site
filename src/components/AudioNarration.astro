@@ -9,9 +9,8 @@
  * the a11y suite (tests/a11y/audio.spec.ts) enforces the accessible name,
  * the visible "AI-narrated" label, and that the mp3 actually resolves.
  *
- * Read-along: while the narration plays, the paragraph being spoken is marked
- * with a rule in the left margin, so a reader can follow the voice through the
- * text. The manifest carries one cue (a start time in seconds) per narrated
+ * Read-along: while the narration plays, the paragraph being spoken gets a
+ * soft rounded outline, so a reader can follow the voice through the text. The manifest carries one cue (a start time in seconds) per narrated
  * block, measured from the mp3 itself by scripts/audio/cues.mjs, and
  * NARRATED_BLOCKS is the same selector the generator used to write the script.
  * The marker is visual only: it changes no text, no roles and no focus, so
@@ -19,11 +18,10 @@
  * never scrolls the page, which stays where the reader put it. Without
  * JavaScript the player works exactly as before, minus the marker.
  *
- * Readers choose: a switch turns the marker off for anyone who finds it
- * distracting, and a pair of radios picks its form, the rule in the margin or
- * a soft outline around the paragraph. Both are native controls, remembered
- * in localStorage like the theme, and rendered hidden so they only appear
- * when the script that honours them is running.
+ * Readers choose: an On/Off radio pair beside the player turns the outline off
+ * for anyone who finds it distracting. The choice is remembered in
+ * localStorage like the theme, and the radios render hidden so they only
+ * appear when the script that honours them is running.
  *
  * The same cues drive the Media Session: a phone's lock screen, headphones
  * and car controls show the case study's title and its social card, and
@@ -81,23 +79,19 @@ const blocks = NARRATED_BLOCKS;
       />
       {
         cues.length > 0 && (
-          <div class="read-along" hidden>
-            <label class="read-along__switch">
-              <input id="read-along-toggle" type="checkbox" role="switch" checked />
-              Mark the paragraph being read
-            </label>
-            <fieldset class="read-along__style">
-              <legend>Marker</legend>
+          <fieldset class="read-along" hidden>
+            <legend>Outline the paragraph being read</legend>
+            <span class="read-along__options">
               <label>
-                <input type="radio" name="read-along-style" value="rule" checked />
-                Margin rule
+                <input type="radio" name="read-along" value="on" checked />
+                On
               </label>
               <label>
-                <input type="radio" name="read-along-style" value="outline" />
-                Outline
+                <input type="radio" name="read-along" value="off" />
+                Off
               </label>
-            </fieldset>
-          </div>
+            </span>
+          </fieldset>
         )
       }
       <p class="narration__note">
@@ -133,10 +127,7 @@ const blocks = NARRATED_BLOCKS;
           // nothing for them to control. The suite fails on this state.
           if (paragraphs.length !== cues.length) return;
 
-          var toggle = document.getElementById('read-along-toggle');
-          var styles = panel.querySelector('fieldset');
           var enabled = load('readAlong') !== 'off';
-          var style = load('readAlongStyle') === 'outline' ? 'outline' : 'rule';
           var started = false;
           var current = -1;
 
@@ -154,35 +145,22 @@ const blocks = NARRATED_BLOCKS;
           function follow() {
             mark(enabled && started ? indexAt(audio.currentTime) : -1);
           }
-          function apply() {
-            toggle.checked = enabled;
-            styles.disabled = !enabled;
-            panel.querySelector('input[value="' + style + '"]').checked = true;
-            document.documentElement.setAttribute('data-read-along-style', style);
-            follow();
-          }
-
-          toggle.addEventListener('change', function () {
-            enabled = toggle.checked;
+          panel.querySelector('input[value="' + (enabled ? 'on' : 'off') + '"]').checked = true;
+          panel.addEventListener('change', function (event) {
+            enabled = event.target.value === 'on';
             save('readAlong', enabled ? 'on' : 'off');
-            apply();
-          });
-          styles.addEventListener('change', function (event) {
-            style = event.target.value;
-            save('readAlongStyle', style);
-            apply();
+            follow();
           });
           audio.addEventListener('play', function () { started = true; follow(); });
           audio.addEventListener('timeupdate', follow);
           audio.addEventListener('seeked', function () { started = true; follow(); });
           audio.addEventListener('ended', function () { started = false; follow(); });
           audio.addEventListener('emptied', function () { started = false; follow(); });
-          apply();
           panel.hidden = false;
 
           // Lock screen, headphones and car: name the reading, and make the
           // previous and next buttons move by paragraph. This works whether
-          // or not the marker is showing.
+          // or not the outline is on.
           if (!('mediaSession' in navigator)) return;
           var session = navigator.mediaSession;
           var card = document.querySelector('meta[property="og:image"]');
@@ -265,19 +243,34 @@ const blocks = NARRATED_BLOCKS;
     color: var(--color-muted);
   }
 
-  /* Read-along settings: one switch and one pair of radios, native controls
-     so keyboard, screen reader and forced colors all work without help.
-     Each control's whole label is its hit area, well past the 24px target. */
+  /* Read-along setting: one native radio pair, so keyboard, screen reader
+     and forced colors all work without help. Each label is its option's
+     whole hit area, past the 24px target minimum. */
   .read-along {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-1) var(--space-3);
-    margin-top: var(--space-2);
+    gap: var(--space-1) var(--space-2);
+    min-width: 0;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    border: 0;
     font-size: var(--fs-14);
   }
   .read-along[hidden] {
     display: none;
+  }
+  /* A floated legend sits inline with its options instead of on the border. */
+  .read-along legend {
+    float: left;
+    margin-right: var(--space-1);
+    padding: 0;
+    font-weight: var(--fw-medium);
+  }
+  /* On and Off wrap as one unit, never split across lines. */
+  .read-along__options {
+    display: inline-flex;
+    gap: var(--space-2);
   }
   .read-along label {
     display: inline-flex;
@@ -286,9 +279,6 @@ const blocks = NARRATED_BLOCKS;
     min-height: 1.5rem;
     cursor: pointer;
   }
-  .read-along__switch {
-    font-weight: var(--fw-medium);
-  }
   .read-along input {
     width: 1.125rem;
     height: 1.125rem;
@@ -296,87 +286,28 @@ const blocks = NARRATED_BLOCKS;
     accent-color: var(--color-accent);
     cursor: pointer;
   }
-  .read-along__style {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-1) var(--space-2);
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-  /* A floated legend sits inline with its options instead of on the border. */
-  .read-along__style legend {
-    float: left;
-    padding: 0;
-    color: var(--color-muted);
-  }
-  .read-along__style:disabled label,
-  .read-along__style:disabled input {
-    cursor: default;
-  }
 
-  /* Read-along marker: two vertical rules, a hairline and a bold one, set in
-     the margin beside the paragraph being spoken. It is the site's rule
-     motif turned on its side, and it sits in the container's side padding
-     rather than behind the text, so nothing is ever drawn under words.
-     Absolutely positioned, so marking a paragraph cannot shift a single line
-     of layout, and it switches instantly with no transition. */
+  /* The read-along outline: a soft rounded outline around the paragraph
+     being spoken. An outline takes no layout space, so marking a paragraph
+     cannot move a single line, and it switches instantly with no transition.
+     The offset keeps it clear of the words, inside the container's side
+     padding and the gap between paragraphs, so nothing is drawn under text.
+     The colour is --color-accent-soft, 3:1 or better against the page in
+     both themes, and 2px of it is distinct from the focus ring, which is
+     3px of solid ink. */
   :global([data-narrating]) {
-    position: relative;
-  }
-  :global([data-narrating])::before {
-    content: '';
-    position: absolute;
-    inset-block: 0.2em;
-    inset-inline-start: calc(-1 * var(--space-2) - 2px);
-    width: 7px;
-    background: linear-gradient(
-      to right,
-      var(--color-accent-graphic) 0 1px,
-      transparent 1px 3px,
-      var(--color-accent-graphic) 3px 7px
-    );
-  }
-  /* Forced colors strips gradients, which would erase the marker. Opt the
-     marker alone out and paint it in the user's own Highlight color. */
-  @media (forced-colors: active) {
-    :global([data-narrating])::before {
-      forced-color-adjust: none;
-      background: linear-gradient(
-        to right,
-        Highlight 0 1px,
-        transparent 1px 3px,
-        Highlight 3px 7px
-      );
-    }
-  }
-
-  /* Outline variant: a soft rounded outline around the whole paragraph in
-     place of the margin rule. An outline takes no layout space, so this
-     cannot move a line either, and it stays clear of the text: the offset
-     sits in the side padding and inside the gap between paragraphs. The
-     colour is the soft accent, 3:1 or better against the page in both
-     themes. Distinct from the focus ring, which is 3px of solid ink. */
-  :global([data-read-along-style='outline'] [data-narrating])::before {
-    display: none;
-  }
-  :global([data-read-along-style='outline'] [data-narrating]) {
     outline: 2px solid var(--color-accent-soft);
     outline-offset: 10px;
     border-radius: 10px;
   }
+  /* Forced colors keeps outlines but repaints them; ask for the user's own
+     Highlight so it still reads as a marker rather than a border. */
   @media (forced-colors: active) {
-    :global([data-read-along-style='outline'] [data-narrating]) {
+    :global([data-narrating]) {
       outline-color: Highlight;
     }
   }
-
   @media print {
-    :global([data-narrating])::before {
-      display: none;
-    }
     :global([data-narrating]) {
       outline: none;
     }

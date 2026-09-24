@@ -8,8 +8,8 @@ import { PARAGRAPH_GAP } from '../../scripts/audio/make-audio.mjs';
 /*
  * Read-along narration.
  *
- * While a case study's narration plays, the paragraph being spoken is marked
- * in the margin. The promises this suite holds it to:
+ * While a case study's narration plays, the paragraph being spoken gets a
+ * soft outline. The promises this suite holds it to:
  *   - there is one cue per narrated block, and each cue sits on a real
  *     paragraph break in the mp3, checked by decoding the shipped file in the
  *     browser that plays it (an independent check on scripts/audio/cues.mjs,
@@ -18,12 +18,12 @@ import { PARAGRAPH_GAP } from '../../scripts/audio/make-audio.mjs';
  *     the reading ends;
  *   - marking changes nothing else: no layout shift, no scrolling, no motion,
  *     and an identical accessibility tree;
- *   - the marker survives forced colors and clears 3:1 non-text contrast in
- *     both themes;
+ *   - the outline is the only marker (no margin rule), survives forced colors,
+ *     and clears 3:1 non-text contrast in both themes;
  *   - the lock screen names the reading, and its previous and next buttons
  *     move a paragraph at a time;
- *   - readers can turn the marker off, or switch it to an outline, with
- *     native keyboard-operable controls that remember the choice;
+ *   - readers can turn outlining on or off with a native, keyboard-operable
+ *     radio pair that remembers the choice;
  *   - without JavaScript the player is exactly what it was.
  *
  * Narrated routes come from the manifest, so a new case study is covered with
@@ -42,19 +42,20 @@ const SILENCE_AMPLITUDE = 10 ** (-80 / 20);
 
 const blocksOn = (page: Page) => page.locator(NARRATED_BLOCKS).filter({ hasText: /\S/ });
 const marked = (page: Page) => page.locator('[data-narrating]');
-const markerSwitch = (page: Page) => page.getByRole('switch', { name: 'Mark the paragraph being read' });
-const styleRadio = (page: Page, name: 'Margin rule' | 'Outline') => page.getByRole('radio', { name });
+const setting = (page: Page) => page.getByRole('group', { name: 'Outline the paragraph being read' });
+const outlining = (page: Page, name: 'On' | 'Off') => setting(page).getByRole('radio', { name });
 
-/** How the marked paragraph is drawn: its outline, and its margin rule. */
+/** How the marked paragraph is drawn: its outline, and anything painted in
+ *  its margin by a pseudo-element (which there should never be). */
 const markerLook = (page: Page) =>
   marked(page).evaluate((el) => {
     const own = getComputedStyle(el);
-    const rule = getComputedStyle(el, '::before');
+    const margin = getComputedStyle(el, '::before');
     return {
       outlineStyle: own.outlineStyle,
       outlineWidth: own.outlineWidth,
       outlineColor: own.outlineColor,
-      rule: rule.display !== 'none' && rule.content !== 'none',
+      marginMark: margin.content !== 'none' && margin.display !== 'none',
     };
   });
 
@@ -322,14 +323,14 @@ for (const { slug, route, cues } of NARRATED) {
           return value;
         };
         return {
-          rule: resolve('--color-accent-graphic'),
-          outline: resolve('--color-accent-soft'),
+          token: resolve('--color-accent-soft'),
+          drawn: getComputedStyle(el).outlineColor,
           page: getComputedStyle(document.body).backgroundColor,
         };
       });
+      expect(colors.drawn, 'the outline is drawn in the soft accent').toBe(colors.token);
       // WCAG 1.4.11: graphics that convey state need 3:1 against what they sit on.
-      expect(contrast(colors.rule, colors.page), 'margin rule').toBeGreaterThanOrEqual(3);
-      expect(contrast(colors.outline, colors.page), 'outline').toBeGreaterThanOrEqual(3);
+      expect(contrast(colors.drawn, colors.page)).toBeGreaterThanOrEqual(3);
     });
   }
 
@@ -338,97 +339,69 @@ for (const { slug, route, cues } of NARRATED) {
     await page.goto(route);
     await primePlayer(page.locator('audio'));
     await seek(page.locator('audio'), cues[1] + 0.5);
-    const marker = await marked(page).evaluate((el) => {
-      const cs = getComputedStyle(el, '::before');
-      return { image: cs.backgroundImage, width: cs.width, adjust: cs.forcedColorAdjust };
-    });
-    expect(marker.adjust).toBe('none');
-    expect(marker.image).toContain('gradient');
-    expect(parseFloat(marker.width)).toBeGreaterThan(0);
-
-    await styleRadio(page, 'Outline').check();
-    const outline = await markerLook(page);
-    expect(outline.outlineStyle).toBe('solid');
-    expect(outline.outlineColor).not.toBe('rgba(0, 0, 0, 0)');
+    const look = await markerLook(page);
+    expect(look.outlineStyle).toBe('solid');
+    expect(parseFloat(look.outlineWidth)).toBeGreaterThan(0);
+    expect(look.outlineColor).not.toBe('rgba(0, 0, 0, 0)');
   });
 
-  test(`read-along: ${slug} switch turns the marker off and back on`, async ({ page }) => {
+  test(`read-along: ${slug} marks with a soft outline and nothing in the margin`, async ({ page }) => {
+    await page.goto(route);
+    await primePlayer(page.locator('audio'));
+    await seek(page.locator('audio'), cues[2] + 0.5);
+    const look = await markerLook(page);
+    expect(look.outlineStyle).toBe('solid');
+    expect(look.outlineWidth).toBe('2px');
+    expect(look.marginMark, 'the margin rule is gone').toBe(false);
+  });
+
+  test(`read-along: ${slug} outlining turns off and back on`, async ({ page }) => {
     await page.goto(route);
     const audio = page.locator('audio');
     const blocks = blocksOn(page);
-    await expect(markerSwitch(page)).toBeChecked();
+    await expect(outlining(page, 'On')).toBeChecked();
     await primePlayer(audio);
     await seek(audio, cues[3] + 0.5);
     await expect(blocks.nth(3)).toHaveAttribute('data-narrating', '');
 
-    await markerSwitch(page).uncheck();
+    await outlining(page, 'Off').check();
     await expect(marked(page)).toHaveCount(0);
     await seek(audio, cues[1] + 0.5);
     await expect(marked(page), 'off means off, through seeks and playback').toHaveCount(0);
-    // The style choice has nothing to act on while the marker is off.
-    await expect(styleRadio(page, 'Margin rule')).toBeDisabled();
-    await expect(styleRadio(page, 'Outline')).toBeDisabled();
 
-    await markerSwitch(page).check();
-    await expect(blocks.nth(1), 'turning it back on marks where the voice is').toHaveAttribute(
+    await outlining(page, 'On').check();
+    await expect(blocks.nth(1), 'turning it back on outlines where the voice is').toHaveAttribute(
       'data-narrating',
       '',
     );
     await expect(marked(page)).toHaveCount(1);
   });
 
-  test(`read-along: ${slug} outline style replaces the rule without moving a line`, async ({ page }) => {
-    await page.goto(route);
-    const audio = page.locator('audio');
-    const atRest = await lineBoxes(page);
-    await primePlayer(audio);
-    await seek(audio, cues[2] + 0.5);
-
-    const rule = await markerLook(page);
-    expect(rule.rule).toBe(true);
-    expect(rule.outlineStyle).toBe('none');
-
-    await styleRadio(page, 'Outline').check();
-    const outline = await markerLook(page);
-    expect(outline.rule, 'one marker at a time').toBe(false);
-    expect(outline.outlineStyle).toBe('solid');
-    expect(outline.outlineWidth).toBe('2px');
-    expect(await lineBoxes(page), 'the outline must not move a single line').toEqual(atRest);
-    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
-  });
-
   test(`read-along: ${slug} remembers the reader's choice`, async ({ page }) => {
     await page.goto(route);
-    await styleRadio(page, 'Outline').check();
-    await markerSwitch(page).uncheck();
+    await outlining(page, 'Off').check();
     await page.reload();
-    await expect(markerSwitch(page)).not.toBeChecked();
-    await expect(styleRadio(page, 'Outline')).toBeChecked();
-
+    await expect(outlining(page, 'Off')).toBeChecked();
     await primePlayer(page.locator('audio'));
     await seek(page.locator('audio'), cues[2] + 0.5);
     await expect(marked(page)).toHaveCount(0);
-    await markerSwitch(page).check();
+
+    await outlining(page, 'On').check();
     await page.reload();
-    await expect(markerSwitch(page)).toBeChecked();
+    await expect(outlining(page, 'On')).toBeChecked();
     await primePlayer(page.locator('audio'));
     await seek(page.locator('audio'), cues[2] + 0.5);
-    expect((await markerLook(page)).outlineStyle).toBe('solid');
+    await expect(marked(page)).toHaveCount(1);
   });
 
-  test(`read-along: ${slug} settings work from the keyboard`, async ({ page }) => {
+  test(`read-along: ${slug} the setting works from the keyboard`, async ({ page }) => {
     await page.goto(route);
-    await markerSwitch(page).focus();
-    await page.keyboard.press('Space');
-    await expect(markerSwitch(page)).not.toBeChecked();
-    await page.keyboard.press('Space');
-    await expect(markerSwitch(page)).toBeChecked();
-
-    await page.keyboard.press('Tab');
-    await expect(styleRadio(page, 'Margin rule')).toBeFocused();
+    await outlining(page, 'On').focus();
     await page.keyboard.press('ArrowRight');
-    await expect(styleRadio(page, 'Outline')).toBeChecked();
-    await expect(styleRadio(page, 'Outline')).toBeFocused();
+    await expect(outlining(page, 'Off')).toBeChecked();
+    await expect(outlining(page, 'Off')).toBeFocused();
+    await page.keyboard.press('ArrowLeft');
+    await expect(outlining(page, 'On')).toBeChecked();
   });
 }
 

@@ -30,8 +30,8 @@ Playwright suite enforces it rather than the README asserting it.
 - A visible `:focus-visible` outline on everything focusable.
 - Body text targets AAA (7:1) contrast. Text is never placed over a pattern.
 - Nothing animates in either motion mode. Decorative SVG is `aria-hidden`.
-- Narrated pages mark the paragraph being spoken, without moving a line of layout,
-  scrolling the page, or touching the accessibility tree.
+- Narrated pages outline the paragraph being spoken, without moving a line of layout,
+  scrolling the page, or touching the accessibility tree, and readers can turn it off.
 - Every route reflows to 320px with no horizontal scroll and stays readable under forced
   colors.
 - Both themes are scanned, so dark mode is held to the same bar as light.
@@ -50,7 +50,7 @@ Each commitment above is a test. The suite is the specification.
 | `tests/a11y/aria-snapshot.spec.ts` | locks each route's `<main>` accessibility tree |
 | `tests/a11y/virtual-screen-reader.spec.ts` | virtual screen-reader narration of the built HTML, in order |
 | `tests/a11y/audio.spec.ts` | every narrated page exposes one native `<audio>` player, labelled honestly, with an mp3 that resolves |
-| `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 marker contrast in both themes and under forced colors; the off switch, the outline style, persistence and keyboard operation; lock-screen title, artwork, and paragraph skip |
+| `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 outline contrast in both themes and under forced colors, with nothing drawn in the margin; the On/Off setting, persistence and keyboard operation; lock-screen title, artwork, and paragraph skip |
 | `tests/social-cards.spec.ts` | every route's share card matches the page as served, resolves as a 1200×630 PNG, and carries alt text |
 | `tests/fold.spec.ts` | the hero fits the fold on phone viewports with no horizontal scroll |
 | `tests/voiceover/` | real macOS VoiceOver narration of the homepage, run as a launch gate |
@@ -123,7 +123,7 @@ without any script of ours.
 
 ### Read-along
 
-While a reading plays, the paragraph being spoken is marked with a rule in the margin.
+While a reading plays, the paragraph being spoken gets a soft rounded outline.
 The generator joins paragraphs with 0.8 s of digital silence, which speech never reaches,
 so `scripts/audio/cues.mjs` finds every paragraph break in the mp3 itself with ffmpeg and
 writes one start time per block into the manifest as `cues`. That works the same for a
@@ -131,16 +131,17 @@ reading synthesized a minute ago and one committed before cues existed, and it n
 API key. A count that disagrees with the page fails instead of guessing.
 
 `src/lib/narration.mjs` holds the one selector that decides which blocks are narrated,
-shared by the generator and the marker, so the two can never disagree about what a
-paragraph is. The marker is a few inline lines that set a `data-` attribute, which
-assistive technology never sees. Without JavaScript the player is unchanged.
+shared by the generator and the outline, so the two can never disagree about what a
+paragraph is. The outline is a few inline lines that set a `data-` attribute, which
+assistive technology never sees, and CSS that draws a 2px `outline` in
+`--color-accent-soft` (3.2:1 light, 3.6:1 dark, the non-text minimum with a little room).
+An outline takes no layout space, so it cannot move a line. Without JavaScript the player
+is unchanged.
 
-Readers choose how it looks. Under the player, a native switch turns the marker off and
-a pair of radios picks between the margin rule and a soft rounded outline around the
-paragraph, drawn in `--color-accent-soft` (3.2:1 light, 3.6:1 dark, the non-text minimum
-with a little room). Both choices persist in `localStorage` like the theme. The controls
-render `hidden` and the script reveals them, so a reader without JavaScript never sees
-settings that nothing would honour.
+Under the player, an "Outline the paragraph being read" radio pair turns it on or off.
+The choice persists in `localStorage` like the theme. The radios render `hidden` and the
+script reveals them, so a reader without JavaScript never sees a setting that nothing
+would honour.
 
 The same cues drive the Media Session, so a phone's lock screen, headphones and car
 controls show the case study's title with its social card as artwork, and their previous
@@ -189,7 +190,7 @@ outage on the blog cannot fail a deploy here.
   graphics.
 - Type scale: 12 / 14 / 16 / 18 / 24 / 32 / 48 / 72 px.
 - The only script that runs unconditionally is a few inline lines in the head that restore
-  the stored theme before first paint. The theme toggle and the read-along marker on
+  the stored theme before first paint. The theme toggle and the read-along outline on
   narrated pages are the only other client JavaScript.
 
 ## Deploy and rollback
