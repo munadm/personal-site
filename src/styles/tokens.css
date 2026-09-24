@@ -12,6 +12,8 @@
  *   --color-muted on --color-bg (dark):  #b0ada2 on #16150f ≈ 8.1:1 (AAA)
  *   --color-accent text-safe (light): #0f6e56 on #faf9f5 ≈ 5.9:1 (AA, exceeds 4.5:1 requirement)
  *   --color-accent text-safe (dark):  #7fb3a3 on #16150f ≈ 7.7:1 (AAA)
+ *   --color-accent-soft (light): #569886 on #faf9f5 ≈ 3.2:1 (non-text, 1.4.11)
+ *   --color-accent-soft (dark):  #557468 on #16150f ≈ 3.6:1 (non-text, 1.4.11)
  *
  * Theming (2026-07): supports three states — system preference (default,
  * via prefers-color-scheme), and an explicit user override written to
@@ -35,6 +37,9 @@
      "Claude Code" aesthetic. See ratio table above. */
   --color-accent: #0f6e56;
   --color-accent-graphic: #0f6e56;
+  /* A quieter accent for outlines that mark state (the read-along outline).
+     Graphics only, never text: it clears the 3:1 non-text minimum and no more. */
+  --color-accent-soft: #569886;
   --color-on-accent: #faf9f5; /* ≈ 6.0:1 on #0f6e56 */
 
   /* Deprecated: no longer used above the fold or in active hover states.
@@ -131,6 +136,7 @@
     /* Desaturated teal, still text-safe on dark: ≈ 7.7:1 (AAA). */
     --color-accent: #7fb3a3;
     --color-accent-graphic: #7fb3a3;
+    --color-accent-soft: #557468; /* ≈ 3.6:1 on --color-bg, graphics only */
     --color-on-accent: #16150f; /* dark ink on accent ≈ 7.7:1 */
 
     --color-rule: #b0ada2;
@@ -148,6 +154,7 @@
 
   --color-accent: #7fb3a3;
   --color-accent-graphic: #7fb3a3;
+  --color-accent-soft: #557468;
   --color-on-accent: #16150f;
 
   --color-rule: #b0ada2;
@@ -164,6 +171,7 @@
 
   --color-accent: #0f6e56;
   --color-accent-graphic: #0f6e56;
+  --color-accent-soft: #569886;
   --color-on-accent: #faf9f5;
 
   --color-rule: #55534a;

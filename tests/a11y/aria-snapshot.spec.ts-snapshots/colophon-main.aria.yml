@@ -22,6 +22,6 @@
     - link "Gemini text-to-speech":
       - /url: https://ai.google.dev/gemini-api/docs/speech-generation
     - text: ", a paragraph at a time so the phrasing carries across whole sentences rather than resetting at every full stop. Each reading is generated from the page's own text, encoded to a small mp3, and served as a static file through a native audio player, so there is nothing to load unless you press play. The page you are reading is the transcript."
-  - paragraph: "While a reading plays, a rule in the margin marks the paragraph being spoken, so you can follow the voice through the text. Its timing comes from the audio itself: the pauses between paragraphs are measured when the reading is made. The marker is visual only. It never scrolls the page and never changes what a screen reader announces."
+  - paragraph: "While a reading plays, a rule in the margin marks the paragraph being spoken, so you can follow the voice through the text. Its timing comes from the audio itself: the pauses between paragraphs are measured when the reading is made. The marker is visual only. It never scrolls the page and never changes what a screen reader announces. The player has a switch to turn it off, and a choice between the margin rule and a soft outline around the paragraph; the page remembers both."
   - heading "Privacy" [level=2]
   - paragraph: No analytics, no cookies, no tracking scripts of any kind. I don't know who visits this site or what they look at.
