@@ -8,8 +8,8 @@
 #   - the index's, which is what gets committed and what CI checks against the
 #     committed pages.
 #
-# When nothing under src/ or scripts/og/ has unstaged or untracked changes,
-# those are the same pages, so the working-tree render is the committed one and
+# When nothing under src/, scripts/og/ or public/og/ has unstaged or
+# untracked changes, those are the same pages, so the working-tree render is the committed one and
 # is staged as is.
 #
 # When there are such edits, the working-tree render may reflect words that
@@ -19,14 +19,20 @@
 # for its own pages, which get committed later along with those edits.
 set -e
 
+# Checked before rendering, and public/og counts too: a hand-replaced PNG or
+# a stray untracked file there would otherwise ride into the commit on the
+# wholesale `git add` below, since the generator trusts any image whose
+# manifest hash still matches.
+dirty=$(git diff --name-only -- src scripts/og public/og; git ls-files --others --exclude-standard -- src scripts/og public/og)
+
 node scripts/og/make-cards.mjs --skip-build
 
-if [ -z "$(git diff --name-only -- src scripts/og)$(git ls-files --others --exclude-standard -- src scripts/og)" ]; then
+if [ -z "$dirty" ]; then
   git add public/og
   exit 0
 fi
 
-echo "pre-commit: unstaged edits under src/ or scripts/og/: rendering the committed cards from the staged snapshot..."
+echo "pre-commit: unstaged edits under src/, scripts/og/ or public/og/: rendering the committed cards from the staged snapshot..."
 snapshot=$(mktemp -d)
 trap 'rm -rf "$snapshot"' EXIT
 git checkout-index --all --prefix="$snapshot/"
