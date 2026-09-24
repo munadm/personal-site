@@ -1,0 +1,52 @@
+{
+  "/": {
+    "image": "/og/home.png",
+    "alt": "Munad Mahinoor. Engineering leader for AI-enabled, remote-first teams. Payments at scale. munadmahinoor.com.",
+    "hash": "086e989e91bf8047"
+  },
+  "/accessibility": {
+    "image": "/og/accessibility.png",
+    "alt": "Accessibility statement. I care about this more than most people building a personal site would, so here's an honest account rather than boilerplate. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "9eadf00077111858"
+  },
+  "/colophon": {
+    "image": "/og/colophon.png",
+    "alt": "Colophon. How this site is built. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "8602ff687f94e822"
+  },
+  "/contact": {
+    "image": "/og/contact.png",
+    "alt": "Contact. Remote-first, based in Philadelphia (Eastern time). Munad Mahinoor, munadmahinoor.com.",
+    "hash": "1750af856c210e37"
+  },
+  "/resume": {
+    "image": "/og/resume.png",
+    "alt": "Resume: Munad Mahinoor. Engineering leader with 9+ years building high-availability fintech platforms at PayPal, scaling from individual contributor to managing an organization of 26 engineers. munadmahinoor.com.",
+    "hash": "082b9f81abe8e0ac"
+  },
+  "/work": {
+    "image": "/og/work.png",
+    "alt": "Selected work. A few of the efforts I've led: platform-scale engineering organizations, internal tooling that spread past its own team, and applied AI for compliance. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "1b6b211975e51eae"
+  },
+  "/work/bnpl-platform": {
+    "image": "/og/work-bnpl-platform.png",
+    "alt": "Case study 01: Leading BNPL platform engineering at PayPal. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "e202c5d03ffd998c"
+  },
+  "/work/llm-pii-scanner": {
+    "image": "/og/work-llm-pii-scanner.png",
+    "alt": "Case study 03: An LLM-driven PII scanner that ships as a standing compliance control. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "0f3a2e23386b3412"
+  },
+  "/work/simplification-layer": {
+    "image": "/og/work-simplification-layer.png",
+    "alt": "Case study 02: The simplification layer that shipped a rewrite's outcome without the rewrite. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "a99cfac1ac1bee50"
+  },
+  "/writing": {
+    "image": "/og/writing.png",
+    "alt": "Writing. Essays live on the blog, at blog.munadmahinoor.com. Munad Mahinoor, munadmahinoor.com.",
+    "hash": "4e39f74b8a9269b1"
+  }
+}

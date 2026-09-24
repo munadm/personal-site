@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import cards from '../../public/og/manifest.json';
 
 export interface Props {
   title: string;
@@ -16,7 +17,21 @@ const {
 
 const siteName = 'Munad Mahinoor';
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL('/favicon.svg', Astro.site).href;
+
+/*
+ * Social card: a 1200x630 PNG rendered from this page by
+ * scripts/og/make-cards.mjs (the pre-commit hook keeps it current). Pages
+ * without their own card, such as the 404, share the homepage's. The alt
+ * text is the card's words, so a screen reader in a feed gets what a sighted
+ * reader gets.
+ */
+type Card = { image: string; alt: string };
+// Annotated, not asserted: the manifest's literal type has no index signature
+// to look a route up in, and the assignment still checks every entry's shape.
+const cardsByRoute: Record<string, Card> = cards;
+const route = Astro.url.pathname.replace(/\/$/, '') || '/';
+const card = cardsByRoute[route] ?? cardsByRoute['/'];
+const ogImage = card ? new URL(card.image, Astro.site).href : undefined;
 
 const personLd = {
   '@context': 'https://schema.org',
@@ -58,12 +73,29 @@ const personLd = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImage} />
+    {
+      card && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:type" content="image/png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={card.alt} />
+        </>
+      )
+    }
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    {
+      card && (
+        <>
+          <meta name="twitter:image" content={ogImage} />
+          <meta name="twitter:image:alt" content={card.alt} />
+        </>
+      )
+    }
 
     {
       personSchema && (

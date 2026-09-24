@@ -8,15 +8,35 @@
  * Native <audio controls> is keyboard- and screen-reader-accessible for free;
  * the a11y suite (tests/a11y/audio.spec.ts) enforces the accessible name,
  * the visible "AI-narrated" label, and that the mp3 actually resolves.
+ *
+ * Read-along: while the narration plays, the paragraph being spoken gets a
+ * soft rounded outline, so a reader can follow the voice through the text. The manifest carries one cue (a start time in seconds) per narrated
+ * block, measured from the mp3 itself by scripts/audio/cues.mjs, and
+ * NARRATED_BLOCKS is the same selector the generator used to write the script.
+ * The marker is visual only: it changes no text, no roles and no focus, so
+ * the accessibility tree is identical whether or not it is showing, and it
+ * never scrolls the page, which stays where the reader put it. Without
+ * JavaScript the player works exactly as before, minus the marker.
+ *
+ * Readers choose: an On/Off radio pair beside the player turns the outline off
+ * for anyone who finds it distracting. The choice is remembered in
+ * localStorage like the theme, and the radios render hidden so they only
+ * appear when the script that honours them is running.
+ *
+ * The same cues drive the Media Session: a phone's lock screen, headphones
+ * and car controls show the case study's title and its social card, and
+ * their previous and next buttons move a paragraph at a time.
+ * tests/a11y/read-along.spec.ts enforces all of that.
  */
 import manifest from '../../public/audio/manifest.json';
+import { NARRATED_BLOCKS } from '../lib/narration.mjs';
 
 interface Props {
   /** Page slug — the manifest key and the /audio/<slug>.mp3 basename. */
   slug: string;
 }
 
-type Entry = { minutes: number };
+type Entry = { minutes: number; cues?: number[] };
 // Annotated, not asserted: the manifest is generated with one entry per
 // narrated slug, so its literal type has no index signature to look `slug` up
 // in. The assignment keeps the check that every entry really carries minutes.
@@ -25,6 +45,8 @@ const { slug } = Astro.props;
 const entry = entries[slug];
 const src = `/audio/${slug}.mp3`;
 const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minutes` : '';
+const cues = entry?.cues ?? [];
+const blocks = NARRATED_BLOCKS;
 ---
 
 {
@@ -55,11 +77,112 @@ const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minute
         src={src}
         aria-label={label}
       />
+      {
+        cues.length > 0 && (
+          <fieldset class="read-along" hidden>
+            <legend>Outline the paragraph being read</legend>
+            <span class="read-along__options">
+              <label>
+                <input type="radio" name="read-along" value="on" checked />
+                On
+              </label>
+              <label>
+                <input type="radio" name="read-along" value="off" />
+                Off
+              </label>
+            </span>
+          </fieldset>
+        )
+      }
       <p class="narration__note">
         A synthetic voice reading the text on this page.{' '}
         <a href="/colophon">How it is made.</a>
       </p>
     </div>
+  )
+}
+
+{
+  cues.length > 0 && (
+    <script is:inline define:vars={{ cues, blocks }}>
+      (function () {
+        var audio = document.querySelector('.narration__player');
+        var panel = document.querySelector('.read-along');
+        if (!audio || !panel) return;
+        function load(key) {
+          try { return localStorage.getItem(key); } catch (e) { return null; }
+        }
+        function save(key, value) {
+          try { localStorage.setItem(key, value); } catch (e) {}
+        }
+        // This script sits above the body copy, so wait for the rest of the
+        // page to parse before looking for its paragraphs.
+        document.addEventListener('DOMContentLoaded', function () {
+          var paragraphs = Array.prototype.filter.call(
+            document.querySelectorAll(blocks),
+            function (el) { return el.textContent.trim() !== ''; }
+          );
+          // Text edited since the audio was made: mark nothing rather than
+          // the wrong paragraph, and leave the controls hidden since there is
+          // nothing for them to control. The suite fails on this state.
+          if (paragraphs.length !== cues.length) return;
+
+          var enabled = load('readAlong') !== 'off';
+          var started = false;
+          var current = -1;
+
+          function mark(i) {
+            if (i === current) return;
+            if (current >= 0) paragraphs[current].removeAttribute('data-narrating');
+            if (i >= 0) paragraphs[i].setAttribute('data-narrating', '');
+            current = i;
+          }
+          function indexAt(t) {
+            var i = cues.length - 1;
+            while (i > 0 && cues[i] > t) i--;
+            return i;
+          }
+          function follow() {
+            mark(enabled && started ? indexAt(audio.currentTime) : -1);
+          }
+          panel.querySelector('input[value="' + (enabled ? 'on' : 'off') + '"]').checked = true;
+          panel.addEventListener('change', function (event) {
+            enabled = event.target.value === 'on';
+            save('readAlong', enabled ? 'on' : 'off');
+            follow();
+          });
+          audio.addEventListener('play', function () { started = true; follow(); });
+          audio.addEventListener('timeupdate', follow);
+          audio.addEventListener('seeked', function () { started = true; follow(); });
+          audio.addEventListener('ended', function () { started = false; follow(); });
+          audio.addEventListener('emptied', function () { started = false; follow(); });
+          panel.hidden = false;
+
+          // Lock screen, headphones and car: name the reading, and make the
+          // previous and next buttons move by paragraph. This works whether
+          // or not the outline is on.
+          if (!('mediaSession' in navigator)) return;
+          var session = navigator.mediaSession;
+          var card = document.querySelector('meta[property="og:image"]');
+          function skip(step) {
+            var here = indexAt(audio.currentTime);
+            // As in any player, "previous" first restarts the current one.
+            if (step < 0 && audio.currentTime - cues[here] > 3) step = 0;
+            audio.currentTime = cues[Math.min(Math.max(here + step, 0), cues.length - 1)];
+          }
+          audio.addEventListener('play', function () {
+            session.metadata = new MediaMetadata({
+              title: paragraphs[0].textContent.trim(),
+              artist: 'Munad Mahinoor',
+              album: 'AI-narrated reading',
+              artwork: card ? [{ src: card.content, sizes: '1200x630', type: 'image/png' }] : []
+            });
+            session.setActionHandler('previoustrack', function () { skip(-1); });
+            session.setActionHandler('nexttrack', function () { skip(1); });
+          });
+        });
+      })();
+    </script>
   )
 }
 
@@ -118,5 +241,75 @@ const label = entry ? `AI-narrated reading of this page, ${entry.minutes} minute
     margin: var(--space-2) 0 0;
     font-size: var(--fs-14);
     color: var(--color-muted);
+  }
+
+  /* Read-along setting: one native radio pair, so keyboard, screen reader
+     and forced colors all work without help. Each label is its option's
+     whole hit area, past the 24px target minimum. */
+  .read-along {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-2);
+    min-width: 0;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    border: 0;
+    font-size: var(--fs-14);
+  }
+  .read-along[hidden] {
+    display: none;
+  }
+  /* A floated legend sits inline with its options instead of on the border. */
+  .read-along legend {
+    float: left;
+    margin-right: var(--space-1);
+    padding: 0;
+    font-weight: var(--fw-medium);
+  }
+  /* On and Off wrap as one unit, never split across lines. */
+  .read-along__options {
+    display: inline-flex;
+    gap: var(--space-2);
+  }
+  .read-along label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.5rem;
+    cursor: pointer;
+  }
+  .read-along input {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  /* The read-along outline: a soft rounded outline around the paragraph
+     being spoken. An outline takes no layout space, so marking a paragraph
+     cannot move a single line, and it switches instantly with no transition.
+     The offset keeps it clear of the words, inside the container's side
+     padding and the gap between paragraphs, so nothing is drawn under text.
+     The colour is --color-accent-soft, 3:1 or better against the page in
+     both themes, and 2px of it is distinct from the focus ring, which is
+     3px of solid ink. */
+  :global([data-narrating]) {
+    outline: 2px solid var(--color-accent-soft);
+    outline-offset: 10px;
+    border-radius: 10px;
+  }
+  /* Forced colors keeps outlines but repaints them; ask for the user's own
+     Highlight so it still reads as a marker rather than a border. */
+  @media (forced-colors: active) {
+    :global([data-narrating]) {
+      outline-color: Highlight;
+    }
+  }
+  @media print {
+    :global([data-narrating]) {
+      outline: none;
+    }
   }
 </style>

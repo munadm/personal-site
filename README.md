@@ -30,6 +30,8 @@ Playwright suite enforces it rather than the README asserting it.
 - A visible `:focus-visible` outline on everything focusable.
 - Body text targets AAA (7:1) contrast. Text is never placed over a pattern.
 - Nothing animates in either motion mode. Decorative SVG is `aria-hidden`.
+- Narrated pages outline the paragraph being spoken, without moving a line of layout,
+  scrolling the page, or touching the accessibility tree, and readers can turn it off.
 - Every route reflows to 320px with no horizontal scroll and stays readable under forced
   colors.
 - Both themes are scanned, so dark mode is held to the same bar as light.
@@ -48,6 +50,8 @@ Each commitment above is a test. The suite is the specification.
 | `tests/a11y/aria-snapshot.spec.ts` | locks each route's `<main>` accessibility tree |
 | `tests/a11y/virtual-screen-reader.spec.ts` | virtual screen-reader narration of the built HTML, in order |
 | `tests/a11y/audio.spec.ts` | every narrated page exposes one native `<audio>` player, labelled honestly, with an mp3 that resolves |
+| `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 outline contrast in both themes and under forced colors, with nothing drawn in the margin; the On/Off setting, persistence and keyboard operation; lock-screen title, artwork, and paragraph skip |
+| `tests/social-cards.spec.ts` | every route's share card matches the page as served, resolves as a 1200×630 PNG, and carries alt text |
 | `tests/fold.spec.ts` | the hero fits the fold on phone viewports with no horizontal scroll |
 | `tests/voiceover/` | real macOS VoiceOver narration of the homepage, run as a launch gate |
 
@@ -94,9 +98,9 @@ to ask for it.
 
 ## Audio narration
 
-Each case study carries an AI-narrated reading, synthesized locally with
-[Kokoro](https://github.com/hexgrad/kokoro). No API is involved and the model never runs
-in CI.
+Each case study carries an AI-narrated reading, synthesized with
+[Gemini text-to-speech](https://ai.google.dev/gemini-api/docs/speech-generation) a
+paragraph at a time. The API is only called when prose changes, and never in CI.
 
 ```sh
 npm run audio    # regenerate changed narrations into public/audio/
@@ -105,19 +109,64 @@ npm run audio    # regenerate changed narrations into public/audio/
 The mp3s are committed like `public/resume.pdf`, so the deploy build only serves static
 files. The generator finds case studies in the build output instead of a hardcoded list,
 hashes their prose into `public/audio/manifest.json`, and re-synthesizes only what
-changed. Its large TTS toolchain lives in `scripts/audio/` with its own `package.json`,
-kept out of the root dependency graph so `npm ci` stays fast. It needs `ffmpeg` on `PATH`.
+changed. Its toolchain lives in `scripts/audio/` with its own `package.json`, kept out of
+the root dependency graph so `npm ci` stays fast. It needs `ffmpeg` on `PATH` and a
+`GEMINI_API_KEY` in a gitignored `.env`, the key only when something needs synthesizing.
 
 You rarely run it by hand. When a commit touches `src/pages/work/*.astro`, the pre-commit
 hook rebuilds the affected narration and stages it into the same commit, which stops the
-audio drifting from the text. Voice and pacing are constants at the top of
-`scripts/audio/make-audio.mjs`, and mispronunciations are fixed with a respelling table in
-the same file.
+audio drifting from the text. Delivery and pacing are constants at the top of
+`scripts/audio/make-audio.mjs`.
 
 The player is a native `<audio controls>` element, keyboard- and screen-reader-operable
 without any script of ours.
 
-## The Writing page
+### Read-along
+
+While a reading plays, the paragraph being spoken gets a soft rounded outline.
+The generator joins paragraphs with 0.8 s of digital silence, which speech never reaches,
+so `scripts/audio/cues.mjs` finds every paragraph break in the mp3 itself with ffmpeg and
+writes one start time per block into the manifest as `cues`. That works the same for a
+reading synthesized a minute ago and one committed before cues existed, and it needs no
+API key. A count that disagrees with the page fails instead of guessing.
+
+`src/lib/narration.mjs` holds the one selector that decides which blocks are narrated,
+shared by the generator and the outline, so the two can never disagree about what a
+paragraph is. The outline is a few inline lines that set a `data-` attribute, which
+assistive technology never sees, and CSS that draws a 2px `outline` in
+`--color-accent-soft` (3.2:1 light, 3.6:1 dark, the non-text minimum with a little room).
+An outline takes no layout space, so it cannot move a line. Without JavaScript the player
+is unchanged.
+
+Under the player, an "Outline the paragraph being read" radio pair turns it on or off.
+The choice persists in `localStorage` like the theme. The radios render `hidden` and the
+script reveals them, so a reader without JavaScript never sees a setting that nothing
+would honour.
+
+The same cues drive the Media Session, so a phone's lock screen, headphones and car
+controls show the case study's title with its social card as artwork, and their previous
+and next buttons move a paragraph at a time. "Previous" restarts the current paragraph
+when it is more than three seconds in, as it does in any audio player.
+
+## Social cards
+
+A link to any page unfurls into a 1200×630 card built from that page: its kicker, its
+`h1`, and the first sentence of its lede, beside a study of horizontal rules seeded from
+the route, so every page gets its own silhouette in the same family as the hero motif.
+`Base.astro` emits `og:image` with its size, type and alt text, and the 404 shares the
+homepage's card.
+
+```sh
+npm run cards    # render changed cards into public/og/
+```
+
+`scripts/og/card.mjs` is pure (page text in, card HTML and hash out) and
+`scripts/og/make-cards.mjs` renders it in Chromium with the self-hosted Archivo, refusing
+to fall back to another font. The PNGs are committed, and the pre-commit hook re-renders
+any card whose page changed and stages it into the same commit. The hash covers the
+card's HTML, so a design change re-renders every card and a copy change re-renders one.
+
+
 
 `/writing` does not retype the essay list. The blog repo publishes its essays at
 [`blog.munadmahinoor.com/essays.json`](https://blog.munadmahinoor.com/essays.json), and
@@ -141,8 +190,8 @@ outage on the blog cannot fail a deploy here.
   graphics.
 - Type scale: 12 / 14 / 16 / 18 / 24 / 32 / 48 / 72 px.
 - The only script that runs unconditionally is a few inline lines in the head that restore
-  the stored theme before first paint. The theme toggle is the one other piece of client
-  JavaScript.
+  the stored theme before first paint. The theme toggle and the read-along outline on
+  narrated pages are the only other client JavaScript.
 
 ## Deploy and rollback
 

@@ -10,13 +10,13 @@
   - list:
     - listitem:
       - link /Case study \d+ BNPL at \$[\d,.]+[bkmBKM]+ scale Leading the engineering org behind a Buy-Now-Pay-Later platform processing tens of billions in annual volume — reliability, risk, and velocity\./:
-        - /url: /work
+        - /url: /work/bnpl-platform
         - paragraph: /Case study \d+/
         - heading /BNPL at \$[\d,.]+[bkmBKM]+ scale/ [level=3]
         - paragraph: Leading the engineering org behind a Buy-Now-Pay-Later platform processing tens of billions in annual volume — reliability, risk, and velocity.
     - listitem:
       - link /Case study \d+ LLM PII scanner Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs\./:
-        - /url: /work
+        - /url: /work/llm-pii-scanner
         - paragraph: /Case study \d+/
         - heading "LLM PII scanner" [level=3]
         - paragraph: Shipping an internal LLM-powered scanner that flags personally identifiable information across services before it leaks into logs.

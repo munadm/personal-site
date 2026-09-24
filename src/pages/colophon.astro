@@ -24,9 +24,10 @@ import SiteFooter from '../components/SiteFooter.astro';
       <h2>Stack</h2>
       <p>
         Built with <a href="https://astro.build" target="_blank" rel="noreferrer">Astro</a>,
-        shipping essentially zero client-side JavaScript &mdash; the one exception is the
-        light/dark theme toggle. Type is set in a self-hosted Archivo variable font, served
-        from this site rather than a third-party font host. Hosted on Cloudflare Pages.
+        shipping essentially zero client-side JavaScript. The exceptions are the light/dark
+        theme toggle and a few lines that mark the paragraph being read aloud on narrated
+        pages. Type is set in a self-hosted Archivo variable font, served from this site
+        rather than a third-party font host. Hosted on Cloudflare Pages.
       </p>
 
       <h2>Design system</h2>
@@ -55,6 +56,13 @@ import SiteFooter from '../components/SiteFooter.astro';
         encoded to a small mp3, and served as a static file through a native audio player, so
         there is nothing to load unless you press play. The page you are reading is the
         transcript.
+      </p>
+      <p>
+        While a reading plays, a soft outline marks the paragraph being spoken, so you can
+        follow the voice through the text. Its timing comes from the audio itself: the pauses
+        between paragraphs are measured when the reading is made. The outline is visual only.
+        It never scrolls the page and never changes what a screen reader announces, and a
+        setting beside the player turns it off; the page remembers your choice.
       </p>
 
       <h2>Privacy</h2>
