@@ -26,6 +26,7 @@ Every PR shows the change, it does not just describe it.
 - **Screenshots for anything visible.** Capture the same page or component before and after so a reviewer validates by eye instead of by trusting the description. Build the previous state from `main` in a scratch worktree, serve it on another port, and shoot both with the same viewport and colour scheme. **Never commit screenshots**, not to the branch and not to an assets branch: review images are not source, and git history is forever. Attach them by dragging the files into the PR body on github.com, which uploads them to GitHub's own CDN. Since that upload needs the web UI, an agent preparing a PR leaves the captured files on disk, says where they are, and writes the before/after in words so the description stands on its own if nobody attaches anything.
 - **Say what did not change.** Reviewers spend their attention on the parts you leave silent. Call out what was deliberately left alone and why.
 - **Show the check.** Paste the result of the suite that proves it, with counts.
+- **Wait for Pullfrog before merging.** Green CI is not enough. Merge only after Pullfrog has posted its review on the PR's latest commit and every finding from it has been fixed, or answered on its thread with the reason it stays. A push starts a new Pullfrog run, so wait again after each one.
 
 ## Documentation
 
