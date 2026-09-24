@@ -51,6 +51,7 @@ Each commitment above is a test. The suite is the specification.
 | `tests/a11y/virtual-screen-reader.spec.ts` | virtual screen-reader narration of the built HTML, in order |
 | `tests/a11y/audio.spec.ts` | every narrated page exposes one native `<audio>` player, labelled honestly, with an mp3 that resolves |
 | `tests/a11y/read-along.spec.ts` | one cue per narrated block, each on a real paragraph break in the decoded mp3; exactly the spoken paragraph is marked; no layout shift, scroll, motion or accessibility-tree change; 3:1 marker contrast in both themes and under forced colors |
+| `tests/social-cards.spec.ts` | every route's share card matches the page as served, resolves as a 1200×630 PNG, and carries alt text |
 | `tests/fold.spec.ts` | the hero fits the fold on phone viewports with no horizontal scroll |
 | `tests/voiceover/` | real macOS VoiceOver narration of the homepage, run as a launch gate |
 
@@ -134,7 +135,25 @@ shared by the generator and the marker, so the two can never disagree about what
 paragraph is. The marker is a few inline lines that set a `data-` attribute, which
 assistive technology never sees. Without JavaScript the player is unchanged.
 
-## The Writing page
+## Social cards
+
+A link to any page unfurls into a 1200×630 card built from that page: its kicker, its
+`h1`, and the first sentence of its lede, beside a study of horizontal rules seeded from
+the route, so every page gets its own silhouette in the same family as the hero motif.
+`Base.astro` emits `og:image` with its size, type and alt text, and the 404 shares the
+homepage's card.
+
+```sh
+npm run cards    # render changed cards into public/og/
+```
+
+`scripts/og/card.mjs` is pure (page text in, card HTML and hash out) and
+`scripts/og/make-cards.mjs` renders it in Chromium with the self-hosted Archivo, refusing
+to fall back to another font. The PNGs are committed, and the pre-commit hook re-renders
+any card whose page changed and stages it into the same commit. The hash covers the
+card's HTML, so a design change re-renders every card and a copy change re-renders one.
+
+
 
 `/writing` does not retype the essay list. The blog repo publishes its essays at
 [`blog.munadmahinoor.com/essays.json`](https://blog.munadmahinoor.com/essays.json), and
