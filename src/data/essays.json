@@ -1,6 +1,13 @@
 {
   "essays": [
     {
+      "slug": "dont-be-the-leader-that-wants-a-pony",
+      "title": "Don't be the leader that wants a pony",
+      "description": "Engineering visions get written to impress rather than to be lived. How I ground optimism in the possible, and the check I run before publishing a true north.",
+      "pubDate": "2026-11-02T00:00:00.000Z",
+      "url": "https://blog.munadmahinoor.com/dont-be-the-leader-that-wants-a-pony/"
+    },
+    {
       "slug": "what-the-layoffs-teach-you",
       "title": "What a few rounds of layoffs have taught me",
       "description": "Layoffs stopped being an event and became a condition of the industry. Four things I have learned from sitting through more than one, written for the people who have too.",
