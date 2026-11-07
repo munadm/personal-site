@@ -1,3 +1,5 @@
+When I say "close out": write HANDOFF.md (summary, sub-task status, learnings, remaining work) and add one hint to AGENTS.md about the step that caused the most friction.
+
 ## First principles (enforced)
 
 Accessibility wins every conflict. The principles are codified as the suite `npm test` runs — the audio generator's self-checks, then Playwright — and a pre-commit hook runs the build plus that same suite before every commit. CI runs the identical command, so keep new checks inside `npm test` rather than beside it. One-time setup per clone:
