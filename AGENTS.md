@@ -1,3 +1,5 @@
+In the main session, plan and delegate to sub-agents; do not implement code yourself unless I ask.
+
 When I say "close out": write HANDOFF.md (summary, sub-task status, learnings, remaining work) and add one hint to AGENTS.md about the step that caused the most friction.
 
 ## First principles (enforced)
