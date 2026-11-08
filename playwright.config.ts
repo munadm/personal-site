@@ -77,5 +77,9 @@ export default defineConfig({
     url: 'http://localhost:4173',
     reuseExistingServer: false,
     timeout: 120_000,
+    // Astro otherwise detaches the preview when an AI agent runs it, so
+    // Playwright can't stop it. This variable, despite its name, keeps it in
+    // the foreground.
+    env: { ASTRO_PREVIEW_BACKGROUND: '1' },
   },
 });
